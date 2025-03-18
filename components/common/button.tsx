@@ -53,7 +53,7 @@ export default function Button({
       )}
     >
       {loading ? (
-        <View className="flex-row items-center space-x-2">
+        <View className="flex-row items-center space-x-2 gap-2">
           <ActivityIndicator color={variant === 'outline' ? '#4338CA' : '#ffffff'} />
           <Text
             className={cn(
