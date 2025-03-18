@@ -1,4 +1,12 @@
-# Welcome to your Expo app 👋
+# Eserv - Global Online Service Platform 👋
+
+Eserv is a Global online service company that specializes in introducing clients to services
+they need at their own convenience at affordable prices. Our team is dedicated in growing
+service-based business, professional or personal services by offering comprehensive
+marketing, client acquisition, and appointment scheduling solutions. Our mission is to
+create a seamless and secure platform that eliminates stress for both service providers
+and consumers. We achieve this by streamlining processes, ensuring smooth payment
+transactions, and prioritizing user safety.
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -24,23 +32,6 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
 ## Join the community
 
