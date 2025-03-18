@@ -5,7 +5,7 @@ import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import AuthHeader from '@/components/common/auth-header'
 import Button from '@/components/common/button'
-import { SIGN_UP } from '@/constants/routes'
+import { FORGOT_PASSWORD, SIGN_UP } from '@/constants/routes'
 
 export default function SignIn() {
   const [email, setEmail] = useState("")
@@ -31,6 +31,10 @@ export default function SignIn() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
+  }
+
+  const handleForgotPassword = () => {
+    router.push(FORGOT_PASSWORD)
   }
 
   return (
@@ -87,7 +91,7 @@ export default function SignIn() {
             </View>
 
             {/* Forgot Password Link */}
-            <TouchableOpacity className="mt-2 self-start">
+            <TouchableOpacity className="mt-2 self-start" onPress={handleForgotPassword}>
               <Text className="text-primary-300 text-sm font-medium">
                 Forgot password?
               </Text>
