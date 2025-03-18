@@ -1,32 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import images from "@/constants/images";
 import { Image, Text, View, TouchableOpacity, Dimensions, FlatList } from "react-native";
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SlideItem } from "@/constants/types";
+import { slides } from "@/constants/data";
+import { router } from "expo-router";
+import { SIGN_IN, SIGN_UP } from "@/constants/routes";
 
 const { width } = Dimensions.get("window");
-
-interface SlideItem {
-  image: any;
-  id: string;
-}
 
 export default function OnboardingFlatList() {
   const [activeSlide, setActiveSlide] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const slides: SlideItem[] = [
-    {
-      image: images.slideImage1,
-      id: "1"
-    },
-    {
-      image: images.slideImage1,
-      id: "2"
-    },
-    {
-      image: images.slideImage1,
-      id: "3"
-    }
-  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,6 +50,14 @@ export default function OnboardingFlatList() {
         ))}
       </View>
     );
+  };
+
+  const handleGetStarted = () => {
+    router.navigate(SIGN_UP);
+  };
+
+  const handleSignIn = () => {
+    router.navigate(SIGN_IN);
   };
 
   return (
@@ -113,18 +107,20 @@ export default function OnboardingFlatList() {
         </View>
 
         {/* Bottom Buttons */}
-        <View className="w-full px-2 mb-8">
-          <TouchableOpacity className="bg-primary-300 py-4 rounded-md w-full">
-            <Text className="text-white text-center font-semibold text-lg">Get started</Text>
-          </TouchableOpacity>
-
-          <View className="flex-row justify-center mt-6">
-            <Text className="text-gray-600 text-base">Already have an account? </Text>
-            <TouchableOpacity>
-              <Text className="text-primary-300 font-semibold text-base">Sign in</Text>
+        <Animated.View entering={FadeInDown.delay(200).springify()} className={"w-full"}>
+          <View className="w-full px-2 mb-8">
+            <TouchableOpacity className="bg-primary-300 py-4 rounded-md w-full" onPress={handleGetStarted}>
+              <Text className="text-white text-center font-semibold text-lg">Get started</Text>
             </TouchableOpacity>
+
+            <View className="flex-row justify-center mt-6">
+              <Text className="text-gray-600 text-base">Already have an account? </Text>
+              <TouchableOpacity onPress={handleSignIn}>
+                <Text className="text-primary-300 font-semibold text-base">Sign in</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </Animated.View>
       </View>
     </SafeAreaView>
   );
