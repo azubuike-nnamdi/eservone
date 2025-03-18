@@ -1,9 +1,11 @@
-import { Text, View } from "react-native";
+import images from "@/constants/images";
+import { Image, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text className="text-red-500">Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <SafeAreaView className="flex justify-center items-center">
+      <Image source={images.logo} className="w-20 h-20" />
+    </SafeAreaView>
   );
 }
