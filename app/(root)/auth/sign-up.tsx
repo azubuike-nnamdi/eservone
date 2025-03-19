@@ -1,6 +1,8 @@
 import AuthHeader from '@/components/common/auth-header'
 import Button from '@/components/common/button'
-import { SIGN_IN } from '@/constants/routes'
+import { SIGN_IN, VERIFY_EMAIL } from '@/constants/routes'
+import { validateEmail } from '@/lib/helpler'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -9,29 +11,42 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateEmail = (text: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(text);
-  };
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
     setIsValidEmail(true); // Reset validation on change
+    setErrorMessage("");
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const isValid = validateEmail(email);
     setIsValidEmail(isValid);
 
-    if (isValid) {
+    if (!isValid) {
+      setErrorMessage("Please enter a valid email address");
+      return;
+    }
+
+    try {
       setIsLoading(true);
+      // Store email in AsyncStorage
+      await AsyncStorage.setItem('forgot_password_email', email);
+
+      //STORE FLOW TYPE
+      await AsyncStorage.setItem('flow_type', 'signup');
+
       // Simulate API call
       setTimeout(() => {
-        console.log("Valid email:", email);
+        console.log("Processing sign up for:", email);
         setIsLoading(false);
+        router.push(VERIFY_EMAIL);
       }, 2000);
+    } catch (error) {
+      setIsLoading(false);
+      setErrorMessage("An error occurred. Please try again.");
     }
   };
 
@@ -54,7 +69,7 @@ export default function SignUp() {
             </Text>
             <TextInput
               className="w-full h-14 border border-gray-200 rounded-md px-4 text-base text-black"
-              placeholder="John Doe"
+              placeholder="sample@gmail.com"
               placeholderTextColor="#CCCCCC"
               value={email}
               onChangeText={handleEmailChange}
