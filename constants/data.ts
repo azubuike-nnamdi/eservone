@@ -7,11 +7,16 @@ export const slides: SlideItem[] = [
     id: "1"
   },
   {
-    image: images.slideImage1,
+    image: images.slideImage2,
     id: "2"
   },
   {
-    image: images.slideImage1,
+    image: images.slideImage3,
     id: "3"
+  },
+  {
+    image: images.slideImage4,
+    id: "4"
   }
+
 ];
