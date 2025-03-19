@@ -1,40 +1,57 @@
 import AuthHeader from "@/components/common/auth-header";
 import Button from "@/components/common/button";
-import { SIGN_UP } from "@/constants/routes";
+import { VERIFY_EMAIL, SIGN_UP } from "@/constants/routes";
 import { router } from "expo-router";
 import { useState } from "react";
 import { View, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { validateEmail } from "@/lib/helpler";
 
 export default function ForgotPassword() {
-
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const validateEmail = (text: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(text);
-  };
+
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
-    setIsValidEmail(true); // Reset validation on change
+    setIsValidEmail(true);
+    setErrorMessage("");
   };
 
   const handleCreateAccount = () => {
     router.push(SIGN_UP)
   }
 
-  const handleForgetPassword = () => {
-    if (email) {
-      setIsLoading(true)
+  const handleForgetPassword = async () => {
+    const isValid = validateEmail(email);
+    setIsValidEmail(isValid);
+
+    if (!isValid) {
+      setErrorMessage("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      // Store email in AsyncStorage
+      await AsyncStorage.setItem('forgot_password_email', email);
+
+      //STORE FLOW TYPE
+      await AsyncStorage.setItem('flow_type', 'forgot_password');
+
       // Simulate API call
       setTimeout(() => {
-        console.log("Signing in with:", email)
-        setIsLoading(false)
-        // Navigate to home or dashboard after successful login
-      }, 2000)
+        console.log("Processing forgot password for:", email);
+        setIsLoading(false);
+        router.push(VERIFY_EMAIL);
+      }, 2000);
+    } catch (error) {
+      setIsLoading(false);
+      setErrorMessage("An error occurred. Please try again.");
     }
   }
 
@@ -54,15 +71,21 @@ export default function ForgotPassword() {
               Your email address
             </Text>
             <TextInput
-              className="w-full h-14 border border-gray-200 rounded-md px-4 text-base text-black mb-4"
+              className={`w-full h-14 border ${isValidEmail ? 'border-gray-200' : 'border-danger'} rounded-md px-4 text-base text-black mb-4`}
               placeholder="example@gmail.com"
               placeholderTextColor="#CCCCCC"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={handleEmailChange}
               keyboardType="email-address"
               autoCapitalize="none"
               textAlign="left"
             />
+
+            {!isValidEmail && (
+              <Text className="text-danger text-sm mb-2 text-center">
+                {errorMessage}
+              </Text>
+            )}
 
             <Text className="text-gray-400 text-sm mt-2 text-center">
               Please provide a valid email address.{'\n'}
@@ -74,7 +97,7 @@ export default function ForgotPassword() {
           <View className="w-full px-6 mt-8">
             <Button
               type="submit"
-              disabled={isLoading || !email}
+              disabled={isLoading || !email || !isValidEmail}
               loading={isLoading}
               loadingText="Submitting..."
               onPress={handleForgetPassword}
