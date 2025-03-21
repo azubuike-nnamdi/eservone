@@ -29,4 +29,23 @@ interface SettingItem {
   href: Href
 }
 
-export type { AuthHeaderProps, SlideItem, FormData, SettingItem };
+type VerificationPayload = {
+  otp: string;
+  requestId: string | null;
+};
+
+type SignUpPayload = {
+  firstName: string;
+  lastName: string;
+  password: string;
+  agreeTermsOfReference: string;
+  deviceId: string;
+  userRole: string;
+};
+
+type SignInPayload = {
+  email: string;
+  password: string;
+};
+
+export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload };
