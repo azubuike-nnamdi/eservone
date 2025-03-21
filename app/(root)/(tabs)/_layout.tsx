@@ -21,7 +21,7 @@ const TabIcon = ({
     />
     <Text
       className={`${focused
-        ? "text-primary-300 font-rubik-medium"
+        ? "text-primary-300 font-rubikMedium"
         : "text-black-200 font-rubik"
         } text-xs w-full text-center mt-1`}
     >
@@ -54,12 +54,12 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="appointments"
         options={{
-          title: "Explore",
+          title: "Appointments",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.search} title="Explore" />
+            <TabIcon focused={focused} icon={icons.bag} title="Appointments" />
           ),
         }}
       />
