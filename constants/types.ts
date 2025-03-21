@@ -1,3 +1,4 @@
+import { Href } from "expo-router";
 
 interface SlideItem {
   image: any;
@@ -22,4 +23,10 @@ type FormData = {
   termsAccepted: boolean;
 }
 
-export type { AuthHeaderProps, SlideItem, FormData };
+interface SettingItem {
+  id: string
+  title: string
+  href: Href
+}
+
+export type { AuthHeaderProps, SlideItem, FormData, SettingItem };
