@@ -1,10 +1,11 @@
 import AuthHeader from '@/components/common/auth-header'
 import Button from '@/components/common/button'
-import { SIGN_IN, VERIFY_EMAIL } from '@/constants/routes'
+import { SIGN_IN } from '@/constants/routes'
+import InitializeEmail from '@/hooks/mutation/initializeEmail'
 import { validateEmail } from '@/lib/helpler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -12,12 +13,12 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { handleInitializeEmail, isPending } = InitializeEmail();
 
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
-    setIsValidEmail(true); // Reset validation on change
+    setIsValidEmail(true);
     setErrorMessage("");
   };
 
@@ -31,22 +32,15 @@ export default function SignUp() {
     }
 
     try {
-      setIsLoading(true);
-      // Store email in AsyncStorage
-      await AsyncStorage.setItem('forgot_password_email', email);
-
-      //STORE FLOW TYPE
+      // Store the email before making the API call
+      await AsyncStorage.setItem('verify_email', email);
       await AsyncStorage.setItem('flow_type', 'signup');
 
-      // Simulate API call
-      setTimeout(() => {
-        console.log("Processing sign up for:", email);
-        setIsLoading(false);
-        router.push(VERIFY_EMAIL);
-      }, 2000);
-    } catch (error) {
-      setIsLoading(false);
-      setErrorMessage("An error occurred. Please try again.");
+      handleInitializeEmail(email);
+    } catch (error: any) {
+      console.log('Sign-up error:', error);
+      setIsValidEmail(false);
+      setErrorMessage(error.message || "An error occurred. Please try again.");
     }
   };
 
@@ -68,7 +62,7 @@ export default function SignUp() {
               Your email address
             </Text>
             <TextInput
-              className="w-full h-14 border border-gray-200 rounded-md px-4 text-base text-black"
+              className={`w-full h-14 border ${isValidEmail ? 'border-gray-200' : 'border-danger'} rounded-md px-4 text-base text-black`}
               placeholder="sample@gmail.com"
               placeholderTextColor="#CCCCCC"
               value={email}
@@ -78,9 +72,14 @@ export default function SignUp() {
               textAlign="center"
             />
 
+            {!isValidEmail && (
+              <Text className="text-danger text-sm mb-2 text-center">
+                {errorMessage}
+              </Text>
+            )}
             <Text className="text-gray-400 text-sm mt-2 text-center">
               Please provide a valid email address.{'\n'}
-              We'll send you a message
+              We'll send you a verification code
             </Text>
           </View>
 
@@ -88,8 +87,8 @@ export default function SignUp() {
           <View className="w-full px-6 mt-24">
             <Button
               type="submit"
-              disabled={isLoading}
-              loading={isLoading}
+              disabled={isPending || !email}
+              loading={isPending}
               loadingText="Verifying email..."
               onPress={handleContinue}
             >
