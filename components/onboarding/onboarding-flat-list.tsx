@@ -7,6 +7,7 @@ import { SlideItem } from "@/constants/types";
 import { slides } from "@/constants/data";
 import { router } from "expo-router";
 import { SIGN_IN, SIGN_UP } from "@/constants/routes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
@@ -52,11 +53,14 @@ export default function OnboardingFlatList() {
     );
   };
 
-  const handleGetStarted = () => {
+  //configure if user is onboarded or not
+  const handleGetStarted = async () => {
+    await AsyncStorage.setItem('isOnboarded', 'true');
     router.navigate(SIGN_UP);
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
+    await AsyncStorage.setItem('isOnboarded', 'true');
     router.navigate(SIGN_IN);
   };
 
