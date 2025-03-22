@@ -39,18 +39,9 @@ api.interceptors.request.use(
 // Create interceptor for api response
 api.interceptors.response.use(
   (response) => {
-    console.log("API Response:", {
-      status: response.status,
-      data: response.data,
-    })
     return response
   },
   (error) => {
-    console.log("API Response Error:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    })
     return Promise.reject(error)
   },
 )

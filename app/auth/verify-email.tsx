@@ -18,9 +18,8 @@ import Button from "@/components/common/button"
 import { router } from "expo-router"
 import { RESET_PASSWORD } from "@/constants/routes"
 import ValidateEmail from "@/hooks/mutation/verify-email"
-import type { VerificationPayload } from "@/constants/types"
-import NotificationModal from "@/components/common/NotificationModal"
-
+import type { ValidateResetPasswordEmailPayload, VerificationPayload } from "@/constants/types"
+import useValidateResetPasswordEmail from "@/hooks/mutation/useValidateResetPasswordEmail"
 
 export default function VerifyEmail() {
   const [email, setEmail] = useState<string | null>(null)
@@ -32,6 +31,7 @@ export default function VerifyEmail() {
   const [showError, setShowError] = useState(false)
   const inputRefs = useRef<Array<TextInput | null>>([])
   const { handleValidateEmail, isPending } = ValidateEmail()
+  const { handleValidateResetPasswordEmail, isPending: isResetPasswordPending } = useValidateResetPasswordEmail()
 
   useEffect(() => {
     const getStoredData = async () => {
@@ -87,21 +87,19 @@ export default function VerifyEmail() {
 
     try {
       if (flowType === "forgot_password") {
-        router.push(RESET_PASSWORD)
-      } else if (flowType === "signup") {
+        const payload: ValidateResetPasswordEmailPayload = {
+          otp: otpString,
+          requestId: requestId || null,
+        }
+        handleValidateResetPasswordEmail(payload)
+      } else {
         const payload: VerificationPayload = {
           otp: otpString,
           requestId: requestId || null,
         }
-
-        console.log("Sending payload:", payload)
         await handleValidateEmail(payload)
-        // Success is handled in the hook
-      } else {
-        console.error("Unknown flow type")
-        setErrorMessage("Invalid verification flow")
-        setShowError(true)
       }
+      // Success is handled in the hook
     } catch (error: any) {
       console.error("Error verifying OTP:", error)
       setIsValidOtp(false)
@@ -151,8 +149,8 @@ export default function VerifyEmail() {
           <View className="w-full mt-8">
             <Button
               type="submit"
-              disabled={isPending || otp.join("").length !== 6}
-              loading={isPending}
+              disabled={isPending || isResetPasswordPending || otp.join("").length !== 6}
+              loading={isPending || isResetPasswordPending}
               loadingText="Verifying..."
               onPress={handleVerifyOtp}
             >
@@ -166,14 +164,7 @@ export default function VerifyEmail() {
           </TouchableOpacity>
         </View>
 
-        {/* Add NotificationModal */}
-        <NotificationModal
-          visible={showError}
-          type="error"
-          message={errorMessage}
-          onClose={() => setShowError(false)}
-          variant="centered"
-        />
+
       </KeyboardAvoidingView>
     </SafeAreaView>
   )

@@ -7,12 +7,13 @@ import { View, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { validateEmail } from "@/lib/helpler";
-
+import useForgotPassword from "@/hooks/mutation/useForgotPassword";
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { handleForgotPassword, isPending } = useForgotPassword()
 
 
 
@@ -43,16 +44,15 @@ export default function ForgotPassword() {
       //STORE FLOW TYPE
       await AsyncStorage.setItem('flow_type', 'forgot_password');
 
-      // Simulate API call
-      setTimeout(() => {
-        console.log("Processing forgot password for:", email);
-        setIsLoading(false);
-        router.push(VERIFY_EMAIL);
-      }, 2000);
+      handleForgotPassword({ email })
     } catch (error) {
       setIsLoading(false);
       setErrorMessage("An error occurred. Please try again.");
     }
+  }
+
+  const handleDeleteStorage = () => {
+    AsyncStorage.clear()
   }
 
   return (
@@ -93,12 +93,18 @@ export default function ForgotPassword() {
             </Text>
           </View>
 
+          <TouchableOpacity onPress={handleDeleteStorage}>
+            <Text className="text-gray-400 text-sm mt-2 text-center">
+              delete
+            </Text>
+          </TouchableOpacity>
+
           {/* Sign In Button */}
           <View className="w-full px-6 mt-8">
             <Button
               type="submit"
-              disabled={isLoading || !email || !isValidEmail}
-              loading={isLoading}
+              disabled={isPending || !email || !isValidEmail}
+              loading={isPending}
               loadingText="Submitting..."
               onPress={handleForgetPassword}
             >

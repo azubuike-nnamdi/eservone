@@ -2,8 +2,9 @@ import Button from "@/components/common/button";
 import ProfileHeader from "@/components/common/profile-header";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { useUser } from "@/context/user-context";
 export default function Index() {
+  const { user } = useUser()
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
@@ -15,7 +16,7 @@ export default function Index() {
           <View className="border-b border-gray-100" />
           <View className="flex-row items-baseline mt-4">
             <Text className="text-2xl font-rubikSemiBold">Good day,</Text>
-            <Text className="text-2xl text-black-300/50 font-rubikMedium ml-1">Tobi</Text>
+            <Text className="text-2xl text-black-300/50 font-rubikMedium ml-1">{user?.firstName}</Text>
           </View>
 
           <View className="mt-4">

@@ -10,6 +10,8 @@ import { validateEmail } from '@/lib/helpler'
 import useSignInMutate from '@/hooks/mutation/useSignInMutate'
 import { SignInPayload } from '@/constants/types'
 
+
+
 import * as Device from "expo-device"
 
 export default function SignIn() {
@@ -39,7 +41,7 @@ export default function SignIn() {
       const payload: SignInPayload = {
         emailAddress: email,
         password: password,
-        deviceId: Device.modelId
+        deviceId: Device.modelName
       }
       handleUserLogin(payload)
 

@@ -17,14 +17,14 @@ const useSignInMutate = () => {
     mutationFn: (payload: SignInPayload) => axios.post(`${baseURL}/eserve-one/user-login`, payload),
     onSuccess: (data) => {
       if (data) {
-        console.log(data?.data)
+        console.log(data?.data?.data)
         //store jwt token using auth context
-        saveToken(data?.data?.token)
+        saveToken(data?.data?.data?.token)
         //store user info using user context
         saveUser({
-          email: data?.data?.email,
-          firstName: data?.data?.firstName,
-          userRole: data?.data?.role,
+          email: data?.data?.data?.email,
+          firstName: data?.data?.data?.firstName,
+          userRole: data?.data?.data?.role,
         })
         queryClient.setQueryData(["user"], data)
         router.push(HOME)

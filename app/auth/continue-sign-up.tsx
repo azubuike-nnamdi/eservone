@@ -69,7 +69,7 @@ export default function ContinueSignUp() {
               lastName: updatedFormData.personalDetails.lastName,
               password: updatedFormData.security.password,
               agreeTermsOfReference: Boolean(accepted).toString(),
-              deviceId: Device.modelId,
+              deviceId: Device.modelName,
               userRole: updatedFormData.serviceType,
             }
 

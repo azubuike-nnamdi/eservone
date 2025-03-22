@@ -16,8 +16,6 @@ const InitializeEmail = () => {
     onSuccess: ({ data }) => {
       console.log('Initialize email success:', data);
       if (data) {
-        console.log('real data', data?.data?.requestId)
-
         // Navigate immediately
         router.push(VERIFY_EMAIL);
         queryClient.invalidateQueries({ queryKey: ["user"] });

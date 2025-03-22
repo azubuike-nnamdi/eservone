@@ -9,15 +9,17 @@ import { MANAGE_SERVICES, BUSINESS_PROFILE, EARNINGS, CERTIFICATES, SIGN_IN } fr
 import { generalSettings, supportSettings, legalSettings } from '@/constants/data'
 import { useAuth } from '@/context/auth-context'
 import { useUser } from '@/context/user-context'
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
 export default function Profile() {
   const { clearToken, isLoading: isAuthLoading } = useAuth()
-  const { clearUser, isLoading: isUserLoading } = useUser()
+  const { clearUser, isLoading: isUserLoading, user } = useUser();
 
   const handleSignOut = async () => {
     try {
       await clearToken()
       await clearUser()
+      AsyncStorage.removeItem('token')
+      AsyncStorage.removeItem('requestId')
       router.push(SIGN_IN)
     } catch (error) {
       Alert.alert('Error', 'Failed to sign out')
@@ -45,38 +47,43 @@ export default function Profile() {
             className='size-16 rounded-full bg-gray-100'
           />
           <View className='ml-4'>
-            <Text className='text-lg font-rubikMedium'>John Doe</Text>
-            <Text className='text-gray-400'>sampleemail@gmail.com</Text>
+            <Text className='text-lg font-rubikMedium'>{user?.firstName}</Text>
+            <Text className='text-gray-400'>{user?.email}</Text>
           </View>
         </View>
 
         {/* Business Profile Section */}
-        <View className='mb-4'>
-          <GeneralSetting
-            title='Business profile - [ XYZ Studios ]'
-            showArrow={false}
-            href={BUSINESS_PROFILE}
-          />
-        </View>
+        {user?.userRole === 'SERVICE_PROVIDER' && (
+          <>
 
-        {/* Services Section */}
-        <View className='mb-4'>
-          <GeneralSetting
-            title='Manage services'
-            showArrow={false}
-            href={MANAGE_SERVICES}
-          />
-          <GeneralSetting
-            title='Earnings'
-            showArrow={false}
-            href={EARNINGS}
-          />
-          <GeneralSetting
-            title='Industrial certificates'
-            showArrow={false}
-            href={CERTIFICATES}
-          />
-        </View>
+            <View className='mb-4'>
+              <GeneralSetting
+                title='Business profile - [ XYZ Studios ]'
+                showArrow={false}
+                href={BUSINESS_PROFILE}
+              />
+            </View>
+
+            {/* Services Section */}
+            <View className='mb-4'>
+              <GeneralSetting
+                title='Manage services'
+                showArrow={false}
+                href={MANAGE_SERVICES}
+              />
+              <GeneralSetting
+                title='Earnings'
+                showArrow={false}
+                href={EARNINGS}
+              />
+              <GeneralSetting
+                title='Industrial certificates'
+                showArrow={false}
+                href={CERTIFICATES}
+              />
+            </View>
+          </>
+        )}
 
         {/* General Section */}
         <View className='mb-4'>

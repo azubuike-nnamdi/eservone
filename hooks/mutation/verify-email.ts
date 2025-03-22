@@ -14,6 +14,7 @@ const ValidateEmail = () => {
       return api.post(`/eserve-one/verify-email`, payload)
     },
     onSuccess: ({ data }) => {
+      console.log("Success response:", data?.data)
       if (data) {
         router.push(CONTINUE_SIGN_UP)
         queryClient.invalidateQueries({ queryKey: ["user"] })

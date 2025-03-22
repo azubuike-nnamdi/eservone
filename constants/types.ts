@@ -64,4 +64,23 @@ type UserContextType = {
   clearUser: () => Promise<void>;
   isLoading: boolean;
 };
-export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType };
+
+type ForgotPasswordPayload = {
+  email: string;
+};
+
+type ChangePasswordPayload = {
+  newPassword: string;
+  oldPassword: string;
+};
+
+type ValidateResetPasswordEmailPayload = {
+  otp: string;
+  requestId: string | null;
+};
+
+type ResetPasswordPayload = {
+  newPassword: string;
+};
+
+export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType, ForgotPasswordPayload, ChangePasswordPayload, ValidateResetPasswordEmailPayload, ResetPasswordPayload };

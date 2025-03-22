@@ -5,6 +5,9 @@ import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import useChangePassword from "@/hooks/mutation/useChangePassword";
+import useResetPassword from "@/hooks/mutation/useResetPassword";
+
 
 export default function ResetPassword() {
   const [email, setEmail] = useState<string | null>(null);
@@ -14,7 +17,7 @@ export default function ResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const { handleResetPassword: resetPassword, isPending } = useResetPassword()
   useEffect(() => {
     const getEmail = async () => {
       try {
@@ -51,10 +54,9 @@ export default function ResetPassword() {
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('Resetting password for:', email);
-      // Add your password reset logic here
+      resetPassword({
+        newPassword: password,
+      })
     } catch (error) {
       setError("Failed to reset password. Please try again.");
     } finally {
@@ -152,8 +154,8 @@ export default function ResetPassword() {
           <View className="w-full">
             <Button
               type="submit"
-              disabled={isLoading || !password || !confirmPassword}
-              loading={isLoading}
+              disabled={isPending || !password || !confirmPassword}
+              loading={isPending}
               loadingText="Resetting password..."
               onPress={handleResetPassword}
             >
