@@ -1,18 +1,37 @@
+import { HOME } from "@/constants/routes"
 import { SignInPayload } from "@/constants/types"
-import api from "@/lib/api"
+import { useAuth } from "@/context/auth-context"
+import { useUser } from "@/context/user-context"
+import api, { baseURL } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-
+import axios from "axios"
+import { router } from "expo-router"
+import { Alert } from "react-native"
 
 const useSignInMutate = () => {
   const queryClient = useQueryClient()
+  const { saveToken } = useAuth()
+  const { saveUser } = useUser()
+
   const { mutate, isPending } = useMutation({
-    mutationFn: (payload: SignInPayload) => api.post("/eserve-one/user-login", payload),
+    mutationFn: (payload: SignInPayload) => axios.post(`${baseURL}/eserve-one/user-login`, payload),
     onSuccess: (data) => {
-      console.log(data)
-      queryClient.setQueryData(["user"], data)
+      if (data) {
+        console.log(data?.data)
+        //store jwt token using auth context
+        saveToken(data?.data?.token)
+        //store user info using user context
+        saveUser({
+          email: data?.data?.email,
+          firstName: data?.data?.firstName,
+          userRole: data?.data?.role,
+        })
+        queryClient.setQueryData(["user"], data)
+        router.push(HOME)
+      }
     },
-    onError: (error: any) => {
-      console.log(error)
+    onError: (error: { response: { data: { description: string } } }) => {
+      Alert.alert('Error', error.response.data.description)
     }
   })
 
