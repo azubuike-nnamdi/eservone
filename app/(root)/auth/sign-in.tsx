@@ -7,6 +7,10 @@ import AuthHeader from '@/components/common/auth-header'
 import Button from '@/components/common/button'
 import { FORGOT_PASSWORD, HOME, SIGN_UP } from '@/constants/routes'
 import { validateEmail } from '@/lib/helpler'
+import useSignInMutate from '@/hooks/mutation/useSignInMutate'
+import { SignInPayload } from '@/constants/types'
+
+import * as Device from "expo-device"
 
 export default function SignIn() {
   const [email, setEmail] = useState("")
@@ -14,8 +18,7 @@ export default function SignIn() {
   const [errorMessage, setErrorMessage] = useState("");
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-
-  const [isLoading, setIsLoading] = useState(false)
+  const { handleSignIn: handleUserLogin, isPending } = useSignInMutate()
 
 
   const handleEmailChange = (text: string) => {
@@ -33,14 +36,13 @@ export default function SignIn() {
     }
 
     if (email && password) {
-      setIsLoading(true)
-      // Simulate API call
-      setTimeout(() => {
-        console.log("Signing in with:", email, password)
-        router.push(HOME)
-        setIsLoading(false)
-        // Navigate to home or dashboard after successful login
-      }, 2000)
+      const payload: SignInPayload = {
+        emailAddress: email,
+        password: password,
+        deviceId: Device.modelId
+      }
+      handleUserLogin(payload)
+
     }
   }
 
@@ -126,8 +128,8 @@ export default function SignIn() {
           <View className="w-full px-6 mt-8">
             <Button
               type="submit"
-              disabled={isLoading || !email || !password}
-              loading={isLoading}
+              disabled={isPending || !email || !password}
+              loading={isPending}
               loadingText="Signing in..."
               onPress={handleSignIn}
             >
