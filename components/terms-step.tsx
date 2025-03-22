@@ -4,23 +4,20 @@ import { useState } from "react";
 import { FormData } from "@/constants/types";
 import { Ionicons } from '@expo/vector-icons';
 import images from "@/constants/images";
+import useSignUpMutate from "@/hooks/mutation/useSignUpMutate";
 
 export const TermsStep = ({
-  onSubmit
+  onSubmit,
+  isPending
 }: {
   onSubmit: (accepted: boolean) => void
+  isPending: boolean
 }) => {
   const [accepted, setAccepted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!accepted) return;
-    setIsLoading(true);
-    try {
-      await onSubmit(accepted);
-    } finally {
-      setIsLoading(false);
-    }
+    await onSubmit(true);
   };
 
   return (
@@ -51,6 +48,7 @@ export const TermsStep = ({
       <TouchableOpacity
         className="flex-row items-center mb-8"
         onPress={() => setAccepted(!accepted)}
+        activeOpacity={0.7}
       >
         <View className={`w-6 h-6 rounded border ${accepted ? 'bg-primary-300 border-primary-300' : 'border-gray-300'} mr-2 items-center justify-center`}>
           {accepted && (
@@ -66,8 +64,8 @@ export const TermsStep = ({
       <View className="w-full">
         <Button
           onPress={handleSubmit}
-          disabled={!accepted || isLoading}
-          loading={isLoading}
+          disabled={!accepted || isPending}
+          loading={isPending}
           loadingText="Creating account..."
         >
           Create account
