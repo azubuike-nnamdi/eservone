@@ -11,7 +11,7 @@ interface AuthHeaderProps {
 }
 
 type FormData = {
-  serviceType: 'provider' | 'seeker' | null;
+  serviceType: 'SERVICE_PROVIDER' | 'SERVICE_SEEKER' | null;
   personalDetails: {
     firstName: string;
     lastName: string;
@@ -38,14 +38,30 @@ type SignUpPayload = {
   firstName: string;
   lastName: string;
   password: string;
-  agreeTermsOfReference: string;
-  deviceId: string;
-  userRole: string;
+  agreeTermsOfReference: boolean | string;
+  deviceId: string | null;
+  userRole: 'SERVICE_PROVIDER' | 'SERVICE_SEEKER' | null;
 };
 
 type SignInPayload = {
-  email: string;
+  emailAddress: string;
   password: string;
+  deviceId: string | null;
 };
 
-export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload };
+
+// Define the user type
+type User = {
+  id?: string;
+  email: string;
+  firstName: string;
+  userRole: string;
+};
+
+type UserContextType = {
+  user: User | null;
+  saveUser: (user: User | null) => Promise<void>;
+  clearUser: () => Promise<void>;
+  isLoading: boolean;
+};
+export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType };
