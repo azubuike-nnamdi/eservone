@@ -1,29 +1,33 @@
-//create axios instance
-import axios from "axios";
+"use client"
 
+import axios from "axios"
 
-export const baseURL = process.env.EXPO_PUBLIC_API_URL;
+export const baseURL = process.env.EXPO_PUBLIC_API_URL
+
+// Create a variable to store the token
+let authToken: string | null = null
+
+// Function to set the token from components
+export const setAuthToken = (token: string | null) => {
+  authToken = token
+}
 
 const api = axios.create({
   baseURL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-
   },
   timeout: 60000,
-});
+})
 
-
-//create interceptor for api
+// Create interceptor for api
 api.interceptors.request.use(
   (config) => {
-    console.log("API Request:", {
-      url: config.url,
-      method: config.method,
-      data: config.data,
-      headers: config.headers,
-    })
+    // Use the stored token instead of calling useAuth()
+    if (authToken) {
+      config.headers.Authorization = `${authToken}`
+    }
     return config
   },
   (error) => {
@@ -32,7 +36,7 @@ api.interceptors.request.use(
   },
 )
 
-//create interceptor for api response
+// Create interceptor for api response
 api.interceptors.response.use(
   (response) => {
     console.log("API Response:", {
@@ -51,4 +55,5 @@ api.interceptors.response.use(
   },
 )
 
-export default api;
+export default api
+
