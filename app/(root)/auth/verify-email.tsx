@@ -18,7 +18,6 @@ import Button from "@/components/common/button"
 import { router } from "expo-router"
 import { RESET_PASSWORD } from "@/constants/routes"
 import ValidateEmail from "@/hooks/mutation/verify-email"
-import * as Device from "expo-device"
 import type { VerificationPayload } from "@/constants/types"
 import NotificationModal from "@/components/common/NotificationModal"
 
