@@ -4,6 +4,7 @@ import TanstackProvider from "@/context/tanstack-provider";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SIGN_IN } from "@/constants/routes";
+import { AuthProvider } from "@/context/auth-context";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -33,7 +34,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (isReady && shouldRedirect) {
-      router.replace(SIGN_IN);
+      // Add a small delay to ensure the component is mounted
+      const timer = setTimeout(() => {
+        router.replace(SIGN_IN);
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [isReady, shouldRedirect]);
 
@@ -43,7 +48,9 @@ export default function RootLayout() {
 
   return (
     <TanstackProvider>
-      <Slot />
+      <AuthProvider>
+        <Slot />
+      </AuthProvider>
     </TanstackProvider>
   );
 }
