@@ -83,4 +83,36 @@ type ResetPasswordPayload = {
   newPassword: string;
 };
 
-export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType, ForgotPasswordPayload, ChangePasswordPayload, ValidateResetPasswordEmailPayload, ResetPasswordPayload };
+type Appointment = {
+  id: string
+  date: string
+  time: string
+  serviceName: string
+  location: string
+  price: number
+  rating?: number
+}
+
+type AppointmentType = 'upcoming' | 'history'
+
+type AppointmentSectionProps = {
+  title: string
+  type: AppointmentType
+  appointments: Appointment[]
+  onAppointmentPress?: (appointment: Appointment) => void
+}
+
+interface AppointmentCardProps {
+  type: AppointmentType
+  date: string
+  time: string
+  serviceName: string
+  location: string
+  price: number
+  rating?: number
+  onPress?: () => void
+}
+
+
+
+export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType, ForgotPasswordPayload, ChangePasswordPayload, ValidateResetPasswordEmailPayload, ResetPasswordPayload, Appointment, AppointmentSectionProps, AppointmentCardProps };
