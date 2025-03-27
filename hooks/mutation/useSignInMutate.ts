@@ -15,19 +15,25 @@ const useSignInMutate = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: SignInPayload) => axios.post(`${baseURL}/eserve-one/user-login`, payload),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data) {
-        console.log(data?.data?.data)
-        //store jwt token using auth context
-        saveToken(data?.data?.data?.token)
-        //store user info using user context
-        saveUser({
-          email: data?.data?.data?.email,
-          firstName: data?.data?.data?.firstName,
-          userRole: data?.data?.data?.role,
-        })
-        queryClient.setQueryData(["user"], data)
-        router.push(HOME)
+        console.log('Sign in success:', data?.data?.data)
+        try {
+          //store jwt token using auth context
+          await saveToken(data?.data?.data?.token)
+          //store user info using user context
+          await saveUser({
+            email: data?.data?.data?.email,
+            firstName: data?.data?.data?.firstName,
+            userRole: data?.data?.data?.role,
+          })
+          queryClient.setQueryData(["user"], data)
+          console.log('Token and user data saved, navigating to home')
+          router.push(HOME)
+        } catch (error) {
+          console.error('Error saving auth data:', error)
+          Alert.alert('Error', 'Failed to save authentication data')
+        }
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
