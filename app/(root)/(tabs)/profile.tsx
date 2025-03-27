@@ -18,7 +18,6 @@ export default function Profile() {
     try {
       await clearToken()
       await clearUser()
-      AsyncStorage.removeItem('token')
       AsyncStorage.removeItem('requestId')
       router.push(SIGN_IN)
     } catch (error) {
