@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import { ActivityIndicator, View } from 'react-native';
 
 const TOKEN_KEY = 'jwt_token';
 
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const loadToken = async () => {
     try {
       const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
+      console.log('Loaded token from storage:', storedToken ? 'Token exists' : 'No token');
       setToken(storedToken);
     } catch (error) {
       console.error('Error loading token:', error);
@@ -35,9 +37,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       if (newToken) {
         await SecureStore.setItemAsync(TOKEN_KEY, newToken);
+        console.log('Token saved successfully');
         setToken(newToken);
       } else {
         await SecureStore.deleteItemAsync(TOKEN_KEY);
+        console.log('Token cleared successfully');
+        setToken(null);
       }
     } catch (error) {
       console.error('Error setting token:', error);
@@ -47,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const clearToken = async () => {
     try {
       await SecureStore.deleteItemAsync(TOKEN_KEY);
-      saveToken(null);
+      setToken(null);
     } catch (error) {
       console.error('Error clearing token:', error);
     }
@@ -55,7 +60,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ token, saveToken, isLoading, clearToken }}>
-      {children}
+      {isLoading ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
