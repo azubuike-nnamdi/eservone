@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useChangePassword from "@/hooks/mutation/useChangePassword";
 import useResetPassword from "@/hooks/mutation/useResetPassword";
+import { validatePassword } from "@/lib/helpler";
 
 
 export default function ResetPassword() {
@@ -31,13 +32,6 @@ export default function ResetPassword() {
     getEmail();
   }, []);
 
-  const validatePassword = (pass: string) => {
-    const hasMinLength = pass.length >= 8;
-    const hasLetter = /[a-zA-Z]/.test(pass);
-    const hasNumber = /\d/.test(pass);
-    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
-    return hasMinLength && hasLetter && hasNumber && hasSymbol;
-  };
 
   const handleResetPassword = async () => {
     setError("");
