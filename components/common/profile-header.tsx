@@ -35,10 +35,10 @@ export default function ProfileHeader({
       <View className='flex flex-row gap-3 items-center'>
         {showBackArrow && (
           <TouchableOpacity onPress={handleBackPress}>
-            <Image source={icons.backArrow} className='size-5' />
+            <Image source={icons.backArrow} className='size-8' />
           </TouchableOpacity>
         )}
-        <Text className='text-xl font-rubikSemiBold text-black-300'>{title}</Text>
+        <Text className='text-xl font-bold text-black-300'>{title}</Text>
       </View>
 
       {rightComponent || (
