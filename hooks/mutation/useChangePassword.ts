@@ -6,13 +6,13 @@ import { router } from "expo-router"
 import { Alert } from "react-native"
 
 const useChangePassword = () => {
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: (payload: ChangePasswordPayload) => {
       return api.post(`/eserve-one/change-password`, payload)
     },
     onSuccess: (data) => {
       if (data) {
-        router.push(SIGN_IN)
+        Alert.alert('Success', data?.data?.description)
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
@@ -25,7 +25,7 @@ const useChangePassword = () => {
     mutate(payload)
   }
 
-  return { handleChangePassword, isPending }
+  return { handleChangePassword, isPending, isSuccess }
 }
 
 export default useChangePassword
