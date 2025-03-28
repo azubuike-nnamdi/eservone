@@ -22,5 +22,6 @@ export default function AppLayout() {
     return <Redirect href={SIGN_IN} />
   }
 
+  // For authenticated users, render the slot which will show the appropriate child route
   return <Slot />
 }

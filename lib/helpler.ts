@@ -17,4 +17,12 @@ const getGreeting = (): string => {
   }
 };
 
-export { validateEmail, getGreeting };
+const validatePassword = (pass: string) => {
+  const hasMinLength = pass.length >= 8;
+  const hasLetter = /[a-zA-Z]/.test(pass);
+  const hasNumber = /\d/.test(pass);
+  const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
+  return hasMinLength && hasLetter && hasNumber && hasSymbol;
+};
+
+export { validateEmail, getGreeting, validatePassword };

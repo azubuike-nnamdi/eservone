@@ -28,7 +28,7 @@ const useSignInMutate = () => {
             userRole: data?.data?.data?.role,
           })
           queryClient.setQueryData(["user"], data)
-          console.log('Token and user data saved, navigating to home')
+          console.log('Token and user data saved, navigating to home', data?.data?.data)
           router.push(HOME)
         } catch (error) {
           console.error('Error saving auth data:', error)
