@@ -15,7 +15,7 @@ export default function Index() {
       >
         <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32 px-7'>
           <ProfileHeader title="Hire a service" showNotification={true} showBackArrow={false} />
-          <View className="border-b border-gray-100" />
+          <View className="border-b border-gray-100 my-3" />
           <View className="flex-row items-baseline mt-4">
             <Text className="text-2xl font-bold">{getGreeting()},</Text>
             <Text className="text-2xl text-black-300/50 font-medium ml-1">{user?.firstName}</Text>
