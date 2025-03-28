@@ -114,5 +114,21 @@ interface AppointmentCardProps {
 }
 
 
+interface ProfileHeaderProps {
+  title: string
+  showBackArrow?: boolean
+  showNotification?: boolean
+  onBackPress?: () => void
+  onNotificationPress?: () => void
+  rightComponent?: React.ReactNode
+}
 
-export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType, ForgotPasswordPayload, ChangePasswordPayload, ValidateResetPasswordEmailPayload, ResetPasswordPayload, Appointment, AppointmentSectionProps, AppointmentCardProps };
+interface DeleteAccountModalProps {
+  visible: boolean
+  onClose: () => void
+  onConfirm: () => void
+}
+
+
+
+export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType, ForgotPasswordPayload, ChangePasswordPayload, ValidateResetPasswordEmailPayload, ResetPasswordPayload, Appointment, AppointmentSectionProps, AppointmentCardProps, DeleteAccountModalProps, ProfileHeaderProps };
