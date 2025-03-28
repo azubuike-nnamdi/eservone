@@ -2,15 +2,8 @@ import React from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import icons from '@/constants/icons'
+import { ProfileHeaderProps } from '@/constants/types'
 
-interface ProfileHeaderProps {
-  title: string
-  showBackArrow?: boolean
-  showNotification?: boolean
-  onBackPress?: () => void
-  onNotificationPress?: () => void
-  rightComponent?: React.ReactNode
-}
 
 export default function ProfileHeader({
   title,
