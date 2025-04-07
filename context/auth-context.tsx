@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 const TOKEN_KEY = 'jwt_token';
@@ -25,9 +25,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
       console.log('Loaded token from storage:', storedToken ? 'Token exists' : 'No token');
-      setToken(storedToken);
+
+      if (!storedToken || storedToken === 'null' || storedToken === 'undefined') {
+        await SecureStore.deleteItemAsync(TOKEN_KEY);
+        setToken(null);
+      } else {
+        setToken(storedToken);
+      }
     } catch (error) {
       console.error('Error loading token:', error);
+      setToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -35,17 +42,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const saveToken = async (newToken: string | null) => {
     try {
-      if (newToken) {
+      // Clear any existing token first
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+
+      if (newToken && newToken !== 'null' && newToken !== 'undefined') {
+        // Save the new token
         await SecureStore.setItemAsync(TOKEN_KEY, newToken);
-        console.log('Token saved successfully');
+        console.log('New token saved successfully');
         setToken(newToken);
       } else {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
         console.log('Token cleared successfully');
         setToken(null);
       }
     } catch (error) {
       console.error('Error setting token:', error);
+      setToken(null);
     }
   };
 
