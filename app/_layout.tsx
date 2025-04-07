@@ -1,11 +1,11 @@
-import { router, Slot, SplashScreen, Stack } from "expo-router";
-import './global.css'
-import TanstackProvider from "@/context/tanstack-provider";
-import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SIGN_IN } from "@/constants/routes";
 import { AuthProvider } from "@/context/auth-context";
-
+import TanstackProvider from "@/context/tanstack-provider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, Slot, SplashScreen } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StatusBar, View } from "react-native";
+import './global.css';
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
@@ -43,12 +43,17 @@ export default function RootLayout() {
   }, [isReady, shouldRedirect]);
 
   if (!isReady) {
-    return null;
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   }
 
   return (
     <TanstackProvider>
       <AuthProvider>
+        <StatusBar barStyle={'dark-content'} />
         <Slot />
       </AuthProvider>
     </TanstackProvider>
