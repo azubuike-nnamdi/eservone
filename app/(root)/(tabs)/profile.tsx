@@ -1,15 +1,15 @@
-import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Text, ScrollView, View, Image, Alert, ActivityIndicator } from 'react-native'
-import icons from '@/constants/icons'
 import ProfileHeader from '@/components/common/profile-header'
 import GeneralSetting from '@/components/profile/general-setting'
-import { router } from 'expo-router'
-import { MANAGE_SERVICES, BUSINESS_PROFILE, EARNINGS, CERTIFICATES, SIGN_IN } from '@/constants/routes'
-import { generalSettings, supportSettings, legalSettings } from '@/constants/data'
+import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
+import icons from '@/constants/icons'
+import { BUSINESS_PROFILE, CERTIFICATES, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
 import { useAuth } from '@/context/auth-context'
 import { useUser } from '@/context/user-context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { router } from 'expo-router'
+import React from 'react'
+import { ActivityIndicator, Alert, Image, ScrollView, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 export default function Profile() {
   const { clearToken, isLoading: isAuthLoading } = useAuth()
   const { clearUser, isLoading: isUserLoading, user } = useUser();
@@ -19,7 +19,12 @@ export default function Profile() {
       await clearToken()
       await clearUser()
       AsyncStorage.removeItem('requestId')
-      router.push(SIGN_IN)
+      Alert.alert('Success', 'You have been successfully logged out', [
+        {
+          text: 'OK',
+          onPress: () => router.push(SIGN_IN)
+        }
+      ])
     } catch (error) {
       Alert.alert('Error', 'Failed to sign out')
     }
