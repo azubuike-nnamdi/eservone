@@ -1,7 +1,7 @@
 
-import { useState } from "react"
-import { View, Text, TouchableOpacity, Switch, ScrollView, Alert } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
+import { useState } from "react"
+import { Alert, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native"
 import DeleteAccountModal from "./delete-profile"
 
 
@@ -135,12 +135,14 @@ export default function PreferencesScreen() {
           onPress={() => setDeleteModalVisible(true)}
         >
           <View>
-            <Text className="text-lg font-semibold text-red-500">Delete account</Text>
+            <View className="flex-row items-center  justify-between ">
+              <Text className="text-lg font-semibold text-red-500">Delete account</Text>
+              <Ionicons name="trash-outline" size={24} color="#EE3137" />
+            </View>
             <Text className="text-base text-[#EE313780]/50 mt-1 pr-4">
               Permanently remove your account and all associated data. This action cannot be undone.
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={24} color="#f43f5e" />
         </TouchableOpacity>
       </View>
 

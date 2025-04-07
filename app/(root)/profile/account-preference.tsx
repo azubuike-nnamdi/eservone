@@ -7,10 +7,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function AccountPreference() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32 px-7'>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName=''>
         <ProfileHeader title='Account preferences' showNotification={false} />
 
-        <View>
+        <View className='px-7'>
           <PreferencesScreen />
         </View>
       </ScrollView>
