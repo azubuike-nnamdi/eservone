@@ -6,6 +6,7 @@ import slideImage4 from "@/assets/images/slider-image-4.png";
 import slideImage5 from "@/assets/images/slider-image-5.png";
 import SendEmail from "@/assets/images/Send.png";
 import Terms from "@/assets/images/Paper.png";
+import WorkBag from "@/assets/images/work-bag.png";
 export default {
   logo,
   slideImage1,
@@ -15,4 +16,5 @@ export default {
   slideImage5,
   SendEmail,
   Terms,
+  WorkBag,
 };
