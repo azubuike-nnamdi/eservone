@@ -55,6 +55,7 @@ type User = {
   id?: string;
   email: string;
   firstName: string;
+  lastName: string;
   userRole: string;
 };
 
@@ -130,5 +131,12 @@ interface DeleteAccountModalProps {
 }
 
 
+interface SectionCardProps {
+  title?: string;
+  description?: string;
+  paragraphs: string[];
+}
 
-export type { AuthHeaderProps, SlideItem, FormData, SettingItem, VerificationPayload, SignUpPayload, SignInPayload, User, UserContextType, ForgotPasswordPayload, ChangePasswordPayload, ValidateResetPasswordEmailPayload, ResetPasswordPayload, Appointment, AppointmentSectionProps, AppointmentCardProps, DeleteAccountModalProps, ProfileHeaderProps };
+
+
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SettingItem, SignInPayload, SignUpPayload, SlideItem, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
