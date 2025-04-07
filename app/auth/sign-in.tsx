@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 import AuthHeader from '@/components/common/auth-header'
 import Button from '@/components/common/button'
-import { FORGOT_PASSWORD, HOME, SIGN_UP } from '@/constants/routes'
-import { validateEmail } from '@/lib/helpler'
-import useSignInMutate from '@/hooks/mutation/useSignInMutate'
+import { FORGOT_PASSWORD, SIGN_UP } from '@/constants/routes'
 import { SignInPayload } from '@/constants/types'
-
-
-
+import useSignInMutate from '@/hooks/mutation/useSignInMutate'
+import { validateEmail } from '@/lib/helpler'
+import { Ionicons } from '@expo/vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Device from "expo-device"
+import { router } from 'expo-router'
+import React, { useEffect, useState } from 'react'
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+const EMAIL_STORAGE_KEY = '@user_email'
 
 export default function SignIn() {
   const [email, setEmail] = useState("")
@@ -22,13 +22,31 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false)
   const { handleSignIn: handleUserLogin, isPending } = useSignInMutate()
 
+  // Load saved email on component mount
+  useEffect(() => {
+    loadSavedEmail()
+  }, [])
 
-  const handleEmailChange = (text: string) => {
+  const loadSavedEmail = async () => {
+    try {
+      const savedEmail = await AsyncStorage.getItem(EMAIL_STORAGE_KEY)
+      if (savedEmail) {
+        setEmail(savedEmail)
+      }
+    } catch (error) {
+      console.log('Error loading saved email:', error)
+    }
+  }
+
+  const handleEmailChange = async (text: string) => {
     setEmail(text);
     setIsValidEmail(true);
     setErrorMessage("");
+    // Update stored email whenever it changes
+    await AsyncStorage.setItem(EMAIL_STORAGE_KEY, text)
   };
-  const handleSignIn = () => {
+
+  const handleSignIn = async () => {
     const isValid = validateEmail(email);
     setIsValidEmail(isValid);
 
@@ -38,13 +56,16 @@ export default function SignIn() {
     }
 
     if (email && password) {
+      // Save email to AsyncStorage when signing in
+      await AsyncStorage.setItem(EMAIL_STORAGE_KEY, email)
+
+
       const payload: SignInPayload = {
         emailAddress: email,
         password: password,
         deviceId: Device.modelName
       }
       handleUserLogin(payload)
-
     }
   }
 
