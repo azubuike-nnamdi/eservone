@@ -22,7 +22,7 @@ export default function ServiceSeekerHomepage() {
          >
             <ScrollView
                showsVerticalScrollIndicator={false}
-               contentContainerClassName="pb-32 px-7"
+               contentContainerClassName="pb-32"
             >
                <ProfileHeader
                   title="Hire a service"

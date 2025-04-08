@@ -1,12 +1,10 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, Text, View } from "react-native";
-import ProfileHeader from "@/components/common/profile-header";
-import { historyAppointments } from "@/constants/data";
 import AppointmentSection from "@/components/appointments/appointment-section";
-import { upcomingAppointments } from "@/constants/data";
-import { useCallback } from "react";
+import ProfileHeader from "@/components/common/profile-header";
+import { historyAppointments, upcomingAppointments } from "@/constants/data";
 import { Appointment } from "@/constants/types";
-import { router } from "expo-router";
+import { useCallback } from "react";
+import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function Appointments() {
 
   const handleUpcomingAppointmentPress = useCallback((appointment: Appointment) => {
@@ -26,10 +24,10 @@ export default function Appointments() {
   }, [])
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32 px-7'>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32'>
         <ProfileHeader title='Appointments' showNotification={false} />
 
-        <View className="mt-6">
+        <View className="mt-6 px-7">
           <AppointmentSection
             title="Upcoming"
             type="upcoming"
