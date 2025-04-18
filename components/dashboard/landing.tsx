@@ -16,7 +16,7 @@ const DashboardScreen = () => {
     { id: '1', label: 'New job requests', value: '1' },
     { id: '2', label: 'Total earnings', value: '₦0.00' },
     { id: '3', label: 'Completed appointments', value: '0' },
-    { id: '4', label: 'Cancelled appointments', value: '0' }
+    { id: '4', label: 'Cancelled appointments', value: '6' }
   ];
 
   const renderStatItem = ({ item }: { item: StatItem }) => (
@@ -40,8 +40,8 @@ const DashboardScreen = () => {
               {user?.firstName}
             </Text>
           </View>
-          <Button type='button' className=' w-3/12 '>
-            <Text className='font-bold  text-xs'>Create a service</Text>
+          <Button type='button' className=' w-4/12 '>
+            <Text className='font-bold p-2 text-xs'>Create a service</Text>
           </Button>
         </View>
         <FlatList

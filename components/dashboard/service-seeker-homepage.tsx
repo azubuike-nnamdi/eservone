@@ -29,33 +29,35 @@ export default function ServiceSeekerHomepage() {
                   showNotification={true}
                   showBackArrow={false}
                />
-               <View className="flex-row items-baseline mt-4">
-                  <Text className="text-2xl font-bold">{getGreeting()},</Text>
-                  <Text className="text-2xl text-black-300/50 font-medium ml-1">
-                     {user?.firstName}
-                  </Text>
-               </View>
+               <View className="px-7">
+                  <View className="flex-row items-baseline mt-4">
+                     <Text className="text-2xl font-bold">{getGreeting()},</Text>
+                     <Text className="text-2xl text-black-300/50 font-medium ml-1">
+                        {user?.firstName}
+                     </Text>
+                  </View>
 
-               <View className="mt-4">
-                  <Text className="text-[22px] text-black-300 font-rubikBold font-bold leading-8">
-                     Find the right talent and {"\n"}take your ideas to the next
-                     level.
-                  </Text>
-                  <Text className="text-base text-black-300 font-rubikLight">
-                     No hassle, just great work.
-                  </Text>
-               </View>
+                  <View className="mt-4">
+                     <Text className="text-[22px] text-black-300 font-rubikBold font-bold leading-8">
+                        Find the right talent and {"\n"}take your ideas to the next
+                        level.
+                     </Text>
+                     <Text className="text-base text-black-300 font-rubikLight">
+                        No hassle, just great work.
+                     </Text>
+                  </View>
 
-               <View className="mt-12">
-                  <Text className="text-base text-black-300 font-rubikLight mb-2">
-                     What are you looking for?
-                  </Text>
-                  <View>
-                     <TextInput
-                        placeholder="Search for a service"
-                        className="flex-1 border border-gray-100 rounded-lg p-5"
-                     />
-                     <Button className="mt-3">Search </Button>
+                  <View className="mt-12">
+                     <Text className="text-base text-black-300 font-rubikLight mb-2">
+                        What are you looking for?
+                     </Text>
+                     <View>
+                        <TextInput
+                           placeholder="Search for a service"
+                           className="flex-1 border border-gray-100 rounded-lg p-5"
+                        />
+                        <Button className="mt-3">Search </Button>
+                     </View>
                   </View>
                </View>
             </ScrollView>

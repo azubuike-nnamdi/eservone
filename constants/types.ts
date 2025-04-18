@@ -138,5 +138,12 @@ interface SectionCardProps {
 }
 
 
+interface ServiceType {
+  key: string;
+  value: string;
+}
 
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SettingItem, SignInPayload, SignUpPayload, SlideItem, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+
+
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+

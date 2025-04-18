@@ -1,8 +1,14 @@
 import icons from "@/constants/icons";
+import { UPLOAD_CERTIFICATE } from "@/constants/routes";
+import { useRouter } from "expo-router";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import Button from "../common/button";
-
 export default function CertificateLanding() {
+  const router = useRouter();
+
+  const handleAddCertificate = () => {
+    router.push(UPLOAD_CERTIFICATE);
+  }
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
@@ -17,7 +23,7 @@ export default function CertificateLanding() {
           </Text>
           <Button
             variant="primary"
-            onPress={() => { }}
+            onPress={handleAddCertificate}
             className="w-full bg-[#4338CA] py-4 rounded-lg"
           >
             <Text className="text-white text-center font-medium">Add a certificate</Text>

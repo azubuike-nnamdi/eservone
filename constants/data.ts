@@ -1,7 +1,7 @@
 import icons from "./icons";
 import images from "./images";
 import { ACCOUNT_PREFERENCE, ACCOUNT_SECURITY, PRIVACY_POLICY, PROFILE_INFORMATION, SUPPORT, TERMS_OF_SERVICES } from "./routes";
-import { Appointment, SettingItem, SlideItem } from "./types";
+import { Appointment, ServiceType, SettingItem, SlideItem } from "./types";
 
 export const slides: SlideItem[] = [
   {
@@ -130,3 +130,18 @@ export const historyAppointments: Appointment[] = [
     rating: 5.0,
   },
 ]
+
+
+export const SERVICES: ServiceType[] = [
+  { key: 'hair_stylist', value: 'Hair Stylist' },
+  { key: 'nail_technician', value: 'Nail Technician' },
+  { key: 'makeup_artist', value: 'Makeup Artist' },
+  { key: 'massage_therapist', value: 'Massage Therapist' },
+  { key: 'vetinarian', value: 'Vetinarian' },
+  { key: 'electrician', value: 'Electrician' },
+  { key: 'plumber', value: 'Plumber' },
+  { key: 'carpenter', value: 'Carpenter' },
+  { key: 'painter', value: 'Painter' },
+  { key: 'car_mechanic', value: 'Car Mechanic' },
+  { key: 'other', value: 'Other' }
+];
