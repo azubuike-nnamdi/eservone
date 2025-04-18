@@ -2,39 +2,49 @@ import { SIGN_IN } from '@/constants/routes';
 import { useAuth } from '@/context/auth-context';
 import { Stack, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function AppLayout() {
   const { token, isLoading, saveToken } = useAuth();
   const router = useRouter();
+  const [isCheckingToken, setIsCheckingToken] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      if (isLoading) return; // Wait until auth context is ready
+      try {
+        // Always check for persisted token on mount
+        const persistedToken = await SecureStore.getItemAsync('jwt_token');
 
-      // Check for persisted token if no token exists
-      if (!token) {
-        try {
-          const persistedToken = await SecureStore.getItemAsync('jwt_token');
-          if (persistedToken) {
+        if (persistedToken) {
+          // If we have a persisted token but no token in context, restore it
+          if (!token) {
             await saveToken(persistedToken);
-            return; // Token found and saved, stay on authenticated page
           }
-          // No token found, redirect to sign in
-          router.replace(SIGN_IN);
-        } catch (error) {
-          console.log('Error checking persisted token:', error);
-          router.replace(SIGN_IN); // On error, safely redirect to sign in
+          // Stay on authenticated page
+          return;
         }
+
+        // No token found, redirect to sign in
+        if (!token) {
+          router.replace(SIGN_IN);
+        }
+      } catch (error) {
+        console.log('Error checking persisted token:', error);
+        if (!token) {
+          router.replace(SIGN_IN);
+        }
+      } finally {
+        setIsCheckingToken(false);
       }
     };
 
     initializeAuth();
-  }, [token, isLoading, router, saveToken]);
+  }, [token, router, saveToken]);
+
 
   // Show loading state while checking auth
-  if (isLoading) {
+  if (isLoading || isCheckingToken) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#0000ff" />
