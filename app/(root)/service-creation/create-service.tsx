@@ -1,17 +1,206 @@
+import Button from "@/components/common/button";
 import ProfileHeader from "@/components/common/profile-header";
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView } from "react-native";
+import Step1Details from "@/components/services/Step1Details";
+import Step2Pricing from "@/components/services/Step2Pricing";
+import Step3Media from "@/components/services/Step3Media";
+import useCreateService from "@/hooks/mutation/useCreateService";
+import { cn } from "@/lib/utils";
+import { useServiceCreationStore } from "@/store/service-creation-store";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { router } from "expo-router";
+import React from "react";
+import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from "react-native";
+
+const TOTAL_STEPS = 3;
 
 export default function CreateService() {
+  const store = useServiceCreationStore();
+  const resetStore = useServiceCreationStore((state) => state.reset);
+  const { handleCreateService, isPending } = useCreateService(); // For final submission
+
+  const renderStep = () => {
+    switch (store.currentStep) {
+      case 1:
+        return <Step1Details />;
+      case 2:
+        return <Step2Pricing />;
+      case 3:
+        return <Step3Media />;
+      default:
+        return null;
+    }
+  };
+
+  const handleNext = () => {
+    if (store.currentStep < TOTAL_STEPS) {
+      store.setStep(store.currentStep + 1);
+    } else {
+      // Handle final submission on step 3
+      // Validate: Ensure at least one image is uploaded
+      if (store.images.length === 0) {
+        alert("Please upload at least one image for the service.");
+        return; // Stop submission
+      }
+      handleFinalSubmit(); // Proceed if validation passes
+    }
+  };
+
+  const handleBack = () => {
+    if (store.currentStep > 1) {
+      store.setStep(store.currentStep - 1);
+    }
+    // Navigation back when on step 1 is handled by handleHeaderBackPress
+  };
+
+  // --- Handle Header Back Press with Confirmation --- 
+  const handleHeaderBackPress = () => {
+    if (store.currentStep === TOTAL_STEPS) { // Check if on the last step (Step 3)
+      // On Step 1, show confirmation before leaving
+      Alert.alert(
+        "Discard Service Creation?",
+        "Are you sure you want to go back? Your progress will be lost.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Yes, Discard",
+            style: "destructive",
+            onPress: () => {
+              resetStore(); // Clear the store
+              router.back(); // Navigate back out of the creation flow
+            },
+          },
+        ]
+      );
+    } else {
+      // If not on the last step (i.e., on step 1 or 2), just go back one step
+      handleBack();
+    }
+  };
+
+  const handleFinalSubmit = async () => {
+    console.log("Final Data from Store:", store);
+
+    // --- Data Transformation for API Payload ---
+
+    // Determine serviceDeliveryType
+    let serviceDeliveryType = "WALK_IN"; // Default or handle case where neither is selected
+    if (store.deliveryType.homeService) {
+      serviceDeliveryType = "HOME_SERVICE";
+    } else if (store.deliveryType.walkIn) {
+      serviceDeliveryType = "WALK_IN";
+    }
+    // TODO: Clarify API expectation if both are true or neither is true.
+
+    // --- Convert images to Base64 (with manipulation) ---
+    let uploadImage: { image: string; imageTitle: string }[] = [];
+    try {
+      uploadImage = await Promise.all(
+        store.images.map(async (imageUri, index) => {
+          // Manipulate Image: Resize and Compress
+          const manipulatedImage = await manipulateAsync(
+            imageUri, // Original image URI
+            [{ resize: { width: 1024 } }], // Resize based on width
+            {
+              compress: 0.7, // JPEG quality
+              format: SaveFormat.JPEG,
+              base64: true, // Get Base64 directly
+            }
+          );
+          return {
+            image: manipulatedImage.base64!, // Use base64, assert non-null
+            imageTitle: `service_image_${index + 1}`,
+          };
+        })
+      );
+      console.log("Images processed (resized/compressed/Base64).");
+    } catch (error) {
+      console.error("Error processing images:", error);
+      alert("Failed to process images for upload. Please try again.");
+      return; // Stop submission
+    }
+    // -----------------------------------------------
+
+    // --- Construct JSON Payload ---
+    const apiPayload = {
+      serviceName: store.serviceName,
+      serviceCategoryId: store.serviceCategory as number, // Casting, ensure it's valid number
+      serviceDescription: store.serviceDescription,
+      serviceDeliveryType: serviceDeliveryType,
+      minimumPrice: store.minFee ?? 0,
+      maximumPrice: store.maxFee ?? 0,
+      // receivablePrice: 0, // Include if needed by API, otherwise omit
+      uploadImage: uploadImage, // Use the processed Base64 images
+    };
+
+    console.log("Constructed JSON Payload (Base64 truncated):");
+    console.log({ ...apiPayload, uploadImage: apiPayload.uploadImage.map(img => ({ ...img, image: img.image.substring(0, 50) + '...' })) });
+    // --------------------------
+
+    handleCreateService(apiPayload)
+
+  };
+
+  // Step titles for header (optional)
+  const stepTitles = [
+    'Service Details',
+    'Pricing',
+    'Media Upload'
+  ]
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32 px-7'>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          className="flex-1"
+      <ProfileHeader
+        title={`Create Service ${store.currentStep > 1 ? `- ${stepTitles[store.currentStep - 1]}` : ''}`}
+        showNotification={false}
+        showBackArrow={true} // Always show back arrow within the flow
+        onBackPress={handleHeaderBackPress} // Use the new handler with confirmation
+      />
+      {/* Progress Indicator */}
+
+      <View className="px-7 mt-4 mb-2 flex-row space-x-2">
+        {[...Array(TOTAL_STEPS)].map((_, index) => (
+          <View
+            key={index}
+            className={cn(
+              "h-1.5 flex-1 rounded-full",
+              index === store.currentStep - 1 // Current step
+                ? "bg-primary-300"
+                : index < store.currentStep // Completed steps
+                  ? "bg-primary-300"
+                  : "bg-gray-200" // Future steps
+            )}
+          />
+        ))}
+      </View>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Adjust offset if needed
+      >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerClassName="flex-grow pb-5" // Use flex-grow to push button down
+          className="flex-1 px-7"
         >
-          <ProfileHeader title='Create Service' showNotification={false} />
-        </KeyboardAvoidingView>
-      </ScrollView>
+          <View className="flex-1">
+            {renderStep()}
+          </View>
+
+        </ScrollView>
+        {/* Navigation Buttons - outside ScrollView content to stick at bottom */}
+        <View className="px-7 pt-4 pb-6 border-t border-gray-200 bg-white">
+          <Button
+            onPress={handleNext}
+            variant='primary'
+            loading={store.currentStep === TOTAL_STEPS && isPending}
+            disabled={isPending || (store.currentStep === TOTAL_STEPS && store.images.length === 0)}
+            loadingText="Publishing..."
+          >
+            {store.currentStep === TOTAL_STEPS ? "Publish Service" : "Continue"}
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
-  )
+  );
 }

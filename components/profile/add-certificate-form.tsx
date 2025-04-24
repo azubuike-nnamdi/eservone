@@ -4,8 +4,8 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import React, { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SelectList } from 'react-native-dropdown-select-list';
 import Button from '../common/button';
+import Select from '../common/select';
 
 // Types and Interfaces
 
@@ -13,6 +13,12 @@ interface FormData {
   service: string;
   customService: string;
   document: DocumentPicker.DocumentPickerResult | null;
+}
+
+// Define the type for the Select component options
+interface SelectOption {
+  label: string;
+  value: string | number;
 }
 
 // Constants
@@ -50,40 +56,39 @@ const DocumentPickerComponent: React.FC<{
 const ServiceSelection: React.FC<{
   selectedService: string;
   customService: string;
-  onServiceChange: (service: string) => void;
+  onServiceChange: (service: string | number | null) => void;
   onCustomServiceChange: (service: string) => void;
-}> = ({ selectedService, customService, onServiceChange, onCustomServiceChange }) => (
-  <View className="mb-4">
-    <Text className="text-base text-gray-700 mb-2">Select service</Text>
-    <SelectList
-      setSelected={onServiceChange}
-      data={SERVICES}
-      save="key"
-      placeholder="Select service"
-      boxStyles={{
-        borderWidth: 1,
-        borderColor: '#E5E5E5',
-        borderRadius: 8,
-        padding: 12,
-      }}
-      inputStyles={{
-        fontSize: 16,
-        color: '#333',
-      }}
-    />
+}> = ({ selectedService, customService, onServiceChange, onCustomServiceChange }) => {
 
-    {selectedService === 'other' && (
-      <View className="mt-4">
-        <TextInput
-          className="border border-gray-300 rounded-lg p-3 text-base"
-          placeholder="Enter your service type"
-          value={customService}
-          onChangeText={onCustomServiceChange}
-        />
-      </View>
-    )}
-  </View>
-);
+  // Map SERVICES to the format needed by your Select component
+  const serviceOptions: SelectOption[] = SERVICES.map(service => ({
+    label: service.value,
+    value: service.key,
+  }));
+
+  return (
+    <View className="mb-4">
+      <Select
+        label="Select service"
+        placeholder="Select service"
+        options={serviceOptions}
+        value={selectedService}
+        onSelect={onServiceChange}
+      />
+
+      {selectedService === 'other' && (
+        <View className="mt-4">
+          <TextInput
+            className="border border-gray-300 rounded-lg p-3 text-base"
+            placeholder="Enter your service type"
+            value={customService}
+            onChangeText={onCustomServiceChange}
+          />
+        </View>
+      )}
+    </View>
+  );
+};
 
 // Main Component
 export default function AddCertificateForm() {
@@ -214,7 +219,7 @@ export default function AddCertificateForm() {
         <ServiceSelection
           selectedService={formData.service}
           customService={formData.customService}
-          onServiceChange={(service) => setFormData(prev => ({ ...prev, service }))}
+          onServiceChange={(service) => setFormData(prev => ({ ...prev, service: String(service ?? '') }))}
           onCustomServiceChange={(service) => setFormData(prev => ({ ...prev, customService: service }))}
         />
 

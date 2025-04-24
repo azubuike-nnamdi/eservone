@@ -1,10 +1,11 @@
-import { useUser } from "@/context/user-context";
+import { useAuthStore } from "@/store/auth-store";
 import React from "react";
 import ServiceProviderHomepage from "./service-provider-homepage";
 import ServiceSeekerHomepage from "./service-seeker-homepage";
 
 export default function Homepage() {
-   const { user } = useUser();
+   const { user } = useAuthStore();
+   console.log('user', user)
 
 
    const isServiceSeeker = user?.userRole === "SERVICE_SEEKER";
