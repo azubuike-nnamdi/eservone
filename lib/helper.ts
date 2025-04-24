@@ -25,4 +25,9 @@ const validatePassword = (pass: string) => {
   return hasMinLength && hasLetter && hasNumber && hasSymbol;
 };
 
-export { validateEmail, getGreeting, validatePassword };
+const formatCurrency = (value: number | null | undefined) => {
+  if (value === null || value === undefined) return '$0.00';
+  return `$${value.toFixed(2)}`;
+};
+
+export { formatCurrency, getGreeting, validateEmail, validatePassword };
