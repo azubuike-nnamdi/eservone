@@ -2,10 +2,10 @@ import AuthHeader from '@/components/common/auth-header'
 import Button from '@/components/common/button'
 import { SIGN_IN } from '@/constants/routes'
 import InitializeEmail from '@/hooks/mutation/initializeEmail'
-import { validateEmail } from '@/lib/helpler'
+import { validateEmail } from '@/lib/helper'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -14,7 +14,6 @@ export default function SignUp() {
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const { handleInitializeEmail, isPending } = InitializeEmail();
-
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
@@ -44,8 +43,9 @@ export default function SignUp() {
     }
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     router.push(SIGN_IN);
+
   };
 
   return (

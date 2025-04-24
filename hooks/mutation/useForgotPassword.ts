@@ -1,13 +1,14 @@
+import { VERIFY_EMAIL } from "@/constants/routes"
 import { ForgotPasswordPayload } from "@/constants/types"
-import { useMutation } from "@tanstack/react-query"
 import api from "@/lib/api"
-import { router } from "expo-router"
-import { FORGOT_PASSWORD, RESET_PASSWORD, VERIFY_EMAIL } from "@/constants/routes"
-import { Alert } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { router } from "expo-router"
+import { Alert } from "react-native"
 
 
 const useForgotPassword = () => {
+  const queryClient = useQueryClient()
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: ForgotPasswordPayload) => {
       return api.post(`/eserve-one/forgot-password`, payload)
@@ -19,6 +20,7 @@ const useForgotPassword = () => {
           AsyncStorage.setItem('flow_type', 'forgot_password')
         ]);
         router.push(VERIFY_EMAIL)
+        queryClient.invalidateQueries({ queryKey: ["user"] })
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {

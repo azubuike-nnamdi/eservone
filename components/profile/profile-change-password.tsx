@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { validatePassword } from "@/lib/helpler";
 import Button from "@/components/common/button";
 import useChangePassword from "@/hooks/mutation/useChangePassword";
+import { validatePassword } from "@/lib/helper";
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function ProfileChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");

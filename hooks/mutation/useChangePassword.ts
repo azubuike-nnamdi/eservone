@@ -1,11 +1,10 @@
-import { SIGN_IN } from "@/constants/routes"
 import { ChangePasswordPayload } from "@/constants/types"
 import api from "@/lib/api"
-import { useMutation } from "@tanstack/react-query"
-import { router } from "expo-router"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Alert } from "react-native"
 
 const useChangePassword = () => {
+  const queryClient = useQueryClient()
   const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: (payload: ChangePasswordPayload) => {
       return api.post(`/eserve-one/change-password`, payload)
@@ -14,6 +13,7 @@ const useChangePassword = () => {
       if (data) {
         Alert.alert('Success', data?.data?.description)
       }
+      queryClient.invalidateQueries({ queryKey: ["user"] })
     },
     onError: (error: { response: { data: { description: string } } }) => {
       console.log('error', error.response.data.description)

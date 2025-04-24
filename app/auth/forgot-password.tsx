@@ -1,13 +1,13 @@
 import AuthHeader from "@/components/common/auth-header";
 import Button from "@/components/common/button";
-import { VERIFY_EMAIL, SIGN_UP } from "@/constants/routes";
+import { SIGN_UP } from "@/constants/routes";
+import useForgotPassword from "@/hooks/mutation/useForgotPassword";
+import { validateEmail } from "@/lib/helper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
-import { View, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity } from "react-native";
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { validateEmail } from "@/lib/helpler";
-import useForgotPassword from "@/hooks/mutation/useForgotPassword";
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
