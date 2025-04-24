@@ -3,7 +3,7 @@ import Button from '@/components/common/button'
 import { FORGOT_PASSWORD, SIGN_UP } from '@/constants/routes'
 import { SignInPayload } from '@/constants/types'
 import useSignInMutate from '@/hooks/mutation/useSignInMutate'
-import { validateEmail } from '@/lib/helpler'
+import { validateEmail } from '@/lib/helper'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Device from "expo-device"

@@ -1,25 +1,22 @@
 "use client"
 
+import Button from "@/components/common/button"
 import images from "@/constants/images"
-import { useEffect, useState, useRef } from "react"
+import type { ValidateResetPasswordEmailPayload, VerificationPayload } from "@/constants/types"
+import useValidateResetPasswordEmail from "@/hooks/mutation/useValidateResetPasswordEmail"
+import ValidateEmail from "@/hooks/mutation/verify-email"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useEffect, useRef, useState } from "react"
 import {
-  View,
-  SafeAreaView,
+  Image,
   KeyboardAvoidingView,
   Platform,
-  Image,
+  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
+  View
 } from "react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import Button from "@/components/common/button"
-import { router } from "expo-router"
-import { RESET_PASSWORD } from "@/constants/routes"
-import ValidateEmail from "@/hooks/mutation/verify-email"
-import type { ValidateResetPasswordEmailPayload, VerificationPayload } from "@/constants/types"
-import useValidateResetPasswordEmail from "@/hooks/mutation/useValidateResetPasswordEmail"
 
 export default function VerifyEmail() {
   const [email, setEmail] = useState<string | null>(null)

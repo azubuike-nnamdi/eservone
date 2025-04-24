@@ -143,7 +143,31 @@ interface ServiceType {
   value: string;
 }
 
+type UpdateProfilePayload = {
+  homeAddress: string
+  meansOfIdentification: string
+  phoneNumber: string
+  profilePicture: string
+}
+
+type SelectOption = {
+  label: string;
+  value: string | number; // Allow number values too
+}
+
+type SelectProps = {
+  label?: string
+  value: string | number | undefined | null // Allow undefined/null initial value
+  options: SelectOption[]
+  onSelect: (value: string | number) => void
+  placeholder?: string
+  error?: string
+  containerClassName?: string
+  labelClassName?: string
+  selectClassName?: string
+  errorClassName?: string
+}
 
 
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 

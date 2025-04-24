@@ -1,7 +1,7 @@
 import Button from "@/components/common/button";
 import ProfileHeader from "@/components/common/profile-header";
-import { useUser } from "@/context/user-context";
-import { getGreeting } from "@/lib/helpler";
+import { getGreeting } from "@/lib/helper";
+import { useAuthStore } from "@/store/auth-store";
 import {
    KeyboardAvoidingView,
    Platform,
@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ServiceSeekerHomepage() {
-   const { user } = useUser();
+   const { user } = useAuthStore();
    return (
       <SafeAreaView className="flex-1 bg-white">
          <KeyboardAvoidingView

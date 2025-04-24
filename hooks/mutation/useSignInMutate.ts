@@ -1,8 +1,7 @@
 import { HOME } from "@/constants/routes"
 import { SignInPayload } from "@/constants/types"
-import { useAuth } from "@/context/auth-context"
-import { useUser } from "@/context/user-context"
 import { baseURL } from "@/lib/api"
+import { useAuthStore } from "@/store/auth-store"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { router } from "expo-router"
@@ -10,8 +9,7 @@ import { Alert } from "react-native"
 
 const useSignInMutate = () => {
   const queryClient = useQueryClient()
-  const { saveToken } = useAuth()
-  const { saveUser } = useUser()
+  const setAuth = useAuthStore((state) => state.setAuth)
 
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: SignInPayload) => axios.post(`${baseURL}/eserve-one/user-login`, payload),
@@ -19,17 +17,20 @@ const useSignInMutate = () => {
       if (data) {
         console.log('Sign in success:', data?.data?.data)
         try {
-          //store jwt token using auth context
-          await saveToken(data?.data?.data?.token)
-          //store user info using user context
-          await saveUser({
-            email: data?.data?.data?.email,
-            firstName: data?.data?.data?.firstName,
-            lastName: data?.data?.data?.lastName,
-            userRole: data?.data?.data?.role,
-          })
+          // Store auth data in Zustand store
+          setAuth(
+            data?.data?.data?.jwtToken,
+            data?.data?.data?.refreshToken,
+            {
+              email: data?.data?.data?.email,
+              firstName: data?.data?.data?.firstName,
+              lastName: data?.data?.data?.lastName,
+              userRole: data?.data?.data?.role,
+            }
+          )
+          queryClient.invalidateQueries({ queryKey: ["user"] })
           queryClient.setQueryData(["user"], data)
-          console.log('Token and user data saved, navigating to home', data?.data?.data)
+          console.log('Auth data saved, navigating to home', data?.data?.data)
           router.push(HOME)
         } catch (error) {
           console.error('Error saving auth data:', error)

@@ -1,6 +1,8 @@
 import Button from '@/components/common/button';
-import { useUser } from '@/context/user-context';
-import { getGreeting } from '@/lib/helpler';
+import { CREATE_SERVICE } from '@/constants/routes';
+import { getGreeting } from '@/lib/helper';
+import { useAuthStore } from '@/store/auth-store';
+import { router } from 'expo-router';
 import { StarIcon } from 'lucide-react-native';
 import React from 'react';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
@@ -11,7 +13,9 @@ interface StatItem {
 }
 
 const DashboardScreen = () => {
-  const { user } = useUser()
+  const { user } = useAuthStore()
+
+
   const statsData: StatItem[] = [
     { id: '1', label: 'New job requests', value: '1' },
     { id: '2', label: 'Total earnings', value: '₦0.00' },
@@ -40,8 +44,8 @@ const DashboardScreen = () => {
               {user?.firstName}
             </Text>
           </View>
-          <Button type='button' className=' w-4/12 '>
-            <Text className='font-bold p-2 text-xs'>Create a service</Text>
+          <Button type='button' variant='outline' className='w-1/2' onPress={() => router.push(CREATE_SERVICE)}>
+            <Text className='text-primary-300 text-lg font-bold'>Create Service</Text>
           </Button>
         </View>
         <FlatList

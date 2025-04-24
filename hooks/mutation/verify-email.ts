@@ -1,13 +1,13 @@
 import { CONTINUE_SIGN_UP } from "@/constants/routes"
 import type { VerificationPayload } from "@/constants/types"
 import api from "@/lib/api"
-import { useAuth } from "@/context/auth-context"
+import { useSignupStore } from "@/store/signup-store"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { router } from "expo-router"
 
 const ValidateEmail = () => {
   const queryClient = useQueryClient()
-  const { saveToken } = useAuth()
+  const setJwtToken = useSignupStore((state) => state.setJwtToken)
 
   const mutation = useMutation({
     mutationFn: (payload: VerificationPayload) => {
@@ -16,15 +16,16 @@ const ValidateEmail = () => {
     onSuccess: ({ data }) => {
       console.log("Success response:", data?.data)
       if (data) {
+        console.log("Storing JWT Token:", data?.data?.jwtToken);
         router.push(CONTINUE_SIGN_UP)
         queryClient.invalidateQueries({ queryKey: ["user"] })
 
-        //store jwt token using auth context
-        saveToken(data?.data?.jwtToken)
+        //store jwt token using signup store
+        setJwtToken(data?.data?.jwtToken)
+        console.log("JWT Token stored in signup store");
       }
     },
     onError: (error: any) => {
-
       const errorMsg = error.response?.data?.description || "An error occurred while verifying OTP"
       console.log("OTP verification error:", errorMsg)
       throw new Error(errorMsg)

@@ -34,6 +34,7 @@ import star from "@/assets/icons/star.png";
 import swim from "@/assets/icons/swim.png";
 import wallet from "@/assets/icons/wallet.png";
 import wifi from "@/assets/icons/wifi.png";
+import workIcon from "@/assets/icons/Work.png";
 
 export default {
   google,
@@ -72,4 +73,5 @@ export default {
   bag,
   backArrow2,
   certProfileIcon,
+  workIcon
 };

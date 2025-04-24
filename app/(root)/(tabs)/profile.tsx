@@ -3,22 +3,22 @@ import GeneralSetting from '@/components/profile/general-setting'
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
 import icons from '@/constants/icons'
 import { BUSINESS_PROFILE, CERTIFICATES, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
-import { useAuth } from '@/context/auth-context'
-import { useUser } from '@/context/user-context'
+import { useAuthStore } from '@/store/auth-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
 import React from 'react'
 import { ActivityIndicator, Alert, Image, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
 export default function Profile() {
-  const { clearToken, isLoading: isAuthLoading } = useAuth()
-  const { clearUser, isLoading: isUserLoading, user } = useUser();
+  const { clearAuth, user, isAuthenticated } = useAuthStore()
+
+  console.log(user)
 
   const handleSignOut = async () => {
     try {
-      await clearToken()
-      await clearUser()
-      AsyncStorage.removeItem('requestId')
+      await clearAuth()
+      await AsyncStorage.removeItem('requestId')
       Alert.alert('Success', 'You have been successfully logged out', [
         {
           text: 'OK',
@@ -30,11 +30,11 @@ export default function Profile() {
     }
   }
 
-  if (isAuthLoading || isUserLoading) {
+  if (!isAuthenticated) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text className="mt-2 font-rubikMedium">Signing out...</Text>
+        <Text className="mt-2 font-rubikMedium">Loading...</Text>
       </View>
     )
   }
@@ -60,7 +60,6 @@ export default function Profile() {
           {/* Business Profile Section */}
           {user?.userRole === 'SERVICE_PROVIDER' && (
             <>
-
               <View className='mb-4'>
                 <GeneralSetting
                   title='Business profile - [ XYZ Studios ]'
@@ -92,20 +91,8 @@ export default function Profile() {
 
           {/* General Section */}
           <View className='mb-4'>
-            <Text className='font-rubikSemiBold mb-4 text-xl'>General</Text>
+            <Text className='text-lg font-rubikMedium mb-4'>General</Text>
             {generalSettings.map((setting) => (
-              <GeneralSetting
-                key={setting.id}
-                title={setting.title}
-                showArrow={false}
-                href={setting.href}
-              />
-            ))}
-          </View>
-
-          {/* Support Section */}
-          <View className='mb-4'>
-            {supportSettings.map((setting) => (
               <GeneralSetting
                 key={setting.id}
                 title={setting.title}
@@ -117,6 +104,7 @@ export default function Profile() {
 
           {/* Legal Section */}
           <View className='mb-4'>
+            <Text className='text-lg font-rubikMedium mb-4'>Legal</Text>
             {legalSettings.map((setting) => (
               <GeneralSetting
                 key={setting.id}
@@ -127,15 +115,27 @@ export default function Profile() {
             ))}
           </View>
 
-          {/* Logout Section */}
-          <View>
-            <GeneralSetting
-              title='Logout'
-              showArrow={false}
-              icon={icons.logout}
-              textStyle='text-red-500'
+          {/* Support Section */}
+          <View className='mb-4'>
+            <Text className='text-lg font-rubikMedium mb-4'>Support</Text>
+            {supportSettings.map((setting) => (
+              <GeneralSetting
+                key={setting.id}
+                title={setting.title}
+                showArrow={false}
+                href={setting.href}
+              />
+            ))}
+          </View>
+
+          {/* Sign Out Button */}
+          <View className='mt-8'>
+            <Text
+              className='text-red-500 text-center font-rubikMedium'
               onPress={handleSignOut}
-            />
+            >
+              Sign Out
+            </Text>
           </View>
         </View>
       </ScrollView>

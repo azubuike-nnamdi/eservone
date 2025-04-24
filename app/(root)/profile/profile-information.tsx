@@ -1,12 +1,12 @@
 import ProfileHeader from '@/components/common/profile-header'
-import { useUser } from '@/context/user-context'
+import { useAuthStore } from '@/store/auth-store'
 import { Feather } from '@expo/vector-icons'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileInformation() {
-  const { user } = useUser();
+  const { user } = useAuthStore();
 
   const { firstName, lastName, email } = user || {};
   return (

@@ -1,10 +1,10 @@
 import Button from '@/components/common/button'
 import ProfileHeader from '@/components/common/profile-header'
 import images from '@/constants/images'
-import { VERIFY_IDENTITY } from '@/constants/routes'
-import { useUser } from '@/context/user-context'
+import { CREATE_SERVICE } from '@/constants/routes'
 import useGetAllServices from '@/hooks/query/useGetAllServices'
-import { getGreeting } from '@/lib/helpler'
+import { getGreeting } from '@/lib/helper'
+import { useAuthStore } from '@/store/auth-store'
 import { router } from 'expo-router'
 import React from 'react'
 import { Image, KeyboardAvoidingView, Platform, SafeAreaView, Text, View } from 'react-native'
@@ -22,7 +22,7 @@ const EmptyState = ({ firstName }: { firstName?: string }) => (
     <View className="w-full px-6 mt-8">
       <Button
         type='button'
-        onPress={() => router.push(VERIFY_IDENTITY)}
+        onPress={() => router.push(CREATE_SERVICE)}
       >
         Create a service
       </Button>
@@ -31,7 +31,7 @@ const EmptyState = ({ firstName }: { firstName?: string }) => (
 )
 
 export default function ServiceProviderHomepage() {
-  const { user } = useUser()
+  const { user } = useAuthStore()
   const { data, isPending } = useGetAllServices()
 
   const renderContent = () => {

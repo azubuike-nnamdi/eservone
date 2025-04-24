@@ -1,13 +1,12 @@
 import AuthHeader from "@/components/common/auth-header";
 import Button from "@/components/common/button";
-import { useState, useEffect } from "react";
-import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import useResetPassword from "@/hooks/mutation/useResetPassword";
+import { validatePassword } from "@/lib/helper";
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import useChangePassword from "@/hooks/mutation/useChangePassword";
-import useResetPassword from "@/hooks/mutation/useResetPassword";
-import { validatePassword } from "@/lib/helpler";
+import { useEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function ResetPassword() {
