@@ -1,50 +1,39 @@
 import { SIGN_IN } from '@/constants/routes';
-import { useAuth } from '@/context/auth-context';
+import { useAuthStore } from '@/store/auth-store';
 import { Stack, useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function AppLayout() {
-  const { token, isLoading, saveToken } = useAuth();
+  const { accessToken, isAuthenticated } = useAuthStore();
   const router = useRouter();
-  const [isCheckingToken, setIsCheckingToken] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Always check for persisted token on mount
-        const persistedToken = await SecureStore.getItemAsync('jwt_token');
-
-        if (persistedToken) {
-          // If we have a persisted token but no token in context, restore it
-          if (!token) {
-            await saveToken(persistedToken);
-          }
-          // Stay on authenticated page
+        // If we have a token but not authenticated, stay on authenticated page
+        if (accessToken && !isAuthenticated) {
           return;
         }
 
-        // No token found, redirect to sign in
-        if (!token) {
+        // No token or not authenticated, redirect to sign in
+        if (!accessToken || !isAuthenticated) {
           router.replace(SIGN_IN);
         }
       } catch (error) {
-        console.log('Error checking persisted token:', error);
-        if (!token) {
-          router.replace(SIGN_IN);
-        }
+        console.log('Error checking auth state:', error);
+        router.replace(SIGN_IN);
       } finally {
-        setIsCheckingToken(false);
+        setIsCheckingAuth(false);
       }
     };
 
     initializeAuth();
-  }, [token, router, saveToken]);
-
+  }, [accessToken, isAuthenticated, router]);
 
   // Show loading state while checking auth
-  if (isLoading || isCheckingToken) {
+  if (isCheckingAuth) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#0000ff" />
@@ -52,7 +41,7 @@ export default function AppLayout() {
     );
   }
 
-  // Render authenticated layout when token exists
+  // Render authenticated layout when authenticated
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
