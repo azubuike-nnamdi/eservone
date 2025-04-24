@@ -2,7 +2,7 @@ import { HOME } from "@/constants/routes"
 import { SignInPayload } from "@/constants/types"
 import { useAuth } from "@/context/auth-context"
 import { useUser } from "@/context/user-context"
-import api, { baseURL } from "@/lib/api"
+import { baseURL } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { router } from "expo-router"
@@ -25,6 +25,7 @@ const useSignInMutate = () => {
           await saveUser({
             email: data?.data?.data?.email,
             firstName: data?.data?.data?.firstName,
+            lastName: data?.data?.data?.lastName,
             userRole: data?.data?.data?.role,
           })
           queryClient.setQueryData(["user"], data)
