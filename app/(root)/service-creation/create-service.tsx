@@ -6,7 +6,7 @@ import Step3Media from "@/components/services/Step3Media";
 import useCreateService from "@/hooks/mutation/useCreateService";
 import { cn } from "@/lib/utils";
 import { useServiceCreationStore } from "@/store/service-creation-store";
-import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import { router } from "expo-router";
 import React from "react";
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from "react-native";
@@ -54,27 +54,22 @@ export default function CreateService() {
 
   // --- Handle Header Back Press with Confirmation --- 
   const handleHeaderBackPress = () => {
-    if (store.currentStep === TOTAL_STEPS) { // Check if on the last step (Step 3)
-      // On Step 1, show confirmation before leaving
-      Alert.alert(
-        "Discard Service Creation?",
-        "Are you sure you want to go back? Your progress will be lost.",
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Yes, Discard",
-            style: "destructive",
-            onPress: () => {
-              resetStore(); // Clear the store
-              router.back(); // Navigate back out of the creation flow
-            },
+    // Show confirmation before leaving from any step
+    Alert.alert(
+      "Discard Service Creation?",
+      "Are you sure you want to go back? Your progress will be lost.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Yes, Discard",
+          style: "destructive",
+          onPress: () => {
+            resetStore();
+            router.back();
           },
-        ]
-      );
-    } else {
-      // If not on the last step (i.e., on step 1 or 2), just go back one step
-      handleBack();
-    }
+        },
+      ]
+    );
   };
 
   const handleFinalSubmit = async () => {
@@ -83,13 +78,12 @@ export default function CreateService() {
     // --- Data Transformation for API Payload ---
 
     // Determine serviceDeliveryType
-    let serviceDeliveryType = "WALK_IN"; // Default or handle case where neither is selected
+    let serviceDeliveryType = "WALK_IN_SERVICE";
     if (store.deliveryType.homeService) {
       serviceDeliveryType = "HOME_SERVICE";
     } else if (store.deliveryType.walkIn) {
-      serviceDeliveryType = "WALK_IN";
+      serviceDeliveryType = "WALK_IN_SERVICE";
     }
-    // TODO: Clarify API expectation if both are true or neither is true.
 
     // --- Convert images to Base64 (with manipulation) ---
     let uploadImage: { image: string; imageTitle: string }[] = [];
@@ -97,7 +91,7 @@ export default function CreateService() {
       uploadImage = await Promise.all(
         store.images.map(async (imageUri, index) => {
           // Manipulate Image: Resize and Compress
-          const manipulatedImage = await manipulateAsync(
+          const manipulatedImage = await ImageManipulator.manipulateAsync(
             imageUri, // Original image URI
             [{ resize: { width: 1024 } }], // Resize based on width
             {
@@ -112,7 +106,6 @@ export default function CreateService() {
           };
         })
       );
-      console.log("Images processed (resized/compressed/Base64).");
     } catch (error) {
       console.error("Error processing images:", error);
       alert("Failed to process images for upload. Please try again.");
@@ -132,9 +125,6 @@ export default function CreateService() {
       uploadImage: uploadImage, // Use the processed Base64 images
     };
 
-    console.log("Constructed JSON Payload (Base64 truncated):");
-    console.log({ ...apiPayload, uploadImage: apiPayload.uploadImage.map(img => ({ ...img, image: img.image.substring(0, 50) + '...' })) });
-    // --------------------------
 
     handleCreateService(apiPayload)
 
@@ -152,8 +142,8 @@ export default function CreateService() {
       <ProfileHeader
         title={`Create Service ${store.currentStep > 1 ? `- ${stepTitles[store.currentStep - 1]}` : ''}`}
         showNotification={false}
-        showBackArrow={true} // Always show back arrow within the flow
-        onBackPress={handleHeaderBackPress} // Use the new handler with confirmation
+        showBackArrow={true}
+        onBackPress={handleHeaderBackPress}
       />
       {/* Progress Indicator */}
 
