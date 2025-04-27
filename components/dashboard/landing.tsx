@@ -1,8 +1,6 @@
 import Button from '@/components/common/button';
-import { CREATE_SERVICE } from '@/constants/routes';
 import { getGreeting } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
-import { router } from 'expo-router';
 import { StarIcon } from 'lucide-react-native';
 import React from 'react';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
@@ -44,9 +42,6 @@ const DashboardScreen = () => {
               {user?.firstName}
             </Text>
           </View>
-          <Button type='button' variant='outline' className='w-1/2' onPress={() => router.push(CREATE_SERVICE)}>
-            <Text className='text-primary-300 text-lg font-bold'>Create Service</Text>
-          </Button>
         </View>
         <FlatList
           data={statsData}
