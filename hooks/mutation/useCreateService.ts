@@ -1,5 +1,8 @@
+import { HOME } from "@/constants/routes";
 import api from "@/lib/api";
+import { useServiceCreationStore } from "@/store/service-creation-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { Alert } from "react-native";
 
 // Define the payload structure according to the API's JSON expectation
@@ -19,6 +22,7 @@ interface CreateServicePayload {
 
 export const useCreateService = () => {
   const queryClient = useQueryClient()
+  const resetStore = useServiceCreationStore((state) => state.reset);
   const { mutate, isPending, isSuccess } = useMutation({
     // Expect the JSON payload object
     mutationFn: (payload: CreateServicePayload) => {
@@ -27,6 +31,8 @@ export const useCreateService = () => {
     onSuccess: (data) => {
       if (data) {
         Alert.alert('Success', data?.data?.description)
+        resetStore()
+        router.push(HOME)
       }
       queryClient.invalidateQueries({ queryKey: ["services"] })
     },
