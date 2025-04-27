@@ -168,6 +168,24 @@ type SelectProps = {
   errorClassName?: string
 }
 
+type LoadingStateProps = {
+  isLoading: boolean;
+  text?: string;
+  className?: string;
+  spinnerColor?: string;
+}
 
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+
+type ServiceItem = {
+  id: number;
+  serviceName: string;
+  serviceDescription: string;
+  minimumPrice: number;
+  maximumPrice: number;
+  serviceDeliveryType: string;
+  active: boolean;
+  userId: number;
+}
+
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 
