@@ -1,5 +1,4 @@
 import { SIGN_IN } from "@/constants/routes";
-import { AuthProvider } from "@/context/auth-context";
 import TanstackProvider from "@/context/tanstack-provider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, Slot, SplashScreen } from "expo-router";
@@ -52,10 +51,8 @@ export default function RootLayout() {
 
   return (
     <TanstackProvider>
-      <AuthProvider>
-        <StatusBar barStyle={'dark-content'} />
-        <Slot />
-      </AuthProvider>
+      <StatusBar barStyle={'dark-content'} />
+      <Slot />
     </TanstackProvider>
   );
 }
