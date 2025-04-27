@@ -13,8 +13,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function Profile() {
   const { clearAuth, user, isAuthenticated } = useAuthStore()
 
-  console.log(user)
-
   const handleSignOut = async () => {
     try {
       await clearAuth()
