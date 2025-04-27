@@ -38,13 +38,99 @@ api.interceptors.request.use(
   },
 );
 
+// --- Refresh Token Logic --- 
+let isRefreshing = false;
+let failedQueue: { resolve: (value: unknown) => void; reject: (reason?: any) => void; }[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// --- Extracted Refresh Token Function --- 
+const handleRefreshToken = async (): Promise<string> => {
+  const currentRefreshToken = useAuthStore.getState().refreshToken;
+
+  if (!currentRefreshToken) {
+    console.log('No refresh token available, logging out.');
+    useAuthStore.getState().clearAuth();
+    throw new Error('No refresh token available');
+  }
+
+  try {
+    console.log('Attempting to refresh token...');
+    const refreshResponse = await axios.post(`${baseURL}/eserve-one/refreshToken`, {
+      refreshToken: currentRefreshToken,
+    }, { headers: { 'Content-Type': 'application/json' } });
+
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = refreshResponse.data; // Adjust path
+
+    if (!newAccessToken) {
+      throw new Error('New access token not received from refresh endpoint');
+    }
+
+    console.log('Token refreshed successfully.');
+    const currentUser = useAuthStore.getState().user;
+    useAuthStore.getState().setAuth(newAccessToken, newRefreshToken || currentRefreshToken, currentUser!); // Update store
+    return newAccessToken;
+  } catch (refreshError: any) {
+    console.error('Failed to refresh token:', refreshError?.response?.data || refreshError.message);
+    useAuthStore.getState().clearAuth(); // Clear auth state on refresh failure
+    throw refreshError; // Re-throw error to be caught by the interceptor
+  }
+}
+
 // Response interceptor (keep as is or modify as needed)
 api.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    return Promise.reject(error);
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Only handle 401 errors
+    if (error.response?.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    // --- Queueing Logic --- 
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      }).then(token => {
+        // Apply the refreshed token to the queued request
+        originalRequest.headers['Authorization'] = ` ${token}`;
+        return api(originalRequest);
+      });
+    }
+
+    // --- Attempt Refresh --- 
+    originalRequest._retry = true; // Mark that we attempted a retry
+    isRefreshing = true;
+
+    try {
+      const newAccessToken = await handleRefreshToken(); // Call the extracted function
+
+      // Refresh successful: apply new token and process queue
+      originalRequest.headers['Authorization'] = ` ${newAccessToken}`;
+      processQueue(null, newAccessToken);
+
+      // Retry the original request with the new token
+      return api(originalRequest);
+    } catch (refreshError) {
+      // Refresh failed: reject queue and bubble up the error
+      processQueue(refreshError, null);
+      originalRequest._retry = true; // Mark as retry
+      return Promise.reject(refreshError); // Important: reject the original request too
+    } finally {
+      isRefreshing = false; // Always reset the flag
+    }
   },
 );
 
