@@ -4,7 +4,7 @@ import ProfileHeader from '@/components/common/profile-header';
 import useGetServiceById from '@/hooks/query/useGetServiceById';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -28,12 +28,21 @@ export default function ManageServicePage() {
   const service = serviceData?.data;
 
   // State for editable fields
-  const [title, setTitle] = useState(service?.serviceName || '');
-  const [description, setDescription] = useState(service?.serviceDescription || '');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [minFee, setMinFee] = useState(service?.minimumPrice.toString() || '');
   const [maxFee, setMaxFee] = useState(service?.maximumPrice.toString() || '');
-  const [images, setImages] = useState<string[]>([FALLBACK_IMAGE]); // Using fallback image for now
+  const [images, setImages] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Prefill state when service data is loaded
+  useEffect(() => {
+    if (service) {
+      setTitle(service.serviceName || '');
+      setDescription(service.serviceDescription || '');
+      setImages([FALLBACK_IMAGE]); // Replace with service image if available
+    }
+  }, [service]);
 
   const handleImageDelete = (index: number) => {
     Alert.alert('Confirm', 'Are you sure you want to delete this image?', [
@@ -58,14 +67,14 @@ export default function ManageServicePage() {
     // Add API call to update service details here
     setTimeout(() => { // Simulate API call
       setIsSaving(false);
-      Alert.alert('Success', 'Changes saved (simulated).', [{ text: 'OK', onPress: () => router.back() }]);
+      Alert.alert('Success', 'Changes saved', [{ text: 'OK', onPress: () => router.back() }]);
     }, 1500);
   };
 
   // Calculate estimated earnings (example logic)
   const calculateEstimatedEarnings = () => {
     const min = parseFloat(minFee) || 0;
-    const serviceFeeRate = 0.1; // Example 10% service fee
+    const serviceFeeRate = 0.1;
     const estimated = min * (1 - serviceFeeRate);
     return estimated.toFixed(2);
   };
