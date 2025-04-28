@@ -3,11 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const useGetServiceById = (serviceId: string) => {
   const getServiceById = async () => {
-    const response = await api.get(`/eserve-one/get-service-by-id`, {
-      headers: {
-        'id': serviceId
-      }
-    });
+    const response = await api.get(`/eserve-one/get-service-by-id?id=${serviceId}`);
     return response.data;
   };
   const { data, isPending, error } = useQuery({
