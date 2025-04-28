@@ -6,7 +6,7 @@ import Step3Media from "@/components/services/Step3Media";
 import useCreateService from "@/hooks/mutation/useCreateService";
 import { cn } from "@/lib/utils";
 import { useServiceCreationStore } from "@/store/service-creation-store";
-import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { router } from "expo-router";
 import React from "react";
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from "react-native";
@@ -91,7 +91,7 @@ export default function CreateService() {
       uploadImage = await Promise.all(
         store.images.map(async (imageUri, index) => {
           // Manipulate Image: Resize and Compress
-          const manipulatedImage = await ImageManipulator.manipulateAsync(
+          const manipulatedImage = await manipulateAsync(
             imageUri, // Original image URI
             [{ resize: { width: 1024 } }], // Resize based on width
             {
