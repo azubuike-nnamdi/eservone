@@ -25,6 +25,7 @@ api.interceptors.request.use(
     // Use signup token if available, otherwise use auth token
     const token = signupToken || authToken;
 
+    console.log('token', token)
     // Set Authorization header if a token exists
     if (token) {
       config.headers.Authorization = `${token}`;
@@ -55,7 +56,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 // --- Extracted Refresh Token Function --- 
 const handleRefreshToken = async (): Promise<string> => {
-  const currentRefreshToken = useAuthStore.getState().refreshToken;
+  const currentRefreshToken = useAuthStore.getState().accessToken;
 
   if (!currentRefreshToken) {
     console.log('No refresh token available, logging out.');
@@ -65,11 +66,17 @@ const handleRefreshToken = async (): Promise<string> => {
 
   try {
     console.log('Attempting to refresh token...');
-    const refreshResponse = await axios.post(`${baseURL}/eserve-one/refreshToken`, {
-      refreshToken: currentRefreshToken,
-    }, { headers: { 'Content-Type': 'application/json' } });
+    const refreshResponse = await axios.post(
+      `${baseURL}/eserve-one/refreshToken`,
+      {
+        headers: {
+          'Authorization': `${currentRefreshToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
 
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = refreshResponse.data; // Adjust path
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = refreshResponse.data;
 
     if (!newAccessToken) {
       throw new Error('New access token not received from refresh endpoint');
@@ -80,7 +87,7 @@ const handleRefreshToken = async (): Promise<string> => {
     useAuthStore.getState().setAuth(newAccessToken, newRefreshToken || currentRefreshToken, currentUser!); // Update store
     return newAccessToken;
   } catch (refreshError: any) {
-    console.error('Failed to refresh token:', refreshError?.response?.data || refreshError.message);
+    // console.error('Failed to refresh token:', refreshError?.response?.data || refreshError.message);
     useAuthStore.getState().clearAuth(); // Clear auth state on refresh failure
     throw refreshError; // Re-throw error to be caught by the interceptor
   }
