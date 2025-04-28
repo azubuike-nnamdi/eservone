@@ -67,6 +67,7 @@ const DashboardScreen = () => {
               <Button type='button' variant='outline' className='mt-4 w-6/12'>
                 <Text className='font-bold text-primary-300 text-lg'>Read all reviews</Text>
               </Button>
+
             </View>
           }
 
