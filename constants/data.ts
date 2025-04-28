@@ -145,3 +145,5 @@ export const SERVICES: ServiceType[] = [
   { key: 'car_mechanic', value: 'Car Mechanic' },
   { key: 'other', value: 'Other' }
 ];
+
+export const FALLBACK_IMAGE = 'https://images.pexels.com/photos/3998414/pexels-photo-3998414.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
