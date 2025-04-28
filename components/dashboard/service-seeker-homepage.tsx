@@ -1,18 +1,19 @@
-import Button from "@/components/common/button";
 import ProfileHeader from "@/components/common/profile-header";
+import SearchBar from "@/components/common/search-bar";
 import { getGreeting } from "@/lib/helper";
 import { useAuthStore } from "@/store/auth-store";
+import { useRouter } from "expo-router";
 import {
    KeyboardAvoidingView,
    Platform,
    ScrollView,
    Text,
-   TextInput,
-   View,
+   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ServiceSeekerHomepage() {
+   const router = useRouter();
    const { user } = useAuthStore();
    return (
       <SafeAreaView className="flex-1 bg-white">
@@ -52,11 +53,11 @@ export default function ServiceSeekerHomepage() {
                         What are you looking for?
                      </Text>
                      <View>
-                        <TextInput
-                           placeholder="Search for a service"
-                           className="flex-1 border border-gray-100 rounded-lg p-5"
+                        <SearchBar
+                           onPress={() => router.push("/(root)/search")}
+                           placeholder="Search for a movie"
                         />
-                        <Button className="mt-3">Search </Button>
+
                      </View>
                   </View>
                </View>
