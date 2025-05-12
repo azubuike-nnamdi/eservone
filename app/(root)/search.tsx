@@ -3,17 +3,20 @@ import ProfileHeader from "@/components/common/profile-header";
 import SearchBar from "@/components/common/search-bar";
 import SeekerServiceCard from "@/components/services/seeker-service-card";
 import useGetAllServices from "@/hooks/query/useGetAllServices";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
-
+  const router = useRouter();
   const { data, isPending, error } = useGetAllServices();
 
   const services = data?.data;
 
-
+  const handleServicePress = (id: string) => {
+    router.push(`/products/${id}`);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -27,6 +30,7 @@ export default function Search() {
               title={item.serviceName}
               studio={item.studioName || "XYZ Studios"}
               priceRange={`$${item.minimumPrice} - $${item.maximumPrice}`}
+              onPress={() => handleServicePress(item.id.toString())}
             />
           )}
           keyExtractor={(item) => item.id.toString()}
