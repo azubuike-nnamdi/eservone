@@ -33,8 +33,8 @@ export default function Checkbox({
           <Ionicons
             name="checkmark"
             size={16}
-            color="white"
-            style={{ marginTop: 1 }}
+            color="black"
+            className='font-bold'
           />
         )}
       </View>
