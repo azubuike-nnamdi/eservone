@@ -25,7 +25,6 @@ api.interceptors.request.use(
     // Use signup token if available, otherwise use auth token
     const token = signupToken || authToken;
 
-    console.log('token', token)
     // Set Authorization header if a token exists
     if (token) {
       config.headers.Authorization = `${token}`;
