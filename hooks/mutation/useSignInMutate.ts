@@ -1,15 +1,16 @@
 import { HOME } from "@/constants/routes"
 import { SignInPayload } from "@/constants/types"
+import { useToast } from "@/context/toast-context"
 import { baseURL } from "@/lib/api"
 import { useAuthStore } from "@/store/auth-store"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { router } from "expo-router"
-import { Alert } from "react-native"
 
 const useSignInMutate = () => {
   const queryClient = useQueryClient()
   const setAuth = useAuthStore((state) => state.setAuth)
+  const { showToast } = useToast()
 
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: SignInPayload) => axios.post(`${baseURL}/eserve-one/user-login`, payload),
@@ -31,15 +32,16 @@ const useSignInMutate = () => {
           queryClient.invalidateQueries({ queryKey: ["user"] })
           queryClient.setQueryData(["user"], data)
           console.log('Auth data saved, navigating to home', data?.data?.data)
+
           router.push(HOME)
         } catch (error) {
           console.error('Error saving auth data:', error)
-          Alert.alert('Error', 'Failed to save authentication data')
+          showToast("Failed to save authentication data", "error")
         }
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      Alert.alert('Error', error.response.data.description)
+      showToast(error.response.data.description || "An error occurred during sign in", "error")
     }
   })
 
