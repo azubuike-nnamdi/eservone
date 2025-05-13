@@ -187,5 +187,17 @@ type ServiceItem = {
   userId: number;
 }
 
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+type BookAppointmentPayload = {
+  additionalDetails: string;
+  appointmentDate: string;
+  buzzCode: string;
+  costOfService: string;
+  customerAddress: string;
+  hasPet: boolean;
+  serviceId: number;
+  upfrontPayment: string;
+}
+
+
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 
