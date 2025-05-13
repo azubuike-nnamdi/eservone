@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+
+import { useState } from "react";
+
 const validateEmail = (text: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(text);
@@ -30,4 +34,36 @@ const formatCurrency = (value: number | null | undefined) => {
   return `$${value.toFixed(2)}`;
 };
 
-export { formatCurrency, getGreeting, validateEmail, validatePassword };
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+function mergeDateAndTimeToISO(date: string, time: string): string {
+  if (!date || !time) return '';
+  let hour = 0, minute = 0;
+  let timeString = time.trim().toLowerCase();
+  if (timeString.includes('am') || timeString.includes('pm')) {
+    // 12-hour format
+    const [rawHour, rawMinute] = timeString.replace(/am|pm/, '').trim().split(':');
+    hour = parseInt(rawHour, 10);
+    minute = parseInt(rawMinute || '0', 10);
+    if (timeString.includes('pm') && hour < 12) hour += 12;
+    if (timeString.includes('am') && hour === 12) hour = 0;
+  } else {
+    // 24-hour format
+    [hour, minute] = timeString.split(':').map(Number);
+  }
+  const dateObj = new Date(date);
+  dateObj.setHours(hour, minute, 0, 0);
+  return dateObj.toISOString();
+}
+
+export { formatCurrency, getGreeting, mergeDateAndTimeToISO, useDebounce, validateEmail, validatePassword };
+
