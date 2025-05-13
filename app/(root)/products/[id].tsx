@@ -1,10 +1,14 @@
 import Button from "@/components/common/button";
 import Checkbox from "@/components/common/check-box";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
+import LoadingState from "@/components/common/LoadingState";
 import ProfileHeader from "@/components/common/profile-header";
 import Select from "@/components/common/select";
 import TextInput from "@/components/common/text-input";
+import { BookAppointmentPayload } from "@/constants/types";
+import useBookAppointment from "@/hooks/mutation/useBookAppointment";
 import useGetServiceById from "@/hooks/query/useGetServiceById";
+import { mergeDateAndTimeToISO } from "@/lib/helper";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -14,6 +18,7 @@ const FALLBACK_IMAGE = 'https://images.pexels.com/photos/3998414/pexels-photo-39
 export default function ProductById() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: serviceData, isPending } = useGetServiceById(id as string);
+  const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
 
   // Form state
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
@@ -49,7 +54,26 @@ export default function ProductById() {
     );
   }
 
+
   const service = serviceData?.data;
+
+  const handleBookService = () => {
+
+    const isoString = mergeDateAndTimeToISO(date, time);
+
+    const payload: BookAppointmentPayload = {
+      additionalDetails: details,
+      appointmentDate: isoString,
+      buzzCode,
+      costOfService: service?.minimumPrice?.toString() || '',
+      customerAddress: address,
+      hasPet: hasPets,
+      serviceId: Number(id),
+      upfrontPayment: upfront,
+    };
+
+    handleBookAppointment(payload)
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -126,9 +150,19 @@ export default function ProductById() {
           <Checkbox label="Do you have pets?" checked={hasPets} onChange={setHasPets} />
 
           {/* Book service button */}
-          <Button className="mt-4">Book service</Button>
+          <Button className="mt-4"
+            onPress={handleBookService}
+            disabled={isBookingPending}
+            loading={isBookingPending}
+            loadingText="Booking service..."
+          >Book service</Button>
         </View>
       </ScrollView>
+      {isBookingPending && (
+        <View className="absolute inset-0 bg-black/50 items-center justify-center">
+          <LoadingState isLoading={isBookingPending} />
+        </View>
+      )}
     </SafeAreaView>
   )
 }
