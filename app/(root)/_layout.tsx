@@ -5,22 +5,23 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function AppLayout() {
-  const { accessToken, isAuthenticated } = useAuthStore();
+  const { accessToken, isAuthenticated, user } = useAuthStore();
   const router = useRouter();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // If we have a token but not authenticated, stay on authenticated page
-        if (accessToken && !isAuthenticated) {
+        console.log('Auth State:', { accessToken, isAuthenticated, hasUser: !!user });
+
+        // If we have no token, no user, or not authenticated, redirect to sign in
+        if (!accessToken || !user || !isAuthenticated) {
+          console.log('Redirecting to sign in - Auth check failed');
+          router.replace(SIGN_IN);
           return;
         }
 
-        // No token or not authenticated, redirect to sign in
-        if (!accessToken || !isAuthenticated) {
-          router.replace(SIGN_IN);
-        }
+        console.log('Auth check passed - staying on authenticated page');
       } catch (error) {
         console.log('Error checking auth state:', error);
         router.replace(SIGN_IN);
@@ -30,7 +31,7 @@ export default function AppLayout() {
     };
 
     initializeAuth();
-  }, [accessToken, isAuthenticated, router]);
+  }, [accessToken, isAuthenticated, user, router]);
 
   // Show loading state while checking auth
   if (isCheckingAuth) {
