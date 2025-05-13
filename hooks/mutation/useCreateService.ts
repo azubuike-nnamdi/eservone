@@ -1,9 +1,9 @@
 import { HOME } from "@/constants/routes";
+import { useToast } from "@/context/toast-context";
 import api from "@/lib/api";
 import { useServiceCreationStore } from "@/store/service-creation-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { Alert } from "react-native";
 
 // Define the payload structure according to the API's JSON expectation
 interface CreateServicePayload {
@@ -23,6 +23,9 @@ interface CreateServicePayload {
 export const useCreateService = () => {
   const queryClient = useQueryClient()
   const resetStore = useServiceCreationStore((state) => state.reset);
+
+  const { showToast } = useToast()
+
   const { mutate, isPending, isSuccess } = useMutation({
     // Expect the JSON payload object
     mutationFn: (payload: CreateServicePayload) => {
@@ -30,14 +33,14 @@ export const useCreateService = () => {
     },
     onSuccess: (data) => {
       if (data) {
-        Alert.alert('Success', data?.data?.description)
+        showToast(data?.data?.description, "success")
         resetStore()
         router.push(HOME)
       }
       queryClient.invalidateQueries({ queryKey: ["services"] })
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      Alert.alert('Error', error?.response?.data?.description)
+      showToast(error?.response?.data?.description, "error")
     }
   })
 
