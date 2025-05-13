@@ -1,8 +1,8 @@
-import { Text, View } from "react-native"
+import { Text, View } from "react-native";
 
-import { AppointmentCardProps } from "@/constants/types"
-import { TouchableOpacity } from "react-native"
-import { ChevronRight, Star } from "lucide-react-native"
+import { AppointmentCardProps } from "@/constants/types";
+import Entypo from '@expo/vector-icons/Entypo';
+import { TouchableOpacity } from "react-native";
 
 export default function AppointmentCard({
   type,
@@ -38,10 +38,10 @@ export default function AppointmentCard({
           </View>
 
           {isUpcoming ? (
-            <ChevronRight size={20} color="#000" />
+            <Entypo name="chevron-right" size={20} color="#000" />
           ) : rating ? (
             <View className="flex-row items-center">
-              <Star size={16} color="#FFD700" fill="#FFD700" />
+              <Entypo name="star" size={16} color="#FFD700" fill="#FFD700" />
               <Text className="ml-1 text-sm">{rating.toFixed(1)}</Text>
             </View>
           ) : null}

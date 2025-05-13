@@ -1,7 +1,7 @@
 import Button from '@/components/common/button';
 import { getGreeting } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
-import { StarIcon } from 'lucide-react-native';
+import Entypo from '@expo/vector-icons/Entypo';
 import React from 'react';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
 interface StatItem {
@@ -55,11 +55,11 @@ const DashboardScreen = () => {
               <Text className='text-5xl  font-bold my-4 text-primary-300'>4.5</Text>
 
               <View className='flex-row items-center justify-between gap-3'>
-                <StarIcon size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <StarIcon size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <StarIcon size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <StarIcon size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <StarIcon size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
+                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
+                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
+                <Entypo nam size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
+                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
+                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
               </View>
 
               <Text className='text-lg text-black-300 font-medium mt-4'>60 reviews</Text>
