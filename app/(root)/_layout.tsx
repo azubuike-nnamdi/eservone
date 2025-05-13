@@ -10,27 +10,36 @@ export default function AppLayout() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const initializeAuth = async () => {
+    const checkAuth = async () => {
       try {
-        console.log('Auth State:', { accessToken, isAuthenticated, hasUser: !!user });
+        // Wait a bit to ensure state is updated
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-        // If we have no token, no user, or not authenticated, redirect to sign in
+        console.log('Auth State:', {
+          hasToken: !!accessToken,
+          isAuthenticated,
+          hasUser: !!user,
+          userDetails: user
+        });
+
         if (!accessToken || !user || !isAuthenticated) {
-          console.log('Redirecting to sign in - Auth check failed');
+          console.log('Auth check failed - redirecting to sign in');
+          useAuthStore.getState().clearAuth();
           router.replace(SIGN_IN);
           return;
         }
 
-        console.log('Auth check passed - staying on authenticated page');
+        console.log('Auth check passed');
       } catch (error) {
-        console.log('Error checking auth state:', error);
+        console.log('Error checking auth:', error);
+        useAuthStore.getState().clearAuth();
         router.replace(SIGN_IN);
       } finally {
         setIsCheckingAuth(false);
       }
     };
 
-    initializeAuth();
+    checkAuth();
   }, [accessToken, isAuthenticated, user, router]);
 
   // Show loading state while checking auth
@@ -40,6 +49,11 @@ export default function AppLayout() {
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
+  }
+
+  // Don't render anything if not authenticated
+  if (!accessToken || !user || !isAuthenticated) {
+    return null;
   }
 
   // Render authenticated layout when authenticated
