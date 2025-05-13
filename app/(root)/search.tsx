@@ -2,17 +2,22 @@ import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
 import SearchBar from "@/components/common/search-bar";
 import SeekerServiceCard from "@/components/services/seeker-service-card";
-import useGetAllServices from "@/hooks/query/useGetAllServices";
+import useSearchServices from "@/hooks/query/useSearchServices";
+import { useDebounce } from "@/lib/helper";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const router = useRouter();
-  const { data, isPending, error } = useGetAllServices();
+  // const { data, isPending, error } = useGetAllServices();
+  const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(debouncedSearchQuery);
 
-  const services = data?.data;
+
+  const services = searchData?.data;
+
 
   const handleServicePress = (id: string) => {
     router.push(`/products/${id}`);
@@ -47,16 +52,16 @@ export default function Search() {
                 />
               </View>
 
-              {isPending && (
+              {(searchPending) && (
                 <LoadingSkeleton count={3} />
               )}
-              {error && (
+              {(searchError) && (
                 <Text className="text-red-500 text-center text-lg">
-                  {error?.message}
+                  {searchError?.message}
                 </Text>
               )}
 
-              {!isPending && !error && searchQuery.trim() && (
+              {!searchPending && !searchError && searchQuery.trim() && (
                 <Text className="text-md text-black mb-3 font-bold">
                   Search Results for:{" "}
                   <Text className="text-accent">{searchQuery}</Text>
@@ -65,7 +70,7 @@ export default function Search() {
             </>
           }
           ListEmptyComponent={
-            !isPending && !error ? (
+            !searchPending && !searchError ? (
               <View className="mt-10 px-5">
                 <Text className="text-gray-400 text-center">
                   {searchQuery.trim() ? 'No services found' : 'Start typing to search for services'}
