@@ -68,6 +68,7 @@ const TabsLayout = () => {
         options={{
           title: "Messages",
           headerShown: false,
+          tabBarStyle: { display: 'none' },
           tabBarIcon: ({ focused }) => (
             <TabIcon focused={focused} icon={icons.chat} title="Messages" />
           ),

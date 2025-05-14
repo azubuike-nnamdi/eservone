@@ -198,6 +198,17 @@ type BookAppointmentPayload = {
   upfrontPayment: string;
 }
 
-
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+interface ServiceProviderInfoModalProps {
+  visible: boolean;
+  onClose: () => void;
+  providerName: string;
+  service: string;
+  timesProvided: number;
+  certificates: number;
+  isVerified: boolean;
+  isTopProvider: boolean;
+  onBook: () => void;
+  onViewProfile: () => void;
+}
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 

@@ -45,13 +45,6 @@ export default function CreateService() {
     }
   };
 
-  const handleBack = () => {
-    if (store.currentStep > 1) {
-      store.setStep(store.currentStep - 1);
-    }
-    // Navigation back when on step 1 is handled by handleHeaderBackPress
-  };
-
   // --- Handle Header Back Press with Confirmation --- 
   const handleHeaderBackPress = () => {
     // Show confirmation before leaving from any step

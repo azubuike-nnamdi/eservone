@@ -1,9 +1,8 @@
 import { VERIFY_EMAIL } from "@/constants/routes";
-import api, { baseURL } from "@/lib/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { router } from "expo-router";
+import api from "@/lib/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { router } from "expo-router";
 
 const InitializeEmail = () => {
   const queryClient = useQueryClient();

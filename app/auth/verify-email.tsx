@@ -25,8 +25,8 @@ export default function VerifyEmail() {
   const [isValidOtp, setIsValidOtp] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [requestId, setRequestId] = useState<string | null>(null)
-  const [showError, setShowError] = useState(false)
-  const inputRefs = useRef<Array<TextInput | null>>([])
+
+  const inputRefs = useRef<(TextInput | null)[]>([])
   const { handleValidateEmail, isPending } = ValidateEmail()
   const { handleValidateResetPasswordEmail, isPending: isResetPasswordPending } = useValidateResetPasswordEmail()
 
@@ -78,7 +78,6 @@ export default function VerifyEmail() {
     if (otpString.length !== 6) {
       setIsValidOtp(false)
       setErrorMessage("Please enter a valid 6-digit code")
-      setShowError(true)
       return
     }
 
@@ -101,7 +100,6 @@ export default function VerifyEmail() {
       console.error("Error verifying OTP:", error)
       setIsValidOtp(false)
       setErrorMessage(error.message || "Failed to verify OTP. Please try again.")
-      setShowError(true)
     }
   }
 

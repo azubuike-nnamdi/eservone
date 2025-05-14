@@ -15,7 +15,6 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { handleResetPassword: resetPassword, isPending } = useResetPassword()
   useEffect(() => {
@@ -45,16 +44,9 @@ export default function ResetPassword() {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      resetPassword({
-        newPassword: password,
-      })
-    } catch (error) {
-      setError("Failed to reset password. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    resetPassword({
+      newPassword: password,
+    })
   };
 
   return (

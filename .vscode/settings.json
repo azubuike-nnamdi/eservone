@@ -1,5 +1,16 @@
 {
-   "cSpell.words": ["ellipsize", "Entypo", "eserve", "Vetinarian"],
+   "cSpell.words": [
+      "appwrite",
+      "ellipsize",
+      "Entypo",
+      "eserve",
+      "eserveone",
+      "eserverone",
+      "moti",
+      "nativewind",
+      "Tobi",
+      "Vetinarian"
+   ],
    "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
       "source.organizeImports": "explicit"
