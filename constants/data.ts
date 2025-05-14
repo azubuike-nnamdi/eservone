@@ -146,4 +146,42 @@ export const SERVICES: ServiceType[] = [
   { key: 'other', value: 'Other' }
 ];
 
+export const chatRooms = [
+  {
+    id: '1',
+    name: 'XYZ Studios',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    lastMessage: "Hello, Thank you for contacting us, but may you'll...",
+    date: '10/20/23',
+  },
+  {
+    id: '2',
+    name: 'Tobi',
+    avatar: '', // No avatar
+    lastMessage: "Hello, Thank you for contacting us, but may you'll...",
+    date: '10/20/23',
+  },
+  {
+    id: '3',
+    name: 'Emma Brown',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    lastMessage: "Hello, Thank you for contacting us, but may you'll...",
+    date: '10/20/23',
+  },
+  {
+    id: '4',
+    name: 'James Wilson',
+    avatar: 'https://randomuser.me/api/portraits/men/65.jpg',
+    lastMessage: "Hello, Thank you for contacting us, but may you'll...",
+    date: '10/20/23',
+  },
+  {
+    id: '5',
+    name: 'Sophia Davis',
+    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
+    lastMessage: "Hello, Thank you for contacting us, but may you'll...",
+    date: '10/20/23',
+  },
+];
+
 export const FALLBACK_IMAGE = 'https://images.pexels.com/photos/3998414/pexels-photo-3998414.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
