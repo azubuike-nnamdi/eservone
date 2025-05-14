@@ -11,7 +11,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { handleForgotPassword, isPending } = useForgotPassword()
 
@@ -36,19 +35,13 @@ export default function ForgotPassword() {
       return;
     }
 
-    try {
-      setIsLoading(true);
-      // Store email in AsyncStorage
-      await AsyncStorage.setItem('forgot_password_email', email);
+    // Store email in AsyncStorage
+    await AsyncStorage.setItem('forgot_password_email', email);
 
-      //STORE FLOW TYPE
-      await AsyncStorage.setItem('flow_type', 'forgot_password');
+    //STORE FLOW TYPE
+    await AsyncStorage.setItem('flow_type', 'forgot_password');
 
-      handleForgotPassword({ email })
-    } catch (error) {
-      setIsLoading(false);
-      setErrorMessage("An error occurred. Please try again.");
-    }
+    handleForgotPassword({ email })
   }
 
   const handleDeleteStorage = () => {

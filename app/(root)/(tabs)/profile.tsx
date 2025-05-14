@@ -3,7 +3,6 @@ import GeneralSetting from '@/components/profile/general-setting'
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
 import icons from '@/constants/icons'
 import { BUSINESS_PROFILE, CERTIFICATES, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
-import { useToast } from '@/context/toast-context'
 import { useAuthStore } from '@/store/auth-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
@@ -13,16 +12,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Profile() {
   const { clearAuth, user, isAuthenticated } = useAuthStore()
-  const { showToast } = useToast()
 
   const handleSignOut = async () => {
-    try {
-      clearAuth()
-      await AsyncStorage.removeItem('requestId')
-      router.replace(SIGN_IN)
-    } catch (error) {
-      showToast("Failed to sign out", "error")
-    }
+    clearAuth()
+    await AsyncStorage.removeItem('requestId')
+    router.replace(SIGN_IN)
   }
 
   if (!isAuthenticated) {

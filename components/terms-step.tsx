@@ -1,10 +1,8 @@
-import { Text, View, TouchableOpacity, Image } from "react-native";
-import Button from "./common/button";
-import { useState } from "react";
-import { FormData } from "@/constants/types";
-import { Ionicons } from '@expo/vector-icons';
 import images from "@/constants/images";
-import useSignUpMutate from "@/hooks/mutation/useSignUpMutate";
+import { Ionicons } from '@expo/vector-icons';
+import { useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import Button from "./common/button";
 
 export const TermsStep = ({
   onSubmit,
