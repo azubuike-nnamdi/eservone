@@ -1,8 +1,9 @@
-import { Text, TextInput, View, TouchableOpacity } from "react-native";
-import Button from "./common/button";
-import { useState } from "react";
 import { FormData } from "@/constants/types";
+import { validatePassword } from "@/lib/helper";
 import { Ionicons } from '@expo/vector-icons';
+import { useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import Button from "./common/button";
 
 export const SecurityStep = ({
   data,
@@ -17,17 +18,10 @@ export const SecurityStep = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const validatePassword = (pass: string) => {
-    const hasMinLength = pass.length >= 8;
-    const hasLetter = /[a-zA-Z]/.test(pass);
-    const hasNumber = /\d/.test(pass);
-    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
-    return hasMinLength && hasLetter && hasNumber && hasSymbol;
-  };
 
   const handleNext = () => {
     if (!validatePassword(password)) {
-      setError("Password must meet all requirements");
+      setError("Password must contain at least one lowercase, one uppercase, one special character, one digit and a length of at least 6 characters.");
       return;
     }
 
@@ -102,7 +96,7 @@ export const SecurityStep = ({
         <View className="flex-row items-center">
           <Ionicons name="information-circle-outline" size={20} color="#CCCCCC" />
           <Text className="text-gray-400 text-sm ml-2">
-            Your password must be at least 8 character long, with a mix of letters, numbers, and symbols.
+            Password must have at least 6 characters, one lowercase, one uppercase, one special character, and one digit.
           </Text>
         </View>
         {error ? (
