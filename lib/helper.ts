@@ -65,5 +65,12 @@ function mergeDateAndTimeToISO(date: string, time: string): string {
   return dateObj.toISOString();
 }
 
-export { formatCurrency, getGreeting, mergeDateAndTimeToISO, useDebounce, validateEmail, validatePassword };
+function formatTimeFromISO(isoString: string): string {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+}
+
+export { formatCurrency, formatTimeFromISO, getGreeting, mergeDateAndTimeToISO, useDebounce, validateEmail, validatePassword };
 
