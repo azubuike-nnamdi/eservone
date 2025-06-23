@@ -15,12 +15,12 @@ export default function AppLayout() {
         // Wait a bit to ensure state is updated
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        console.log('Auth State:', {
-          hasToken: !!accessToken,
-          isAuthenticated,
-          hasUser: !!user,
-          userDetails: user
-        });
+        // console.log('Auth State:', {
+        //   hasToken: !!accessToken,
+        //   isAuthenticated,
+        //   hasUser: !!user,
+        //   userDetails: user
+        // });
 
         if (!accessToken || !user || !isAuthenticated) {
           console.log('Auth check failed - redirecting to sign in');
@@ -29,7 +29,7 @@ export default function AppLayout() {
           return;
         }
 
-        console.log('Auth check passed');
+        // console.log('Auth check passed');
       } catch (error) {
         console.log('Error checking auth:', error);
         useAuthStore.getState().clearAuth();
