@@ -1,4 +1,4 @@
-import { HOME } from "@/constants/routes";
+import { MANAGE_SERVICES } from "@/constants/routes";
 import { useToast } from "@/context/toast-context";
 import api from "@/lib/api";
 import { useServiceCreationStore } from "@/store/service-creation-store";
@@ -35,12 +35,17 @@ export const useCreateService = () => {
       if (data) {
         showToast(data?.data?.description, "success")
         resetStore()
-        router.push(HOME)
+        router.push(MANAGE_SERVICES)
       }
       queryClient.invalidateQueries({ queryKey: ["services"] })
     },
     onError: (error: { response: { data: { description: string } } }) => {
       showToast(error?.response?.data?.description, "error")
+      //redirect user to verify identity if message is "You cannot create service, Kindly complete signup."
+      if (error?.response?.data?.description === "You cannot create service, Kindly complete signup") {
+        router.push('/service-creation/verify-identity')
+      }
+
     }
   })
 
