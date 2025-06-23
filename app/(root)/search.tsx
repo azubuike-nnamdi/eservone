@@ -10,14 +10,15 @@ import { FlatList, SafeAreaView, Text, View } from "react-native";
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const debouncedSearchQuery = useDebounce(searchQuery.toLowerCase(), 500);
   const router = useRouter();
   // const { data, isPending, error } = useGetAllServices();
-  const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(debouncedSearchQuery);
 
+  // Use "all" as default for API if search query is empty
+  const apiSearchQuery = searchQuery.trim() ? debouncedSearchQuery : 'all';
+  const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(apiSearchQuery);
 
   const services = searchData?.data;
-
 
   const handleServicePress = (id: string) => {
     router.push(`/products/${id}`);
@@ -67,13 +68,19 @@ export default function Search() {
                   <Text className="text-accent">{searchQuery}</Text>
                 </Text>
               )}
+
+              {!searchPending && !searchError && !searchQuery.trim() && (
+                <Text className="text-md text-black mb-3 font-bold">
+                  All Services
+                </Text>
+              )}
             </>
           }
           ListEmptyComponent={
             !searchPending && !searchError ? (
               <View className="mt-10 px-5">
                 <Text className="text-gray-400 text-center">
-                  {searchQuery.trim() ? 'No services found' : 'Start typing to search for services'}
+                  {searchQuery.trim() ? 'No services found' : 'No services available'}
                 </Text>
               </View>
             ) : null
