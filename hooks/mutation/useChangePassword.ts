@@ -1,5 +1,5 @@
 import { ChangePasswordPayload } from "@/constants/types"
-import api from "@/lib/api"
+import { api } from "@/lib/api"
 import { useAuthStore } from "@/store/auth-store"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Alert } from "react-native"

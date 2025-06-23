@@ -1,7 +1,7 @@
 import { CONTINUE_SIGN_UP } from "@/constants/routes"
 import type { VerificationPayload } from "@/constants/types"
 import { useToast } from "@/context/toast-context"
-import api from "@/lib/api"
+import { api } from "@/lib/api"
 import { useSignupStore } from "@/store/signup-store"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { router } from "expo-router"

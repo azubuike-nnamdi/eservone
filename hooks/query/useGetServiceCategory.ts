@@ -1,6 +1,6 @@
 //query to get all services
 
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetServiceCategory = () => {

@@ -1,4 +1,4 @@
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
 import { useQuery } from "@tanstack/react-query";
 

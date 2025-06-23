@@ -1,6 +1,6 @@
 import { VERIFY_EMAIL } from "@/constants/routes"
 import { ForgotPasswordPayload } from "@/constants/types"
-import api from "@/lib/api"
+import { api } from "@/lib/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { router } from "expo-router"

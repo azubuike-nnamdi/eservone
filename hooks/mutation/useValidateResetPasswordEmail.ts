@@ -1,6 +1,6 @@
 import { RESET_PASSWORD } from "@/constants/routes"
 import { ValidateResetPasswordEmailPayload } from "@/constants/types"
-import api from "@/lib/api"
+import { api } from "@/lib/api"
 import { useSignupStore } from "@/store/signup-store"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { router } from "expo-router"

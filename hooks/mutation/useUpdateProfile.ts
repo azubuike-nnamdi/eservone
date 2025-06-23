@@ -1,6 +1,6 @@
 import { IDENTIFICATION_CONFIRMATION } from "@/constants/routes"
 import { UpdateProfilePayload } from "@/constants/types"
-import api from "@/lib/api"
+import { api } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { router } from "expo-router"
 import { Alert } from "react-native"

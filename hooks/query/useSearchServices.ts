@@ -1,6 +1,6 @@
 //query to get searched services
 
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export const useSearchServices = (searchValue: string) => {

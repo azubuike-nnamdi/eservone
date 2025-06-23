@@ -1,6 +1,6 @@
 import { MANAGE_SERVICES } from "@/constants/routes";
 import { useToast } from "@/context/toast-context";
-import api from "@/lib/api";
+import { api } from "@/lib/api";
 import { useServiceCreationStore } from "@/store/service-creation-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
