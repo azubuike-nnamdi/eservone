@@ -25,6 +25,7 @@ export default function VerifyEmail() {
   const [isValidOtp, setIsValidOtp] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [requestId, setRequestId] = useState<string | null>(null)
+  const [countdown, setCountdown] = useState(30);
 
   const inputRefs = useRef<(TextInput | null)[]>([])
   const { handleValidateEmail, isPending } = ValidateEmail()
@@ -49,6 +50,14 @@ export default function VerifyEmail() {
 
     getStoredData()
   }, [])
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const handleOtpChange = (text: string, index: number) => {
     // Only allow numbers
@@ -81,27 +90,26 @@ export default function VerifyEmail() {
       return
     }
 
-    try {
-      if (flowType === "forgot_password") {
-        const payload: ValidateResetPasswordEmailPayload = {
-          otp: otpString,
-          requestId: requestId || null,
-        }
-        handleValidateResetPasswordEmail(payload)
-      } else {
-        const payload: VerificationPayload = {
-          otp: otpString,
-          requestId: requestId || null,
-        }
-        await handleValidateEmail(payload)
+    if (flowType === "forgot_password") {
+      const payload: ValidateResetPasswordEmailPayload = {
+        otp: otpString,
+        requestId: requestId || null,
       }
-      // Success is handled in the hook
-    } catch (error: any) {
-      console.error("Error verifying OTP:", error)
-      setIsValidOtp(false)
-      setErrorMessage(error.message || "Failed to verify OTP. Please try again.")
+      handleValidateResetPasswordEmail(payload)
+    } else {
+      const payload: VerificationPayload = {
+        otp: otpString,
+        requestId: requestId || null,
+      }
+      await handleValidateEmail(payload)
     }
   }
+
+  // Resend handler (add your resend logic here)
+  const handleResend = () => {
+    setCountdown(30);
+    // TODO: Add resend code logic here
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -154,9 +162,13 @@ export default function VerifyEmail() {
           </View>
 
           {/* Resend Code Option */}
-          <TouchableOpacity className="mt-4">
-            <Text className="text-primary-300 text-sm">Didn't receive the code? Resend</Text>
-          </TouchableOpacity>
+          {countdown > 0 ? (
+            <Text className="mt-4 text-gray-400 text-sm">Resend code in {countdown}s</Text>
+          ) : (
+            <TouchableOpacity className="mt-4" onPress={handleResend}>
+              <Text className="text-primary-300 text-sm">Didn't receive the code? Resend</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
 
