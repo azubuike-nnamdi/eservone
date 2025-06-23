@@ -4,14 +4,18 @@ import SearchBar from "@/components/common/search-bar";
 import SeekerServiceCard from "@/components/services/seeker-service-card";
 import useSearchServices from "@/hooks/query/useSearchServices";
 import { useDebounce } from "@/lib/helper";
+import { useRecentSearchesStore } from "@/store/recent-searches-store";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery.toLowerCase(), 500);
   const router = useRouter();
+  const addRecentSearch = useRecentSearchesStore((s) => s.addSearch);
+  // const recentSearches = useRecentSearchesStore((s) => s.recent);
+  // const clearRecent = useRecentSearchesStore((s) => s.clear);
   // const { data, isPending, error } = useGetAllServices();
 
   // Use "all" as default for API if search query is empty
@@ -20,9 +24,25 @@ export default function Search() {
 
   const services = searchData?.data;
 
+  // Add to recent searches when a real search is performed
+  useEffect(() => {
+    if (
+      debouncedSearchQuery &&
+      debouncedSearchQuery !== 'all' &&
+      debouncedSearchQuery.trim() !== ''
+    ) {
+      addRecentSearch(searchQuery.trim());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchQuery]);
+
   const handleServicePress = (id: string) => {
     router.push(`/products/${id}`);
   };
+
+  // const handleRecentPress = (term: string) => {
+  //   setSearchQuery(term);
+  // };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -51,6 +71,33 @@ export default function Search() {
                   value={searchQuery}
                   onChangeText={(text: string) => setSearchQuery(text)}
                 />
+                {/* Recent Searches */}
+                {/* {recentSearches.length > 0 && (
+                  <View className="mt-4">
+                    <View className="flex-row justify-between items-center mb-2">
+                      <Text className="text-base font-bold">Recent searches:</Text>
+                      <Text
+                        className="text-base text-red-500 font-bold"
+                        onPress={clearRecent}
+                        style={{ color: "#FF3B30" }}
+                      >
+                        Clear
+                      </Text>
+                    </View>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                      {recentSearches.map((item, idx) => (
+                        <TouchableOpacity
+                          key={idx}
+                          onPress={() => handleRecentPress(item)}
+                          className="bg-gray-100 px-4 py-2 rounded-lg mr-2"
+                          style={{ minWidth: 80, alignItems: "center" }}
+                        >
+                          <Text className="text-blue-800 font-medium">{item}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
+                )} */}
               </View>
 
               {(searchPending) && (
