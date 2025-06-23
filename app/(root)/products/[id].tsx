@@ -20,6 +20,7 @@ export default function ProductById() {
   const { data: serviceData, isPending } = useGetServiceById(id as string);
   const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
 
+
   // Form state
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
   const [date, setDate] = useState('');
@@ -72,7 +73,7 @@ export default function ProductById() {
       upfrontPayment: upfront,
     };
 
-    handleBookAppointment(payload)
+    handleBookAppointment(payload, service)
   }
 
   return (
@@ -87,7 +88,7 @@ export default function ProductById() {
 
           </View>
           <View>
-            <Text className="text-lg font-bold mb-1">{service?.serviceName || 'Service Name'}</Text>
+            <Text className="text-lg font-bold mb-1">{service?.serviceName || ''}</Text>
             <Text className="text-gray-500 mb-1">XYZ Studios</Text>
             <Text className="text-gray-700 mb-1">${service?.minimumPrice} - ${service?.maximumPrice}</Text>
             <Text className="text-gray-600 mb-2">{service?.serviceDescription || 'No description provided.'}</Text>
@@ -111,7 +112,7 @@ export default function ProductById() {
           {/* Address */}
           <View className="mb-2 flex-row justify-between items-center">
             <Text className="text-base font-semibold">Your address</Text>
-            <TouchableOpacity><Text className="text-primary-600 font-medium">Change address</Text></TouchableOpacity>
+            {/* <TouchableOpacity><Text className="text-primary-600 font-medium">Change address</Text></TouchableOpacity> */}
           </View>
           <TextInput value={address} onChangeText={setAddress} placeholder="Enter your address" />
 
