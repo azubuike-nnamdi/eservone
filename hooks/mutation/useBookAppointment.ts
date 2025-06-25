@@ -19,7 +19,6 @@ const useBookAppointment = () => {
       if (data) {
         console.log("data for appointment", data?.data)
         showToast(data?.data?.description, "success")
-        queryClient.invalidateQueries({ queryKey: ["booked-appointments"] })
 
         // Get the chatRoomId from the stored service data
         const chatRoomId = serviceDataRef.current?.chatRoomId
@@ -34,6 +33,9 @@ const useBookAppointment = () => {
     },
     onError: (error: { response: { data: { description: string } } }) => {
       showToast(error?.response?.data?.description ?? "Failed to book appointment", "error")
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] })
     }
   })
 
