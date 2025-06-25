@@ -3,7 +3,7 @@
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetAllServices = () => {
+const useGetAllServices = () => {
   const getAllServices = async () => {
     const response = await api.get('/eserve-one/get-service')
     return response.data
