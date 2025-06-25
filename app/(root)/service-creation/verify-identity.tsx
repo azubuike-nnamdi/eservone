@@ -205,10 +205,15 @@ export default function VerifyIdentity() {
             <View>
               <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Phone number:</Text>
               <TextInput
+                inputMode='numeric'
                 className='border border-gray-300 rounded-lg p-5 bg-gray-50'
                 placeholder='Enter your phone number'
                 value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                onChangeText={(text) => {
+                  // Only allow numeric input
+                  const numericValue = text.replace(/[^0-9]/g, '');
+                  setPhoneNumber(numericValue);
+                }}
                 keyboardType='phone-pad'
               />
             </View>
