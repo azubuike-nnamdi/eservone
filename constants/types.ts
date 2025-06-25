@@ -210,5 +210,33 @@ interface ServiceProviderInfoModalProps {
   onBook: () => void;
   onViewProfile: () => void;
 }
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+
+
+
+type Message = {
+  id: string;
+  senderId: string;
+  name: string;
+  time: string;
+  body: string;
+  isOrder?: boolean;
+  isDelivered?: boolean;
+  isSent?: boolean;
+}
+
+
+
+type SendMessagePayload = {
+  content: string;
+  contentType: string;
+  groupId: string;
+  recipientId: string;
+  sender: string;
+}
+
+type SendMessageOptions = {
+  onSuccess?: () => void;
+  onError?: () => void;
+}
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 
