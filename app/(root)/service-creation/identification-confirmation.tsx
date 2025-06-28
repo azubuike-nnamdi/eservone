@@ -1,3 +1,4 @@
+import ProfileHeader from '@/components/common/profile-header';
 import icons from '@/constants/icons';
 import { Ionicons } from '@expo/vector-icons'; // Using MaterialCommunityIcons for briefcase
 import { router } from 'expo-router';
@@ -13,8 +14,8 @@ export default function IdentificationConfirmation() {
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      {/* Add ProfileHeader if needed, or remove if the stack navigator provides it */}
-      {/* <ProfileHeader title="Confirmation" showBackArrow={true} showNotification={false} /> */}
+
+      <ProfileHeader title="Confirmation" showBackArrow={true} showNotification={false} />
 
       {/* Main content centered */}
       <View className='flex-1 justify-center items-center px-7'>

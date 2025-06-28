@@ -1,27 +1,18 @@
+import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
+import { Message } from "@/constants/types";
 import useSendMessage from "@/hooks/mutation/useSendMessage";
+import useGetRoomMessages from "@/hooks/query/useGetRoomMessages";
 import { useAuthStore } from "@/store/auth-store";
+import { useRoomStore } from "@/store/room-store";
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
-// Add a type for the message prop
-interface Message {
-  id: string;
-  senderId: string;
-  name: string;
-  time: string;
-  body: string;
-  isOrder?: boolean;
-  isDelivered?: boolean;
-  isSent?: boolean;
-}
-
-const MessageBubble = ({ message }: { message: Message }) => {
-  const isUser = message.senderId === message.name;
+const MessageBubble = ({ message, currentUserEmail }: { message: Message, currentUserEmail: string }) => {
+  const isUser = message.senderId === currentUserEmail;
 
   const formatTime = (timeString: string) => {
     const date = new Date(timeString);
@@ -80,11 +71,21 @@ const MessageBubble = ({ message }: { message: Message }) => {
 
 export default function MessageRoom() {
   const { id, userEmail } = useLocalSearchParams();
-
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
   const user = useAuthStore((state) => state.user);
-  const { handleSendMessage, isPending: isSendingMessage } = useSendMessage();
+  const { handleSendMessage, isPending: isSendingMessage, messages: optimisticMessages } = useSendMessage();
+  const { groupId, userEmail: storeUserEmail, setRoom } = useRoomStore();
+
+  React.useEffect(() => {
+    if (id && userEmail) {
+      setRoom(id as string, userEmail as string);
+    }
+  }, [id, userEmail, setRoom]);
+
+  const { data, isPending } = useGetRoomMessages(groupId!, storeUserEmail!, user?.email as string);
+
+  // Combine server messages with optimistic messages
+  const displayedMessages = [...(data?.messages || []), ...optimisticMessages];
 
   const handleSendMessagePress = async () => {
     if (!input.trim() || !id || !user || !userEmail) return;
@@ -103,51 +104,19 @@ export default function MessageRoom() {
       isDelivered: false
     };
 
-    // Add message optimistically
-    setMessages(prev => [...prev, optimisticMessage]);
     setInput("");
 
-    try {
-      const payload = {
-        content: messageText,
-        contentType: "text",
-        groupId: id as string,
-        recipientId: userEmail as string,
-        sender: user.email
-      };
+    const payload = {
+      content: messageText,
+      contentType: "text",
+      groupId: id as string,
+      recipientId: userEmail as string,
+      sender: user.email
+    };
 
-      console.log("Sending message with payload:", payload);
+    console.log("Sending message with payload:", payload);
 
-      // Update message status to sent
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === optimisticMessage.id
-            ? { ...msg, isSent: true }
-            : msg
-        )
-      );
-
-      handleSendMessage(payload, {
-        onSuccess: () => {
-          // Update message status to delivered
-          setMessages(prev =>
-            prev.map(msg =>
-              msg.id === optimisticMessage.id
-                ? { ...msg, isDelivered: true }
-                : msg
-            )
-          );
-        },
-        onError: () => {
-          // Remove failed message
-          setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-        }
-      });
-    } catch (err) {
-      console.error("Error sending message:", err);
-      // Remove failed message
-      setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-    }
+    handleSendMessage(payload, optimisticMessage);
   };
 
   return (
@@ -159,20 +128,26 @@ export default function MessageRoom() {
       >
         <ProfileHeader title="Messages" showNotification={false} />
         <View className="flex-1">
-          <FlatList
-            data={messages}
-            keyExtractor={item => item.id}
-            contentContainerStyle={{ padding: 16, paddingBottom: 16, flexGrow: 1 }}
-            renderItem={({ item }) => (
-              <MessageBubble message={item} />
-            )}
-            ListEmptyComponent={
-              <View className="flex-1 justify-center items-center">
-                <Text className="text-gray-400">No messages yet</Text>
-              </View>
-            }
-            inverted
-          />
+          {isPending ? (
+            <View className="p-4">
+              <LoadingSkeleton count={6} />
+            </View>
+          ) : (
+            <FlatList
+              data={displayedMessages}
+              keyExtractor={item => item.id}
+              contentContainerStyle={{ padding: 16, paddingBottom: 16, flexGrow: 1 }}
+              renderItem={({ item }) => (
+                <MessageBubble message={item} currentUserEmail={user?.email || ''} />
+              )}
+              ListEmptyComponent={
+                <View className="flex-1 justify-center items-center">
+                  <Text className="text-gray-400">No messages yet</Text>
+                </View>
+              }
+              inverted
+            />
+          )}
         </View>
         {/* Input field fixed at the bottom */}
         <View className="flex-row items-center px-3 py-2 border-gray-200 border bg-white mx-4 rounded-full">

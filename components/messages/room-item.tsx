@@ -1,4 +1,5 @@
 import { chatRooms } from "@/constants/data";
+import { formatTimeFromISO } from "@/lib/helper";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 export const RoomItem = ({ room, onPress }: { room: typeof chatRooms[0]; onPress: () => void }) => (
@@ -13,7 +14,7 @@ export const RoomItem = ({ room, onPress }: { room: typeof chatRooms[0]; onPress
     <View className="flex-1">
       <View className="flex-row justify-between items-center">
         <Text className="font-bold text-base text-zinc-800">{room.name}</Text>
-        <Text className="text-xs text-zinc-400">{room.date}</Text>
+        <Text className="text-xs text-zinc-400">{formatTimeFromISO(room.date)}</Text>
       </View>
       <Text className="text-zinc-500 text-sm mt-0.5" numberOfLines={1}>{room.lastMessage}</Text>
     </View>

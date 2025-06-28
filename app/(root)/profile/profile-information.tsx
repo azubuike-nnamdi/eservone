@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function ProfileInformation() {
   const { user } = useAuthStore();
 
+
   const { firstName, lastName, email } = user || {};
   return (
     <SafeAreaView className='flex-1 bg-white'>

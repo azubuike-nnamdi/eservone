@@ -11,19 +11,21 @@ import useGetServiceById from "@/hooks/query/useGetServiceById";
 import { mergeDateAndTimeToISO } from "@/lib/helper";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Calendar } from 'react-native-calendars';
 
 // Fallback image URL
 const FALLBACK_IMAGE = 'https://images.pexels.com/photos/3998414/pexels-photo-3998414.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+
 export default function ProductById() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: serviceData, isPending } = useGetServiceById(id as string);
   const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
 
-
   // Form state
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [time, setTime] = useState('9:00 am');
   const [buzzCode, setBuzzCode] = useState('');
   const [upfront, setUpfront] = useState('0');
@@ -55,12 +57,38 @@ export default function ProductById() {
     );
   }
 
-
   const service = serviceData?.data;
 
-  const handleBookService = () => {
+  // Generate 24-hour time options
+  const generate24HourOptions = () => {
+    const options = [];
+    for (let hour = 0; hour < 24; hour++) {
+      const label = hour.toString().padStart(2, '0') + ':00';
+      options.push({ label, value: label });
+    }
+    return options;
+  };
 
-    const isoString = mergeDateAndTimeToISO(date, time);
+  // Filter time options based on selected date
+  const getFilteredTimeOptions = () => {
+    const allOptions = generate24HourOptions();
+    const today = new Date();
+    const selectedDateString = date.toISOString().split('T')[0];
+    const todayString = today.toISOString().split('T')[0];
+    if (selectedDateString === todayString) {
+      // Only allow times later than the current hour
+      const currentHour = today.getHours();
+      return allOptions.filter(opt => parseInt(opt.value.split(':')[0], 10) > currentHour);
+    }
+    return allOptions;
+  };
+
+  const filteredTimeOptions = getFilteredTimeOptions();
+
+  const handleBookService = () => {
+    // Format date as YYYY-MM-DD
+    const dateString = date.toISOString().split('T')[0];
+    const isoString = mergeDateAndTimeToISO(dateString, time);
 
     const payload: BookAppointmentPayload = {
       additionalDetails: details,
@@ -75,6 +103,11 @@ export default function ProductById() {
 
     handleBookAppointment(payload, service)
   }
+
+  const handleDateSelect = (dateString: string) => {
+    setDate(new Date(dateString));
+    setShowDatePicker(false);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -112,17 +145,24 @@ export default function ProductById() {
           {/* Address */}
           <View className="mb-2 flex-row justify-between items-center">
             <Text className="text-base font-semibold">Your address</Text>
-            {/* <TouchableOpacity><Text className="text-primary-600 font-medium">Change address</Text></TouchableOpacity> */}
           </View>
           <TextInput value={address} onChangeText={setAddress} placeholder="Enter your address" />
 
           {/* Date and Time */}
           <View className="flex-row mb-2 gap-2">
             <View className="flex-1">
-              <TextInput label="Select date" value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" />
+              <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                <TextInput
+                  label="Select date"
+                  value={date ? date.toISOString().split('T')[0] : ''}
+                  placeholder="YYYY-MM-DD"
+                  editable={false}
+                  pointerEvents="none"
+                />
+              </TouchableOpacity>
             </View>
             <View className="flex-1">
-              <Select label="Select time" value={time} options={timeOptions} onSelect={v => setTime(v.toString())} />
+              <Select label="Select time" value={time} options={filteredTimeOptions} onSelect={v => setTime(v.toString())} />
             </View>
           </View>
 
@@ -159,6 +199,34 @@ export default function ProductById() {
           >Book service</Button>
         </View>
       </ScrollView>
+
+      {/* Custom Date Picker Modal */}
+      <Modal
+        visible={showDatePicker}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowDatePicker(false)}
+      >
+        <View className="flex-1 bg-black/50 justify-end">
+          <View className="flex-1 bg-white rounded-t-3xl p-6 max-h-96">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-lg font-semibold">Select Date</Text>
+              <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                <Text className="text-primary-300 font-semibold">Cancel</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Calendar Picker */}
+            <Calendar
+              onDayPress={(day: { dateString: string }) => handleDateSelect(day.dateString)}
+              markedDates={{
+                [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#6366F1' }
+              }}
+              minDate={new Date().toISOString().split('T')[0]}
+            />
+          </View>
+        </View>
+      </Modal>
+
       {isBookingPending && (
         <View className="absolute inset-0 bg-black/50 items-center justify-center">
           <LoadingState isLoading={isBookingPending} />
