@@ -122,6 +122,7 @@ interface ProfileHeaderProps {
   onBackPress?: () => void
   onNotificationPress?: () => void
   rightComponent?: React.ReactNode
+  backDestination?: string
 }
 
 interface DeleteAccountModalProps {
