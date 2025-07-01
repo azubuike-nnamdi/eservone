@@ -71,6 +71,7 @@ const MessageBubble = ({ message, currentUserEmail }: { message: Message, curren
 
 export default function MessageRoom() {
   const { id, userEmail } = useLocalSearchParams();
+
   const [input, setInput] = useState("");
   const user = useAuthStore((state) => state.user);
   const { handleSendMessage, isPending: isSendingMessage, messages: optimisticMessages } = useSendMessage();
@@ -126,7 +127,7 @@ export default function MessageRoom() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
-        <ProfileHeader title="Messages" showNotification={false} />
+        <ProfileHeader title="Messages" showNotification={false} backDestination="/(root)/(tabs)/messages" />
         <View className="flex-1">
           {isPending ? (
             <View className="p-4">
