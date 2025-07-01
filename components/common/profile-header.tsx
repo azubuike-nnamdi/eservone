@@ -1,6 +1,7 @@
 import icons from '@/constants/icons'
 import { ProfileHeaderProps } from '@/constants/types'
 import { useNavigation } from '@react-navigation/native'
+import { useRouter } from 'expo-router'
 import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 
@@ -11,13 +12,17 @@ export default function ProfileHeader({
   showNotification = true,
   onBackPress,
   onNotificationPress,
-  rightComponent
+  rightComponent,
+  backDestination
 }: ProfileHeaderProps) {
   const navigation = useNavigation()
+  const router = useRouter()
 
   const handleBackPress = () => {
     if (onBackPress) {
       onBackPress()
+    } else if (backDestination) {
+      router.push(backDestination as any)
     } else {
       navigation.goBack()
     }
