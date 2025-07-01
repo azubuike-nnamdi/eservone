@@ -72,5 +72,17 @@ function formatTimeFromISO(isoString: string): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
-export { formatCurrency, formatTimeFromISO, getGreeting, mergeDateAndTimeToISO, useDebounce, validateEmail, validatePassword };
+
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-GB');
+}
+
+
+function formatTime(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
+export { formatCurrency, formatDate, formatTime, formatTimeFromISO, getGreeting, mergeDateAndTimeToISO, useDebounce, validateEmail, validatePassword };
 
