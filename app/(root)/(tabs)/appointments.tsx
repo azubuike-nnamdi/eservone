@@ -1,48 +1,177 @@
-import AppointmentSection from "@/components/appointments/appointment-section";
+import AppointmentCard from "@/components/appointments/appointment-card";
+import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
-import { historyAppointments, upcomingAppointments } from "@/constants/data";
 import { Appointment } from "@/constants/types";
-import { useCallback } from "react";
-import { ScrollView, View } from "react-native";
+import useGetAppointmentByUserId from "@/hooks/query/useGetAppointmentByUserId";
+import { useRouter } from "expo-router";
+import { useCallback, useMemo } from "react";
+import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+// Define the data structure for FlatList
+type FlatListData = {
+  type: 'section' | 'appointment';
+  title?: string;
+  appointmentType?: 'upcoming' | 'history';
+  appointment?: Appointment;
+  onPress?: (appointment: Appointment) => void;
+};
+
 export default function Appointments() {
+  const { data: appointments, isPending, error } = useGetAppointmentByUserId();
+  const router = useRouter();
+
+  console.log("appointments", appointments?.data);
+
+  // Section appointments based on status
+  const { upcomingAppointments, historyAppointments } = useMemo(() => {
+    if (!appointments?.data) {
+      return { upcomingAppointments: [], historyAppointments: [] };
+    }
+
+    const upcoming: Appointment[] = [];
+    const history: Appointment[] = [];
+
+    appointments.data.forEach((appointment: Appointment) => {
+      if (appointment.serviceStatus === 'PENDING') {
+        upcoming.push(appointment);
+      } else if (appointment.serviceStatus === 'COMPLETED' || appointment.serviceStatus === 'CANCELLED') {
+        history.push(appointment);
+      }
+    });
+
+    return { upcomingAppointments: upcoming, historyAppointments: history };
+  }, [appointments?.data]);
 
   const handleUpcomingAppointmentPress = useCallback((appointment: Appointment) => {
-    // Navigate to appointment details
-    // router.push({
-    //   pathname: `/appointment-details/${appointment.id}`,
-    //   params: { type: "upcoming" },
-    // })
-  }, [])
+    router.push(`/appointments/${appointment.id}`);
+  }, [router]);
 
   const handleHistoryAppointmentPress = useCallback((appointment: Appointment) => {
-    // Navigate to appointment details
-    // router.push({
-    //   pathname: `/appointment-details/${appointment.id}`,
-    //   params: { type: "history" },
-    // })
-  }, [])
-  return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32'>
-        <ProfileHeader title='Appointments' showNotification={false} />
+    router.push(`/appointments/${appointment.id}`);
+  }, [router]);
 
-        <View className="mt-6 px-7">
-          <AppointmentSection
-            title="Upcoming"
-            type="upcoming"
-            appointments={upcomingAppointments}
-            onAppointmentPress={handleUpcomingAppointmentPress}
-          />
+  // Create FlatList data with sections and appointments
+  const flatListData: FlatListData[] = useMemo(() => {
+    const data: FlatListData[] = [];
 
-          <AppointmentSection
-            title="History"
-            type="history"
-            appointments={historyAppointments}
-            onAppointmentPress={handleHistoryAppointmentPress}
+    // Add upcoming section if there are upcoming appointments
+    if (upcomingAppointments.length > 0) {
+      data.push({
+        type: 'section',
+        title: 'Upcoming',
+        appointmentType: 'upcoming'
+      });
+
+      upcomingAppointments.forEach(appointment => {
+        data.push({
+          type: 'appointment',
+          appointmentType: 'upcoming',
+          appointment,
+          onPress: handleUpcomingAppointmentPress
+        });
+      });
+    }
+
+    // Add history section if there are history appointments
+    if (historyAppointments.length > 0) {
+      data.push({
+        type: 'section',
+        title: 'History',
+        appointmentType: 'history'
+      });
+
+      historyAppointments.forEach(appointment => {
+        data.push({
+          type: 'appointment',
+          appointmentType: 'history',
+          appointment,
+          onPress: handleHistoryAppointmentPress
+        });
+      });
+    }
+
+    return data;
+  }, [upcomingAppointments, historyAppointments, handleUpcomingAppointmentPress, handleHistoryAppointmentPress]);
+
+  const renderItem = useCallback(({ item }: { item: FlatListData }) => {
+    if (item.type === 'section') {
+      return (
+        <View className="px-7 mt-6 mb-4">
+          <Text className="text-lg font-bold">{item.title}</Text>
+        </View>
+      );
+    }
+
+    if (item.type === 'appointment' && item.appointment && item.appointmentType) {
+      return (
+        <View className="px-7 mb-4">
+          <AppointmentCard
+            type={item.appointmentType}
+            appointment={item.appointment}
+            onPress={() => item.onPress?.(item.appointment!)}
           />
         </View>
-      </ScrollView>
+      );
+    }
+
+    return null;
+  }, []);
+
+  const keyExtractor = useCallback((item: FlatListData, index: number) => {
+    if (item.type === 'section') {
+      return `section-${item.title}-${index}`;
+    }
+    return `appointment-${item.appointment?.id}-${index}`;
+  }, []);
+
+  // Show loading state
+  if (isPending) {
+    return (
+      <SafeAreaView className='flex-1 bg-white'>
+        <ProfileHeader title='Appointments' showNotification={false} />
+        <View className="mt-6 px-7">
+          <LoadingSkeleton count={6} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <SafeAreaView className='flex-1 bg-white'>
+        <ProfileHeader title='Appointments' showNotification={false} />
+        <View className="flex-1 justify-center items-center mt-20 px-4">
+          <Text className="text-red-500 text-center text-lg font-semibold mb-2">
+            Error Loading Appointments
+          </Text>
+          <Text className="text-zinc-500 text-center">
+            {error.message || "Something went wrong. Please try again later."}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView className='flex-1 bg-white'>
+      <ProfileHeader title='Appointments' showNotification={false} />
+
+      <FlatList
+        data={flatListData}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 32 }}
+        ListEmptyComponent={
+          <View className="flex-1 justify-center items-center mt-20 px-4">
+            <Text className="text-zinc-500 text-center">
+              No appointments found
+            </Text>
+          </View>
+        }
+      />
     </SafeAreaView>
   )
 }
