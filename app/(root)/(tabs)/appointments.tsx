@@ -35,7 +35,7 @@ export default function Appointments() {
     appointments.data.forEach((appointment: Appointment) => {
       if (appointment.serviceStatus === 'PENDING') {
         upcoming.push(appointment);
-      } else if (appointment.serviceStatus === 'COMPLETED' || appointment.serviceStatus === 'CANCELLED') {
+      } else if (appointment.serviceStatus === 'COMPLETED' || appointment.serviceStatus === 'CANCELED') {
         history.push(appointment);
       }
     });

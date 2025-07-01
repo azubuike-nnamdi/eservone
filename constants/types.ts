@@ -96,7 +96,7 @@ type Appointment = {
   serviceId: number | null
   price: number | null
   userId: string
-  serviceStatus: 'PENDING' | 'COMPLETED' | 'CANCELLED'
+  serviceStatus: 'PENDING' | 'COMPLETED' | 'CANCELED'
   chatRoomId: string | null
   userEmail: string | null
   latitude: string | null
