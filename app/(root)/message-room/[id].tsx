@@ -4,7 +4,6 @@ import { Message } from "@/constants/types";
 import useSendMessage from "@/hooks/mutation/useSendMessage";
 import useGetRoomMessages from "@/hooks/query/useGetRoomMessages";
 import { useAuthStore } from "@/store/auth-store";
-import { useRoomStore } from "@/store/room-store";
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -75,15 +74,12 @@ export default function MessageRoom() {
   const [input, setInput] = useState("");
   const user = useAuthStore((state) => state.user);
   const { handleSendMessage, isPending: isSendingMessage, messages: optimisticMessages } = useSendMessage();
-  const { groupId, userEmail: storeUserEmail, setRoom } = useRoomStore();
 
-  React.useEffect(() => {
-    if (id && userEmail) {
-      setRoom(id as string, userEmail as string);
-    }
-  }, [id, userEmail, setRoom]);
+  // Directly use the id from params instead of going through store
+  const groupId = id as string;
+  const receiverEmail = userEmail as string;
 
-  const { data, isPending } = useGetRoomMessages(groupId!, storeUserEmail!, user?.email as string);
+  const { data, isPending, error } = useGetRoomMessages(groupId, receiverEmail, user?.email as string);
 
   // Combine server messages with optimistic messages
   const displayedMessages = [...(data?.messages || []), ...optimisticMessages];
@@ -119,6 +115,23 @@ export default function MessageRoom() {
 
     handleSendMessage(payload, optimisticMessage);
   };
+
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <ProfileHeader title="Messages" showNotification={false} backDestination="/(root)/(tabs)/messages" />
+        <View className="flex-1 justify-center items-center px-4">
+          <Text className="text-red-500 text-center text-lg font-semibold mb-2">
+            Error Loading Messages
+          </Text>
+          <Text className="text-zinc-500 text-center">
+            {error.message || "Something went wrong. Please try again later."}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
