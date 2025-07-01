@@ -1,18 +1,5 @@
+import { Appointment } from "@/constants/types";
 import { Text, TouchableOpacity, View } from "react-native";
-
-interface Appointment {
-  id: number;
-  appointmentDate: string;
-  address: string | null;
-  costOfService: string;
-  upfrontPayment: string;
-  buzzCode: string;
-  additionalDetails: string;
-  hasPet: boolean;
-  serviceId: number | null;
-  price: number | null;
-  userId: string;
-}
 
 interface AppointmentItemProps {
   appointment: Appointment;
