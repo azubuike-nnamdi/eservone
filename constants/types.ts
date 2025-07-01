@@ -85,13 +85,22 @@ type ResetPasswordPayload = {
 };
 
 type Appointment = {
-  id: string
-  date: string
-  time: string
-  serviceName: string
-  location: string
-  price: number
-  rating?: number
+  id: number
+  appointmentDate: string
+  address: string | null
+  costOfService: string
+  upfrontPayment: string
+  buzzCode: string
+  additionalDetails: string
+  hasPet: boolean
+  serviceId: number | null
+  price: number | null
+  userId: string
+  serviceStatus: 'PENDING' | 'COMPLETED' | 'CANCELLED'
+  chatRoomId: string | null
+  userEmail: string | null
+  latitude: string | null
+  longitude: string | null
 }
 
 type AppointmentType = 'upcoming' | 'history'
@@ -105,12 +114,7 @@ type AppointmentSectionProps = {
 
 interface AppointmentCardProps {
   type: AppointmentType
-  date: string
-  time: string
-  serviceName: string
-  location: string
-  price: number
-  rating?: number
+  appointment: Appointment
   onPress?: () => void
 }
 
@@ -199,6 +203,14 @@ type BookAppointmentPayload = {
   upfrontPayment: string;
 }
 
+type CancelAppointmentPayload = {
+  serviceAppointmentId: number
+}
+
+type CompleteAppointmentPayload = {
+  serviceAppointmentId: number
+}
+
 interface ServiceProviderInfoModalProps {
   visible: boolean;
   onClose: () => void;
@@ -239,5 +251,5 @@ type SendMessageOptions = {
   onSuccess?: () => void;
   onError?: () => void;
 }
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, ChangePasswordPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 
