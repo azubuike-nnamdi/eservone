@@ -4,30 +4,35 @@
       "slug": "eserveone",
       "version": "1.0.0",
       "orientation": "portrait",
-      "icon": "./assets/images/eservone-logo.png",
+      "icon": "./assets/images/icon.png",
       "scheme": "eserveone",
       "userInterfaceStyle": "automatic",
       "newArchEnabled": true,
       "ios": {
-         "supportsTablet": true
+         "supportsTablet": true,
+         "bundleIdentifier": "com.nnamdi.azubuike.eserveone",
+         "infoPlist": {
+            "ITSAppUsesNonExemptEncryption": false
+         }
       },
       "android": {
          "adaptiveIcon": {
-            "foregroundImage": "./assets/images/eservone-logo.png",
+            "foregroundImage": "./assets/images/adaptive-icon.png",
             "backgroundColor": "#ffffff"
-         }
+         },
+         "package": "com.nnamdi.azubuike.eserveone"
       },
       "web": {
          "bundler": "metro",
          "output": "static",
-         "favicon": "./assets/images/eservone-logo.png"
+         "favicon": "./assets/images/favicon.png"
       },
       "plugins": [
          "expo-router",
          [
             "expo-splash-screen",
             {
-               "image": "./assets/images/eservone-logo.png",
+               "image": "./assets/images/splash-icon.png",
                "imageWidth": 200,
                "resizeMode": "contain",
                "backgroundColor": "#ffffff"
@@ -37,6 +42,14 @@
       ],
       "experiments": {
          "typedRoutes": true
+      },
+      "extra": {
+         "router": {
+            "origin": false
+         },
+         "eas": {
+            "projectId": "5a23da15-ecd6-44ea-87bf-d7070423d8d6"
+         }
       }
    }
 }
