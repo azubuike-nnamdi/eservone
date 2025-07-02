@@ -3,6 +3,8 @@ import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
 import { Appointment } from "@/constants/types";
 import useGetAppointmentByUserId from "@/hooks/query/useGetAppointmentByUserId";
+import useGetProviderAppointments from "@/hooks/query/useGetProviderAppointments";
+import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
@@ -18,10 +20,11 @@ type FlatListData = {
 };
 
 export default function Appointments() {
-  const { data: appointments, isPending, error } = useGetAppointmentByUserId();
-  const router = useRouter();
 
-  console.log("appointments", appointments?.data);
+  const user = useAuthStore((state) => state.user);
+  const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
+  const { data: appointments, isPending, error } = hookResult();
+  const router = useRouter();
 
   // Section appointments based on status
   const { upcomingAppointments, historyAppointments } = useMemo(() => {
