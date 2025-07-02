@@ -3,6 +3,7 @@ import ProfileHeader from '@/components/common/profile-header'
 import images from '@/constants/images'
 import { CREATE_SERVICE } from '@/constants/routes'
 import useGetAllServices from '@/hooks/query/useGetAllServices'
+import useGetProviderAppointments from '@/hooks/query/useGetProviderAppointments'
 import { getGreeting } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
 import { router } from 'expo-router'
@@ -33,11 +34,12 @@ const EmptyState = ({ firstName }: { firstName?: string }) => (
 export default function ServiceProviderHomepage() {
   const { user } = useAuthStore()
   const { data, isPending } = useGetAllServices()
+  const { data: appointments, isPending: appointmentsPending, } = useGetProviderAppointments();
 
   const renderContent = () => {
-    if (isPending) return <DashboardSkeleton />
+    if (isPending || appointmentsPending) return <DashboardSkeleton />
     if (!data) return <EmptyState firstName={user?.firstName} />
-    return <DashboardScreen />
+    return <DashboardScreen appointments={appointments} />
   }
 
   return (

@@ -2,7 +2,7 @@ import Button from '@/components/common/button';
 import { getGreeting } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
 import Entypo from '@expo/vector-icons/Entypo';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
 interface StatItem {
   id: string;
@@ -10,15 +10,33 @@ interface StatItem {
   value: string;
 }
 
-const DashboardScreen = () => {
+const DashboardScreen = ({ appointments }: { appointments: any }) => {
   const { user } = useAuthStore()
 
+  // Calculate appointment statistics
+  const appointmentStats = useMemo(() => {
+    if (!appointments?.data) {
+      return {
+        completed: 0,
+        canceled: 0,
+        pending: 0,
+        total: 0
+      };
+    }
+
+    const completed = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'COMPLETED').length;
+    const canceled = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'CANCELED').length;
+    const pending = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'PENDING').length;
+    const total = appointments.data.length;
+
+    return { completed, canceled, pending, total };
+  }, [appointments?.data]);
 
   const statsData: StatItem[] = [
-    { id: '1', label: 'New job requests', value: '1' },
+    { id: '1', label: 'New job requests', value: appointmentStats.pending.toString() },
     { id: '2', label: 'Total earnings', value: '₦0.00' },
-    { id: '3', label: 'Completed appointments', value: '0' },
-    { id: '4', label: 'Cancelled appointments', value: '6' }
+    { id: '3', label: 'Completed appointments', value: appointmentStats.completed.toString() },
+    { id: '4', label: 'Cancelled appointments', value: appointmentStats.canceled.toString() }
   ];
 
   const renderStatItem = ({ item }: { item: StatItem }) => (
