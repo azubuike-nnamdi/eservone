@@ -11,7 +11,7 @@ const useSendMessage = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: SendMessagePayload) => chatApi.post(`/chat/message/send`, payload),
     onSuccess: (data) => {
-      console.log("Message sent successfully:", data);
+
       queryClient.invalidateQueries({ queryKey: ["room-messages"] });
     },
     onError: (error: { response: { data: { description: string } } }) => {
