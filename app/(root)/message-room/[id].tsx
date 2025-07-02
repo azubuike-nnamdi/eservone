@@ -81,8 +81,22 @@ export default function MessageRoom() {
 
   const { data, isPending, error } = useGetRoomMessages(groupId, receiverEmail, user?.email as string);
 
-  // Combine server messages with optimistic messages
-  const displayedMessages = [...(data?.messages || []), ...optimisticMessages];
+
+  // Combine server messages with optimistic messages and sort by timestamp
+  const allMessages = [...(data || []), ...optimisticMessages];
+
+  let displayedMessages = allMessages;
+  try {
+    displayedMessages = allMessages.sort((a, b) => {
+      const timeA = new Date(a.time).getTime();
+      const timeB = new Date(b.time).getTime();
+      return timeA - timeB;
+    });
+  } catch (error) {
+    console.error("Error sorting messages:", error);
+    // If sorting fails, just use the original order
+    displayedMessages = allMessages;
+  }
 
   const handleSendMessagePress = async () => {
     if (!input.trim() || !id || !user || !userEmail) return;
@@ -151,15 +165,16 @@ export default function MessageRoom() {
               data={displayedMessages}
               keyExtractor={item => item.id}
               contentContainerStyle={{ padding: 16, paddingBottom: 16, flexGrow: 1 }}
-              renderItem={({ item }) => (
-                <MessageBubble message={item} currentUserEmail={user?.email || ''} />
-              )}
+              renderItem={({ item, index }) => {
+                return (
+                  <MessageBubble message={item} currentUserEmail={user?.email || ''} />
+                );
+              }}
               ListEmptyComponent={
                 <View className="flex-1 justify-center items-center">
                   <Text className="text-gray-400">No messages yet</Text>
                 </View>
               }
-              inverted
             />
           )}
         </View>

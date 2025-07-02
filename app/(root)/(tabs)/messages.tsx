@@ -13,15 +13,16 @@ export default function Messages() {
 
   const { data: appointments, isPending, error } = useGetAppointmentByUserId();
 
+
   // Filter to show only pending appointments
   const pendingAppointments = appointments?.data?.filter(
     (appointment: Appointment) => appointment.serviceStatus === 'PENDING'
   ) || [];
 
 
-  const handleAppointmentPress = (chatRoomId: string, userEmail: string) => {
+  const handleAppointmentPress = (chatRoomId: string, serviceProviderEmail: string) => {
     // Navigate to appointment details or message room
-    router.push(`/message-room/${chatRoomId}?userEmail=${userEmail}`);
+    router.push(`/message-room/${chatRoomId}?userEmail=${serviceProviderEmail}`);
   };
 
   const renderEmptyComponent = () => {
@@ -64,7 +65,7 @@ export default function Messages() {
         renderItem={({ item }) => (
           <AppointmentItem
             appointment={item}
-            onPress={() => handleAppointmentPress(item.chatRoomId, item.userEmail)}
+            onPress={() => handleAppointmentPress(item.chatRoomId, item.serviceProviderEmail)}
           />
         )}
         contentContainerStyle={{ paddingTop: 8 }}
