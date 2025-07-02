@@ -24,6 +24,7 @@ const DashboardScreen = ({ appointments }: { appointments: any }) => {
       };
     }
 
+
     const completed = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'COMPLETED').length;
     const canceled = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'CANCELED').length;
     const pending = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'PENDING').length;

@@ -211,6 +211,15 @@ type CompleteAppointmentPayload = {
   serviceAppointmentId: number
 }
 
+type CreateRatingPayload = {
+  ratings: number
+}
+
+type createReviewPayload = {
+  serviceId: number
+  content: string
+}
+
 interface ServiceProviderInfoModalProps {
   visible: boolean;
   onClose: () => void;
@@ -251,5 +260,18 @@ type SendMessageOptions = {
   onSuccess?: () => void;
   onError?: () => void;
 }
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+
+type SubmitReviewPayload = {
+  appointmentId: number;
+  rating: number;
+  comment: string;
+}
+
+type PaymentPayload = {
+  appointmentId: number;
+  amount: string;
+  paymentMethod: string;
+}
+
+export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, CreateRatingPayload, createReviewPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 

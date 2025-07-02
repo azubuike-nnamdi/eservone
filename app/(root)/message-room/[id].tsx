@@ -71,6 +71,7 @@ const MessageBubble = ({ message, currentUserEmail }: { message: Message, curren
 export default function MessageRoom() {
   const { id, userEmail, receiverEmail } = useLocalSearchParams();
 
+
   const [input, setInput] = useState("");
   const user = useAuthStore((state) => state.user);
   const { handleSendMessage, isPending: isSendingMessage, messages: optimisticMessages } = useSendMessage();
