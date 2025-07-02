@@ -69,7 +69,7 @@ const MessageBubble = ({ message, currentUserEmail }: { message: Message, curren
 };
 
 export default function MessageRoom() {
-  const { id, userEmail } = useLocalSearchParams();
+  const { id, userEmail, receiverEmail } = useLocalSearchParams();
 
   const [input, setInput] = useState("");
   const user = useAuthStore((state) => state.user);
@@ -77,9 +77,9 @@ export default function MessageRoom() {
 
   // Directly use the id from params instead of going through store
   const groupId = id as string;
-  const receiverEmail = userEmail as string;
 
-  const { data, isPending, error } = useGetRoomMessages(groupId, receiverEmail, user?.email as string);
+
+  const { data, isPending, error } = useGetRoomMessages(groupId, receiverEmail as string, userEmail as string);
 
 
   // Combine server messages with optimistic messages and sort by timestamp

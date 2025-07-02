@@ -3,6 +3,8 @@ import ProfileHeader from "@/components/common/profile-header";
 import { AppointmentItem } from "@/components/messages/appointment-item";
 import { Appointment } from "@/constants/types";
 import useGetAppointmentByUserId from "@/hooks/query/useGetAppointmentByUserId";
+import useGetProviderAppointments from "@/hooks/query/useGetProviderAppointments";
+import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, Text, View } from "react-native";
@@ -11,8 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Messages() {
   const router = useRouter();
 
-  const { data: appointments, isPending, error } = useGetAppointmentByUserId();
-
+  const user = useAuthStore((state) => state.user);
+  const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
+  const { data: appointments, isPending, error } = hookResult();
 
   // Filter to show only pending appointments
   const pendingAppointments = appointments?.data?.filter(
@@ -20,9 +23,9 @@ export default function Messages() {
   ) || [];
 
 
-  const handleAppointmentPress = (chatRoomId: string, serviceProviderEmail: string) => {
+  const handleAppointmentPress = (chatRoomId: string, serviceProviderEmail: string, userEmail: string) => {
     // Navigate to appointment details or message room
-    router.push(`/message-room/${chatRoomId}?userEmail=${serviceProviderEmail}`);
+    router.push(`/message-room/${chatRoomId}?receiverEmail=${serviceProviderEmail}&userEmail=${userEmail}`);
   };
 
   const renderEmptyComponent = () => {
@@ -65,7 +68,7 @@ export default function Messages() {
         renderItem={({ item }) => (
           <AppointmentItem
             appointment={item}
-            onPress={() => handleAppointmentPress(item.chatRoomId, item.serviceProviderEmail)}
+            onPress={() => handleAppointmentPress(item.chatRoomId, item.serviceProviderEmail, item.userEmail)}
           />
         )}
         contentContainerStyle={{ paddingTop: 8 }}
