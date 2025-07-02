@@ -4,7 +4,6 @@ import { UpdateProfilePayload } from '@/constants/types'
 import useUpdateProfile from '@/hooks/mutation/useUpdateProfile'
 import { useAuthStore } from '@/store/auth-store'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-import { encode } from 'base-64'
 import * as DocumentPicker from 'expo-document-picker'
 import * as ImagePicker from 'expo-image-picker'
 import React, { useEffect, useState } from 'react'
@@ -97,8 +96,8 @@ export default function VerifyIdentity() {
     const idDocumentFilename = documentAsset.name;
 
     // Encode filenames in Base64
-    const encodedProfileFilename = encode(profileImageFilename);
-    const encodedIdDocumentFilename = encode(idDocumentFilename);
+    const encodedProfileFilename = Buffer.from(profileImageFilename, 'utf8').toString('base64');
+    const encodedIdDocumentFilename = Buffer.from(idDocumentFilename, 'utf8').toString('base64');
 
     // Create the payload with Base64 encoded filenames
     const payload: UpdateProfilePayload = {
