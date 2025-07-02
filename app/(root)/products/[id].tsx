@@ -33,12 +33,6 @@ export default function ProductById() {
   const [hasPets, setHasPets] = useState(false);
   const [serviceType, setServiceType] = useState('HOME_SERVICE');
 
-  const timeOptions = [
-    { label: '9:00 am', value: '9:00 am' },
-    { label: '10:00 am', value: '10:00 am' },
-    { label: '11:00 am', value: '11:00 am' },
-    { label: '12:00 pm', value: '12:00 pm' },
-  ];
   const upfrontOptions = [
     { label: '0', value: '0' },
     { label: '25', value: '25' },
