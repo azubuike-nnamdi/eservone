@@ -5,6 +5,7 @@ import icons from "@/constants/icons";
 import { Appointment } from "@/constants/types";
 import useCancelAppointment from "@/hooks/mutation/useCancelAppointment";
 import useGetAppointmentByUserId from "@/hooks/query/useGetAppointmentByUserId";
+import useGetProviderAppointments from "@/hooks/query/useGetProviderAppointments";
 import { formatDate, formatTime } from "@/lib/helper";
 import { useAuthStore } from "@/store/auth-store";
 import { useLocalSearchParams } from "expo-router";
@@ -16,7 +17,9 @@ export default function AppointmentDetails() {
   const { id } = useLocalSearchParams();
 
   const user = useAuthStore((state) => state.user);
-  const { data: appointments, isPending, error } = useGetAppointmentByUserId();
+
+  const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
+  const { data: appointments, isPending, error } = hookResult();
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const { handleCancelAppointment, isPending: isCancelling } = useCancelAppointment();
