@@ -67,12 +67,12 @@ export const useAppointmentDetails = () => {
   const handleSubmitReview = (rating: number, comment: string) => {
     if (appointment) {
       // Submit rating first
-      handleCreateRating({ ratings: rating });
+      handleCreateRating({ ratings: rating, serviceId: appointment.id });
 
       // Submit review with service ID and comment
-      if (appointment.serviceId) {
+      if (appointment.id) {
         handleCreateReview({
-          serviceId: appointment.serviceId,
+          serviceAppointmentId: appointment.id,
           content: comment
         });
       }

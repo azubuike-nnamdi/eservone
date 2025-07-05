@@ -212,11 +212,13 @@ type CompleteAppointmentPayload = {
 }
 
 type CreateRatingPayload = {
-  ratings: number
+  ratings: number;
+  serviceId: number;
+
 }
 
 type createReviewPayload = {
-  serviceId: number
+  serviceAppointmentId: number
   content: string
 }
 

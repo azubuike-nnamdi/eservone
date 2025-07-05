@@ -67,6 +67,8 @@ export default function AppointmentDetails() {
     );
   }
 
+  // console.log('appointment in id', appointment);
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ProfileHeader title="Appointment Details" showNotification={false} />
