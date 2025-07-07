@@ -1,23 +1,27 @@
-import { FormData } from "@/constants/types";
 import { validatePassword } from "@/lib/helper";
+import { useOnboardingStore } from "@/store/onboarding-store";
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Button from "./common/button";
 
 export const SecurityStep = ({
-  data,
   onNext
 }: {
-  data: FormData['security'],
-  onNext: (security: FormData['security']) => void
+  onNext: (security: { password: string; confirmPassword: string; }) => void
 }) => {
-  const [password, setPassword] = useState(data.password);
-  const [confirmPassword, setConfirmPassword] = useState(data.confirmPassword);
+  const { data, setSecurity } = useOnboardingStore();
+  const [password, setPassword] = useState(data.security.password);
+  const [confirmPassword, setConfirmPassword] = useState(data.security.confirmPassword);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
 
+  // Update local state when store data changes
+  useEffect(() => {
+    setPassword(data.security.password);
+    setConfirmPassword(data.security.confirmPassword);
+  }, [data.security]);
 
   const handleNext = () => {
     if (!validatePassword(password)) {
@@ -30,6 +34,7 @@ export const SecurityStep = ({
       return;
     }
 
+    setSecurity({ password, confirmPassword });
     onNext({ password, confirmPassword });
   };
 

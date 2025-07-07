@@ -1,12 +1,13 @@
 import AuthHeader from '@/components/common/auth-header'
+import { PersonalDetailsStep } from '@/components/personal-detail-step'
+import { SecurityStep } from '@/components/security-step'
+import { ServiceTypeStep } from '@/components/service-type-step'
+import { TermsStep } from '@/components/terms-step'
+import { SignUpPayload } from '@/constants/types'
+import { useOnboardingStore } from '@/store/onboarding-store'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { PersonalDetailsStep } from '@/components/personal-detail-step'
-import { ServiceTypeStep } from '@/components/service-type-step'
-import { FormData, SignUpPayload } from '@/constants/types'
-import { SecurityStep } from '@/components/security-step'
-import { TermsStep } from '@/components/terms-step'
 
 import * as Device from "expo-device"
 
@@ -15,25 +16,9 @@ import useSignUpMutate from '@/hooks/mutation/useSignUpMutate'
 export default function ContinueSignUp() {
   const [currentStep, setCurrentStep] = useState(1);
   const { handleSignUp, isPending } = useSignUpMutate()
+  const { data, setServiceType, setSecurity, setTermsAccepted, resetOnboarding } = useOnboardingStore()
 
-  const [formData, setFormData] = useState<FormData>({
-    serviceType: null,
-    personalDetails: {
-      firstName: '',
-      lastName: '',
-    },
-    security: {
-      password: '',
-      confirmPassword: '',
-    },
-    termsAccepted: false,
-  });
-
-  const updateFormData = (step: number, data: Partial<FormData>) => {
-    setFormData(prev => ({
-      ...prev,
-      ...data
-    }));
+  const updateStep = (step: number) => {
     if (step < 4) {
       setCurrentStep(step + 1);
     }
@@ -43,39 +28,46 @@ export default function ContinueSignUp() {
     switch (currentStep) {
       case 1:
         return <ServiceTypeStep
-          onNext={(type) => updateFormData(1, { serviceType: type })}
+          onNext={(type) => {
+            setServiceType(type);
+            updateStep(1);
+          }}
         />;
       case 2:
         return <PersonalDetailsStep
-          data={formData.personalDetails}
-          onNext={(details) => updateFormData(2, { personalDetails: details })}
+          onNext={() => updateStep(2)}
         />;
       case 3:
         return <SecurityStep
-          data={formData.security}
-          onNext={(security) => updateFormData(3, { security })}
+          onNext={(security) => {
+            setSecurity(security);
+            updateStep(3);
+          }}
         />;
       case 4:
         return <TermsStep
           onSubmit={async (accepted) => {
-            const updatedFormData = {
-              ...formData,
-              termsAccepted: accepted
-            };
-            setFormData(updatedFormData);
+            setTermsAccepted(accepted);
 
             const payload: SignUpPayload = {
-              firstName: updatedFormData.personalDetails.firstName,
-              lastName: updatedFormData.personalDetails.lastName,
-              password: updatedFormData.security.password,
+              firstName: data.personalDetails.firstName,
+              lastName: data.personalDetails.lastName,
+              password: data.security.password,
               agreeTermsOfReference: Boolean(accepted).toString(),
               deviceId: Device.modelName,
-              userRole: updatedFormData.serviceType,
+              userRole: data.serviceType,
+              country: data.personalDetails.country,
             }
 
             console.log('payload', payload)
 
-            await handleSignUp(payload);
+            try {
+              await handleSignUp(payload);
+              // Clear onboarding data on successful signup
+              resetOnboarding();
+            } catch (error) {
+              console.error('Signup failed:', error);
+            }
           }}
           isPending={isPending}
         />;
@@ -83,7 +75,6 @@ export default function ContinueSignUp() {
         return null;
     }
   };
-
 
   return (
     <SafeAreaView className="flex-1 bg-white">

@@ -3,26 +3,33 @@ import Button from '@/components/common/button'
 import { SIGN_IN } from '@/constants/routes'
 import InitializeEmail from '@/hooks/mutation/initializeEmail'
 import { validateEmail } from '@/lib/helper'
+import { useOnboardingStore } from '@/store/onboarding-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function SignUp() {
-  const [email, setEmail] = useState("");
+  const { data, setEmail } = useOnboardingStore();
+  const [emailInput, setEmailInput] = useState(data.email);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const { handleInitializeEmail, isPending } = InitializeEmail();
 
+  // Update local state when store data changes
+  useEffect(() => {
+    setEmailInput(data.email);
+  }, [data.email]);
+
   const handleEmailChange = (text: string) => {
-    setEmail(text);
+    setEmailInput(text);
     setIsValidEmail(true);
     setErrorMessage("");
   };
 
   const handleContinue = async () => {
-    const isValid = validateEmail(email);
+    const isValid = validateEmail(emailInput);
     setIsValidEmail(isValid);
 
     if (!isValid) {
@@ -31,11 +38,14 @@ export default function SignUp() {
     }
 
     try {
+      // Store the email in onboarding store
+      setEmail(emailInput);
+
       // Store the email before making the API call
-      await AsyncStorage.setItem('verify_email', email);
+      await AsyncStorage.setItem('verify_email', emailInput);
       await AsyncStorage.setItem('flow_type', 'signup');
 
-      handleInitializeEmail(email);
+      handleInitializeEmail(emailInput);
     } catch (error: any) {
       console.log('Sign-up error:', error);
       setIsValidEmail(false);
@@ -45,7 +55,6 @@ export default function SignUp() {
 
   const handleSignIn = async () => {
     router.push(SIGN_IN);
-
   };
 
   return (
@@ -65,7 +74,7 @@ export default function SignUp() {
               className={`w-full h-14 border ${isValidEmail ? 'border-gray-200' : 'border-danger'} rounded-md px-4 text-base text-black`}
               placeholder="sample@gmail.com"
               placeholderTextColor="#CCCCCC"
-              value={email}
+              value={emailInput}
               onChangeText={handleEmailChange}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -87,7 +96,7 @@ export default function SignUp() {
           <View className="w-full px-6 mt-24">
             <Button
               type="submit"
-              disabled={isPending || !email}
+              disabled={isPending || !emailInput}
               loading={isPending}
               loadingText="Verifying email..."
               onPress={handleContinue}
