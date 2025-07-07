@@ -27,6 +27,7 @@ const useSignInMutate = () => {
               firstName: data?.data?.data?.firstName,
               lastName: data?.data?.data?.lastName,
               userRole: data?.data?.data?.role,
+              country: data?.data?.data?.country,
             }
           )
           queryClient.invalidateQueries({ queryKey: ["user"] })
