@@ -1,7 +1,7 @@
 import icons from "./icons";
 import images from "./images";
 import { ACCOUNT_PREFERENCE, ACCOUNT_SECURITY, PRIVACY_POLICY, PROFILE_INFORMATION, SUPPORT, TERMS_OF_SERVICES } from "./routes";
-import { Appointment, ServiceType, SettingItem, SlideItem } from "./types";
+import { ServiceType, SettingItem, SlideItem } from "./types";
 
 export const slides: SlideItem[] = [
   {
@@ -99,37 +99,6 @@ export const legalSettings: SettingItem[] = [
   },
 ]
 
-export const upcomingAppointments: Appointment[] = [
-  {
-    id: "1",
-    date: "Dec 4",
-    time: "6:30am",
-    serviceName: "Wig installation",
-    location: "XYZ Studios",
-    price: 10.5,
-  },
-]
-
-export const historyAppointments: Appointment[] = [
-  {
-    id: "2",
-    date: "Dec 4",
-    time: "6:30am",
-    serviceName: "Wig installation",
-    location: "XYZ Studios",
-    price: 10.5,
-    rating: 5.0,
-  },
-  {
-    id: "3",
-    date: "Dec 4",
-    time: "6:30am",
-    serviceName: "Wig installation",
-    location: "XYZ Studios",
-    price: 10.5,
-    rating: 5.0,
-  },
-]
 
 
 export const SERVICES: ServiceType[] = [
