@@ -14,6 +14,7 @@ export default function ProfileInformation() {
   const { data: userProfileDetails } = useGetUserProfileDetails()
   const { handleUpdateUserBio, isPending } = useUpdateUserBio()
 
+
   const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
 
   const [showBioModal, setShowBioModal] = useState(false);
