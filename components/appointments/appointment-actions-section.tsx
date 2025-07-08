@@ -44,12 +44,12 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
   isAcceptingBooking
 }) => {
   const [showAcceptModal, setShowAcceptModal] = useState(false);
-
+  console.log(appointment);
   return (
 
     <>
       {/* Accept booking for providers when status is PENDING */}
-      {isProvider && appointment.serviceStatus === 'PENDING' && (
+      {isProvider && appointment.serviceAppointmentStatus === 'PENDING' && (
         <>
           <View className="bg-white mb-6">
             <TouchableOpacity
@@ -75,8 +75,8 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
           />
         </>
       )}
-      {/* Mark as completed for providers when status is COMPLETED */}
-      {isProvider && appointment.serviceAppointmentStatus === 'COMPLETED' && (
+      {/* Mark as completed for providers when status is PENDING and appointment is ACCEPTED */}
+      {isProvider && appointment.serviceStatus === 'PENDING' && appointment.serviceAppointmentStatus === 'ACCEPT' && (
         <View className="bg-white mb-6">
           <TouchableOpacity
             className="flex-row items-center gap-4 py-4 border-b border-gray-200"

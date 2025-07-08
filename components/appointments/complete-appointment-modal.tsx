@@ -18,7 +18,7 @@ const CompleteAppointmentModal: React.FC<CompleteAppointmentModalProps> = ({ vis
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-end bg-black/40">
-        <SafeAreaView className="bg-white rounded-t-2xl p-6">
+        <SafeAreaView className="bg-white rounded-t-2xl p-6 mb-4">
           <Text className="text-lg font-bold mb-2 text-center">Complete Appointment</Text>
           <Text className="text-base text-gray-700 mb-6 text-center">
             Are you sure you want to mark this appointment as completed?

@@ -101,7 +101,7 @@ type Appointment = {
   price: number | null
   userId: string
   serviceStatus: 'PENDING' | 'COMPLETED' | 'CANCELED'
-  serviceAppointmentStatus: 'PENDING' | 'COMPLETED' | 'DECLINED'
+  serviceAppointmentStatus: 'PENDING' | 'ACCEPT' | 'DECLINED'
   chatRoomId: string | null
   userEmail: string | null
   latitude: string | null
