@@ -29,11 +29,6 @@ const validatePassword = (pass: string) => {
   return hasMinLength && hasLetter && hasNumber && hasSymbol;
 };
 
-const formatCurrency = (value: number | null | undefined) => {
-  if (value === null || value === undefined) return '$0.00';
-  return `$${value.toFixed(2)}`;
-};
-
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -84,5 +79,12 @@ function formatTime(dateString: string) {
   return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
-export { formatCurrency, formatDate, formatTime, formatTimeFromISO, getGreeting, mergeDateAndTimeToISO, useDebounce, validateEmail, validatePassword };
+function formatNumberWithCommas(value: number | string): string {
+  if (value === '' || value === null || value === undefined) return '';
+  const num = typeof value === 'number' ? value : parseFloat(value.replace(/,/g, ''));
+  if (isNaN(num)) return '';
+  return num.toLocaleString();
+}
+
+export { formatDate, formatNumberWithCommas, formatTime, formatTimeFromISO, getGreeting, useDebounce, validateEmail, validatePassword };
 
