@@ -6,9 +6,9 @@ import ProfileHeader from "@/components/common/profile-header";
 import Select from "@/components/common/select";
 import TextInput from "@/components/common/text-input";
 import { BookAppointmentPayload } from "@/constants/types";
+import { useCurrency } from '@/context/currency-context';
 import useBookAppointment from "@/hooks/mutation/useBookAppointment";
 import useGetServiceById from "@/hooks/query/useGetServiceById";
-import { mergeDateAndTimeToISO } from "@/lib/helper";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Image, Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -21,6 +21,7 @@ export default function ProductById() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: serviceData, isPending } = useGetServiceById(id as string);
   const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
+  const { format } = useCurrency();
 
   // Form state
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
@@ -53,6 +54,10 @@ export default function ProductById() {
 
   const service = serviceData?.data;
 
+  // Format prices using the service's currency
+  const formattedMinPrice = service ? format(service.minimumPrice) : '';
+  const formattedMaxPrice = service ? format(service.maximumPrice) : '';
+
   // Generate 24-hour time options
   const generate24HourOptions = () => {
     const options = [];
@@ -82,7 +87,8 @@ export default function ProductById() {
   const handleBookService = () => {
     // Format date as YYYY-MM-DD
     const dateString = date.toISOString().split('T')[0];
-    const isoString = mergeDateAndTimeToISO(dateString, time);
+    // Inline mergeDateAndTimeToISO logic:
+    const isoString = new Date(`${dateString}T${time}:00`).toISOString();
 
     const payload: BookAppointmentPayload = {
       additionalDetails: details,
@@ -117,7 +123,7 @@ export default function ProductById() {
           <View>
             <Text className="text-lg font-bold mb-1">{service?.serviceName || ''}</Text>
             <Text className="text-gray-500 mb-1">XYZ Studios</Text>
-            <Text className="text-gray-700 mb-1">${service?.minimumPrice} - ${service?.maximumPrice}</Text>
+            <Text className="text-gray-700 mb-1">{formattedMinPrice} - {formattedMaxPrice}</Text>
             <Text className="text-gray-600 mb-2">{service?.serviceDescription || 'No description provided.'}</Text>
             {/* Service type buttons */}
             <View className="flex-row mb-3">

@@ -3,6 +3,7 @@ import AppointmentInfoSection from "@/components/appointments/appointment-info-s
 import AppointmentStatusIndicator from "@/components/appointments/appointment-status-indicator";
 import CancelAppointmentModal from "@/components/appointments/cancel-appointment-modal";
 import CompleteAppointmentModal from "@/components/appointments/complete-appointment-modal";
+import IssueReportModal from "@/components/appointments/issue-report-modal";
 import ReviewSubmissionModal from "@/components/appointments/review-submission-modal";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
@@ -23,24 +24,30 @@ export default function AppointmentDetails() {
     showCancelModal,
     showCompleteModal,
     showReviewModal,
+    showReportModal,
     setShowCancelModal,
     setShowCompleteModal,
     setShowReviewModal,
+    setShowReportModal,
     isCancelling,
     isCompleting,
     isCreatingRating,
     isCreatingReview,
+    isReporting,
     handleReschedule,
     handleChat,
     handleMarkCompleted,
     handleShare,
     handleReport,
     handleSubmitReview,
+    handleSubmitReport,
     handlePayNow,
     handleCancel,
     handleReview,
     handleConfirmCancel,
     handleConfirmComplete,
+    handleAcceptBooking,
+    isAcceptingBooking,
   } = useAppointmentDetails();
 
   if (isPending) {
@@ -91,6 +98,8 @@ export default function AppointmentDetails() {
           onPayNow={handlePayNow}
           isCompleting={isCompleting}
           isMakingPayment={false}
+          onAcceptBooking={handleAcceptBooking}
+          isAcceptingBooking={isAcceptingBooking}
         />
       </ScrollView>
 
@@ -114,6 +123,13 @@ export default function AppointmentDetails() {
         onClose={() => setShowReviewModal(false)}
         onSubmit={handleSubmitReview}
         isLoading={isCreatingRating || isCreatingReview}
+      />
+
+      <IssueReportModal
+        visible={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onSubmit={handleSubmitReport}
+        isLoading={isReporting}
       />
     </SafeAreaView>
   );
