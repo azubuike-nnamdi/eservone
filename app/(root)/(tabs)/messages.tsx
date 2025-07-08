@@ -1,6 +1,6 @@
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
-import { AppointmentItem } from "@/components/messages/appointment-item";
+import AppointmentItem from "@/components/messages/appointment-item";
 import { Appointment } from "@/constants/types";
 import useGetAppointmentByUserId from "@/hooks/query/useGetAppointmentByUserId";
 import useGetProviderAppointments from "@/hooks/query/useGetProviderAppointments";
@@ -15,7 +15,7 @@ export default function Messages() {
 
   const user = useAuthStore((state) => state.user);
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
-  const { data: appointments, isPending, error } = hookResult();
+  const { data: appointments, isPending, error } = hookResult()
 
   // Filter to show only pending appointments
   const pendingAppointments = appointments?.data?.filter(
@@ -61,7 +61,7 @@ export default function Messages() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ProfileHeader title="Messages" showNotification={false} />
+      <ProfileHeader title="Messages" showNotification={false} showCurrency={true} showBackArrow={true} />
       <FlatList
         data={pendingAppointments}
         keyExtractor={(item) => item.id.toString()}

@@ -1,8 +1,8 @@
 import ProfileHeader from '@/components/common/profile-header'
 import GeneralSetting from '@/components/profile/general-setting'
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
-import icons from '@/constants/icons'
 import { BUSINESS_PROFILE, CERTIFICATES, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
+import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { useAuthStore } from '@/store/auth-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
@@ -12,7 +12,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Profile() {
   const { clearAuth, user, isAuthenticated } = useAuthStore()
+  const { data: userProfileDetails } = useGetUserProfileDetails();
 
+  const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
   const handleSignOut = async () => {
     clearAuth()
     await AsyncStorage.removeItem('requestId')
@@ -31,18 +33,18 @@ export default function Profile() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32 '>
-        <ProfileHeader title='My profile' showNotification={false} />
+        <ProfileHeader title='My profile' showNotification={false} showCurrency={true} showBackArrow={true} />
 
         <View className='px-7'>
           {/* User Profile Section */}
           <View className='flex-row items-center mt-6 mb-8'>
             <Image
-              source={icons.person}
+              source={{ uri: userProfileDetails?.data?.profilePicture }}
               className='size-16 rounded-full bg-gray-100'
             />
             <View className='ml-4'>
-              <Text className='text-lg font-rubikMedium'>{user?.firstName}</Text>
-              <Text className='text-gray-400'>{user?.email}</Text>
+              <Text className='text-lg font-rubikMedium'>{fullName}</Text>
+              <Text className='text-gray-400'>{userProfileDetails?.data?.emailAddress}</Text>
             </View>
           </View>
 

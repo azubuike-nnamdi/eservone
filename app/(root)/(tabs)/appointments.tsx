@@ -132,7 +132,7 @@ export default function Appointments() {
   if (isPending) {
     return (
       <SafeAreaView className='flex-1 bg-white'>
-        <ProfileHeader title='Appointments' showNotification={false} />
+        <ProfileHeader title='Appointments' showNotification={false} showCurrency={true} showBackArrow={true} />
         <View className="mt-6 px-7">
           <LoadingSkeleton count={6} />
         </View>
@@ -144,7 +144,7 @@ export default function Appointments() {
   if (error) {
     return (
       <SafeAreaView className='flex-1 bg-white'>
-        <ProfileHeader title='Appointments' showNotification={false} />
+        <ProfileHeader title='Appointments' showNotification={false} showCurrency={true} showBackArrow={true} />
         <View className="flex-1 justify-center items-center mt-20 px-4">
           <Text className="text-red-500 text-center text-lg font-semibold mb-2">
             Error Loading Appointments
@@ -159,7 +159,7 @@ export default function Appointments() {
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <ProfileHeader title='Appointments' showNotification={false} />
+      <ProfileHeader title='Appointments' showNotification={false} showCurrency={true} showBackArrow={true} />
 
       <FlatList
         data={flatListData}
