@@ -1,8 +1,9 @@
 import { Appointment } from "@/constants/types";
 import { useAuthStore } from "@/store/auth-store";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
+import useAcceptBooking from "./mutation/useAcceptBooking";
 import useCancelAppointment from "./mutation/useCancelAppointment";
 import useCompleteAppointment from "./mutation/useCompleteAppointment";
 import useCreateRating from "./mutation/useCreateRating";
@@ -13,12 +14,15 @@ import useGetProviderAppointments from "./query/useGetProviderAppointments";
 export const useAppointmentDetails = () => {
   const { id } = useLocalSearchParams();
   const user = useAuthStore((state) => state.user);
+  const router = useRouter();
 
   // State
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [isReporting, setIsReporting] = useState(false);
 
   // Hooks
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
@@ -27,6 +31,7 @@ export const useAppointmentDetails = () => {
   const { handleCompleteAppointment, isPending: isCompleting } = useCompleteAppointment();
   const { handleCreateRating, isPending: isCreatingRating } = useCreateRating();
   const { handleCreateRating: handleCreateReview, isPending: isCreatingReview } = useSubmitReview();
+  const { handleAcceptBooking: acceptBooking, isPending: isAcceptingBooking } = useAcceptBooking();
 
   // Effects
   useEffect(() => {
@@ -49,7 +54,12 @@ export const useAppointmentDetails = () => {
   };
 
   const handleChat = () => {
-    Alert.alert("Chat", "Open chat logic here");
+    // TODO: Use correct provider email if available in appointment object
+    if (appointment && appointment.chatRoomId && appointment.userEmail) {
+      router.push(`/message-room/${appointment.chatRoomId}?receiverEmail=${appointment.serviceProviderEmail}&userEmail=${appointment.userEmail}`);
+    } else {
+      Alert.alert("Chat", "Chat information is missing.");
+    }
   };
 
   const handleMarkCompleted = () => {
@@ -61,7 +71,7 @@ export const useAppointmentDetails = () => {
   };
 
   const handleReport = () => {
-    Alert.alert("Report Issue", "Report safety issue logic here");
+    setShowReportModal(true);
   };
 
   const handleSubmitReview = (rating: number, comment: string) => {
@@ -108,6 +118,22 @@ export const useAppointmentDetails = () => {
     }
   };
 
+  const handleAcceptBooking = () => {
+    if (appointment) {
+      acceptBooking({ serviceAppointmentId: appointment.id });
+    }
+  };
+
+  const handleSubmitReport = async (issueType: string, description: string) => {
+    setIsReporting(true);
+    // TODO: Implement actual report submission logic (API call)
+    setTimeout(() => {
+      setIsReporting(false);
+      setShowReportModal(false);
+      Alert.alert("Reported", "Your issue has been reported.");
+    }, 1200);
+  };
+
   return {
     // Data
     appointment,
@@ -128,12 +154,16 @@ export const useAppointmentDetails = () => {
     setShowCancelModal,
     setShowCompleteModal,
     setShowReviewModal,
+    showReportModal,
+    setShowReportModal,
+    isReporting,
 
     // Loading states
     isCancelling,
     isCompleting,
     isCreatingRating,
     isCreatingReview,
+    isAcceptingBooking,
 
     // Action handlers
     handleReschedule,
@@ -147,5 +177,7 @@ export const useAppointmentDetails = () => {
     handleReview,
     handleConfirmCancel,
     handleConfirmComplete,
+    handleAcceptBooking,
+    handleSubmitReport,
   };
 }; 
