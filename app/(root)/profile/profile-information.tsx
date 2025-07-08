@@ -1,19 +1,34 @@
+import UserBioModal from '@/components/appointments/user-bio-modal'
 import ProfileHeader from '@/components/common/profile-header'
+import useUpdateUserBio from '@/hooks/mutation/useUpdateUserBio'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { formatDate } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
 import { Feather } from '@expo/vector-icons'
-import React from 'react'
+import React, { useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileInformation() {
   const { user } = useAuthStore();
   const { data: userProfileDetails } = useGetUserProfileDetails()
-  console.log('user profile details', userProfileDetails?.data)
+  const { handleUpdateUserBio, isPending } = useUpdateUserBio()
 
   const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
 
+  const [showBioModal, setShowBioModal] = useState(false);
+  const [bio, setBio] = useState(userProfileDetails?.data?.userBio || "");
+
+  // Keep bio in sync with profile details
+  React.useEffect(() => {
+    setBio(userProfileDetails?.data?.userBio || "");
+  }, [userProfileDetails?.data?.userBio]);
+
+  const handleBioSubmit = (newBio: string) => {
+    setBio(newBio);
+    setShowBioModal(false);
+    handleUpdateUserBio({ userBio: newBio })
+  };
 
   const { firstName, lastName, email } = user || {};
   return (
@@ -39,10 +54,10 @@ export default function ProfileInformation() {
           <View className='mt-8'>
             <View className='flex-row justify-between items-center mb-2'>
               <Text className='text-xl font-semibold'>Bio</Text>
-              <Feather name="edit-2" size={15} color="#6B7280" />
+              <Feather name="edit-2" size={15} color="#6B7280" onPress={() => setShowBioModal(true)} />
             </View>
             <Text className='text-gray-600 leading-6'>
-              {userProfileDetails?.data?.userBio}
+              {bio}
             </Text>
           </View>
 
@@ -57,6 +72,13 @@ export default function ProfileInformation() {
         </View>
 
       </ScrollView>
+      <UserBioModal
+        visible={showBioModal}
+        onClose={() => setShowBioModal(false)}
+        onSubmit={handleBioSubmit}
+        initialBio={bio}
+        isLoading={isPending}
+      />
     </SafeAreaView>
   )
 }
