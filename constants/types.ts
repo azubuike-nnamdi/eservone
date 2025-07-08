@@ -41,6 +41,7 @@ type SignUpPayload = {
   agreeTermsOfReference: boolean | string;
   deviceId: string | null;
   userRole: 'SERVICE_PROVIDER' | 'SERVICE_SEEKER' | null;
+  country?: string;
 };
 
 type SignInPayload = {
@@ -57,6 +58,8 @@ type User = {
   firstName: string;
   lastName: string;
   userRole: string;
+  country?: string;
+  currency?: string;
 };
 
 type UserContextType = {
@@ -86,6 +89,7 @@ type ResetPasswordPayload = {
 
 type Appointment = {
   id: number
+  serviceName: string
   appointmentDate: string
   address: string | null
   costOfService: string
@@ -97,10 +101,12 @@ type Appointment = {
   price: number | null
   userId: string
   serviceStatus: 'PENDING' | 'COMPLETED' | 'CANCELED'
+  serviceAppointmentStatus: 'PENDING' | 'COMPLETED' | 'DECLINED'
   chatRoomId: string | null
   userEmail: string | null
   latitude: string | null
   longitude: string | null
+  serviceProviderEmail: string | null
 }
 
 type AppointmentType = 'upcoming' | 'history'
@@ -123,6 +129,7 @@ interface ProfileHeaderProps {
   title: string
   showBackArrow?: boolean
   showNotification?: boolean
+  showCurrency?: boolean
   onBackPress?: () => void
   onNotificationPress?: () => void
   rightComponent?: React.ReactNode
@@ -222,6 +229,10 @@ type createReviewPayload = {
   content: string
 }
 
+type AcceptBookingPayload = {
+  serviceAppointmentId: number
+}
+
 interface ServiceProviderInfoModalProps {
   visible: boolean;
   onClose: () => void;
@@ -275,5 +286,22 @@ type PaymentPayload = {
   paymentMethod: string;
 }
 
-export type { Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, CreateRatingPayload, createReviewPayload, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+type Country = {
+  code: string;
+  name: string;
+  currency: string;
+  currencySymbol: string;
+  exchangeRate: number; // Rate relative to USD
+}
+
+type CurrencyStore = {
+  selectedCountry: Country | null;
+  availableCountries: Country[];
+  setSelectedCountry: (country: Country) => void;
+  setAvailableCountries: (countries: Country[]) => void;
+  getCountryByCurrency: (currency: string) => Country | undefined;
+  formatCurrency: (amount: number, currency?: string) => string;
+}
+
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 
