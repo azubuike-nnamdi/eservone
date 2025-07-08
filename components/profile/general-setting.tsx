@@ -1,7 +1,7 @@
 import icons from '@/constants/icons'
+import { Href, router } from 'expo-router'
 import React from 'react'
 import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
-import { router, Href } from 'expo-router'
 
 interface GeneralSettingProps {
   icon?: ImageSourcePropType

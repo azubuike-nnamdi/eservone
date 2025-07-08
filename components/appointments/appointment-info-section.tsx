@@ -1,46 +1,51 @@
-import { Appointment } from "@/constants/types";
-import { formatDate, formatTime } from "@/lib/helper";
-import React from "react";
-import { Text, View } from "react-native";
+import { Appointment } from '@/constants/types';
+import { useCurrency } from '@/context/currency-context';
+import React from 'react';
+import { Text, View } from 'react-native';
 
-interface AppointmentInfoSectionProps {
-  appointment: Appointment;
-}
+export default function AppointmentInfoSection({ appointment }: { appointment: Appointment }) {
+  const { format } = useCurrency();
+  const formattedCost = format(parseFloat(appointment.costOfService));
 
-const AppointmentInfoSection: React.FC<AppointmentInfoSectionProps> = ({ appointment }) => {
   return (
-    <>
-      {/* Two-column info grid */}
-      <View className="flex-row justify-between mb-4">
-        <View style={{ flex: 1 }}>
-          <Text className="text-gray-400 text-xs mb-1">Date:</Text>
-          <Text className="text-lg font-bold mb-2">{formatDate(appointment.appointmentDate)}</Text>
-          <Text className="text-gray-400 text-xs mb-1">Service type:</Text>
-          <Text className="text-base text-black mb-2">Home service</Text>
-          <Text className="text-gray-400 text-xs mb-1">Customer address:</Text>
-          <Text className="text-base text-black mb-2">{appointment.address || 'N/A'}</Text>
-          <Text className="text-gray-400 text-xs mb-1">Buzz code:</Text>
-          <Text className="text-base text-black mb-2">{appointment.buzzCode}</Text>
-          <Text className="text-gray-400 text-xs mb-1">Upfront payment (%):</Text>
-          <Text className="text-base text-black mb-2">{appointment.upfrontPayment}</Text>
+    <View className="bg-white p-4 rounded-lg border border-gray-200 mb-4">
+      <Text className="text-lg font-semibold text-black mb-3">Appointment Details</Text>
+
+      <View className="space-y-2">
+        <View className="flex-row justify-between">
+          <Text className="text-gray-600">Date:</Text>
+          <Text className="text-black">{new Date(appointment.appointmentDate).toLocaleDateString()}</Text>
         </View>
-        <View style={{ flex: 1, marginLeft: 24 }}>
-          <Text className="text-gray-400 text-xs mb-1">Time:</Text>
-          <Text className="text-lg font-bold mb-2">{formatTime(appointment.appointmentDate)}</Text>
-          <Text className="text-gray-400 text-xs mb-1">Pets:</Text>
-          <Text className="text-base text-black mb-2">{appointment.hasPet ? 'Yes' : 'No'}</Text>
-          <Text className="text-gray-400 text-xs mb-1">Cost:</Text>
-          <Text className="text-base text-black mb-2">{appointment.costOfService}</Text>
+
+        <View className="flex-row justify-between">
+          <Text className="text-gray-600">Time:</Text>
+          <Text className="text-black">{new Date(appointment.appointmentDate).toLocaleTimeString()}</Text>
         </View>
+
+        <View className="flex-row justify-between">
+          <Text className="text-gray-600">Cost:</Text>
+          <Text className="text-black font-semibold">{formattedCost}</Text>
+        </View>
+
+        {appointment.address && (
+          <View className="flex-row justify-between">
+            <Text className="text-gray-600">Address:</Text>
+            <Text className="text-black flex-1 text-right">{appointment.address}</Text>
+          </View>
+        )}
+
+        <View className="flex-row justify-between">
+          <Text className="text-gray-600">Buzz Code:</Text>
+          <Text className="text-black">{appointment.buzzCode}</Text>
+        </View>
+
+        {appointment.additionalDetails && (
+          <View className="flex-row justify-between">
+            <Text className="text-gray-600">Additional Details:</Text>
+            <Text className="text-black flex-1 text-right">{appointment.additionalDetails}</Text>
+          </View>
+        )}
       </View>
-
-      {/* Additional info */}
-      <Text className="text-gray-400 text-xs mb-1">Additional information:</Text>
-      <Text className="text-base text-black mb-6">
-        {appointment.additionalDetails || 'N/A'}
-      </Text>
-    </>
-  );
-};
-
-export default AppointmentInfoSection; 
+    </View>
+  )
+} 

@@ -8,7 +8,7 @@ export default function Certificates() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <View className='flex-1'>
-        <ProfileHeader title='Industrial Certificates' showNotification={false} />
+        <ProfileHeader title='Industrial Certificates' showNotification={false} showBackArrow={true} />
         <CertificateLanding />
       </View>
     </SafeAreaView>

@@ -24,7 +24,12 @@ export default function ManageServicesDashboard() {
     router.push('/service-creation/create-service');
   };
 
-  const renderItem = ({ item }: { item: ServiceItem }) => <ServiceCard item={item} />;
+  const renderItem = ({ item }: { item: ServiceItem }) => (
+    <ServiceCard
+      item={item}
+      onPress={() => router.push(`/profile/edit-service/${item.id}`)}
+    />
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">

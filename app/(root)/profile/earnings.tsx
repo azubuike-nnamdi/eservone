@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function Earnings() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <ProfileHeader title='Earnings' showNotification={false} />
+      <ProfileHeader title='Earnings' showNotification={false} showBackArrow={true} />
       <EarningsDashboard />
     </SafeAreaView>
   )

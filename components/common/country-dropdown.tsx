@@ -1,11 +1,12 @@
-import countriesData from '@/data/countries.json';
+import { useGetAllCountries } from '@/hooks/query/useGetAllCountries';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface Country {
-  name: string;
-  code: string;
+  id: number;
+  country: string;
+  currency: string;
 }
 
 interface CountryDropdownProps {
@@ -25,20 +26,23 @@ export default function CountryDropdown({
 }: CountryDropdownProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { data: countriesResponse, isPending } = useGetAllCountries();
+
+  const countries = countriesResponse?.data || [];
 
   const filteredCountries = useMemo(() => {
     if (!searchQuery.trim()) {
-      return countriesData;
+      return countries;
     }
-    return countriesData.filter(country =>
-      country.name.toLowerCase().includes(searchQuery.toLowerCase())
+    return countries.filter((country: Country) =>
+      country.country.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, countries]);
 
-  const selectedCountry = countriesData.find(country => country.name === value);
+  const selectedCountry = countries.find((country: Country) => country.country === value);
 
   const handleSelect = (country: Country) => {
-    onSelect(country.name);
+    onSelect(country.country);
     setIsVisible(false);
     setSearchQuery('');
   };
@@ -48,7 +52,7 @@ export default function CountryDropdown({
       className="py-3 px-4 border-b border-gray-100"
       onPress={() => handleSelect(item)}
     >
-      <Text className="text-base text-gray-800">{item.name}</Text>
+      <Text className="text-base text-gray-800">{item.country}</Text>
     </TouchableOpacity>
   );
 
@@ -61,9 +65,10 @@ export default function CountryDropdown({
       <TouchableOpacity
         className={`w-full h-14 border ${error ? 'border-danger' : 'border-gray-200'} rounded-md px-4 flex-row items-center justify-between`}
         onPress={() => setIsVisible(true)}
+        disabled={isPending}
       >
         <Text className={`text-base ${selectedCountry ? 'text-black' : 'text-gray-400'}`}>
-          {selectedCountry ? selectedCountry.name : placeholder}
+          {selectedCountry ? selectedCountry.country : isPending ? 'Loading countries...' : placeholder}
         </Text>
         <Ionicons name="chevron-down" size={20} color="#666" />
       </TouchableOpacity>
@@ -107,7 +112,7 @@ export default function CountryDropdown({
             <FlatList
               data={filteredCountries}
               renderItem={renderCountryItem}
-              keyExtractor={(item) => item.code}
+              keyExtractor={(item) => item.id.toString()}
               showsVerticalScrollIndicator={false}
               className="max-h-96"
             />

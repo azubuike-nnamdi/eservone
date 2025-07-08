@@ -15,6 +15,7 @@ export default function CertificateLanding() {
         showsVerticalScrollIndicator={false}
         contentContainerClassName='flex-1 px-7 justify-center'
       >
+
         <View className="flex-col items-center justify-center px-4">
           <Image source={icons.certProfileIcon} className="w-20 h-20 mb-4" />
           <Text className="text-2xl font-bold text-center mb-4">You haven't added any certificates</Text>

@@ -1,7 +1,8 @@
 import icons from "@/constants/icons";
 import { Appointment } from "@/constants/types";
-import React from "react";
+import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import AcceptBookingModal from "./accept-booking-modal";
 
 interface AppointmentActionsSectionProps {
   appointment: Appointment;
@@ -19,6 +20,8 @@ interface AppointmentActionsSectionProps {
   onPayNow: () => void;
   isCompleting: boolean;
   isMakingPayment: boolean;
+  onAcceptBooking?: () => void;
+  isAcceptingBooking?: boolean;
 }
 
 const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
@@ -36,19 +39,67 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
   onReview,
   onPayNow,
   isCompleting,
-  isMakingPayment
+  isMakingPayment,
+  onAcceptBooking,
+  isAcceptingBooking
 }) => {
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
+
   return (
+
     <>
+      {/* Accept booking for providers when status is PENDING */}
+      {isProvider && appointment.serviceStatus === 'PENDING' && (
+        <>
+          <View className="bg-white mb-6">
+            <TouchableOpacity
+              className="flex-row items-center gap-4 py-4 border-b border-gray-200"
+              onPress={() => setShowAcceptModal(true)}
+              disabled={isAcceptingBooking}
+            >
+              <Image source={icons.markCompletedIcon} className="w-5 h-5" />
+              <Text className="text-base text-black">
+                {isAcceptingBooking ? 'Accepting booking...' : 'Accept booking'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {/* Accept Booking Modal */}
+          <AcceptBookingModal
+            visible={showAcceptModal}
+            onClose={() => setShowAcceptModal(false)}
+            onConfirm={() => {
+              setShowAcceptModal(false);
+              onAcceptBooking && onAcceptBooking();
+            }}
+            isLoading={isAcceptingBooking}
+          />
+        </>
+      )}
+      {/* Mark as completed for providers when status is COMPLETED */}
+      {isProvider && appointment.serviceAppointmentStatus === 'COMPLETED' && (
+        <View className="bg-white mb-6">
+          <TouchableOpacity
+            className="flex-row items-center gap-4 py-4 border-b border-gray-200"
+            onPress={onMarkCompleted}
+            disabled={isCompleting}
+          >
+            <Image source={icons.markCompletedIcon} className="w-5 h-5" />
+            <Text className="text-base text-black">
+              {isCompleting ? 'Marking as completed...' : 'Mark service as completed'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Actions - Only show for pending appointments */}
       {isAppointmentPending && (
         <View className="bg-white mb-6">
-          {isSeeker && (
+          {/* {isSeeker && (
             <TouchableOpacity className="flex-row items-center gap-4 py-4 border-b border-gray-200" onPress={onReschedule}>
               <Image source={icons.rescheduleIcon} className="w-5 h-5" />
               <Text className="text-base text-black">Reschedule appointment</Text>
             </TouchableOpacity>
-          )}
+          )} */}
 
           <TouchableOpacity className="flex-row items-center gap-4 py-4 border-b border-gray-200" onPress={onChat}>
             <Image source={icons.chatIcon} className="w-5 h-5" />
@@ -57,7 +108,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
             </Text>
           </TouchableOpacity>
 
-          {isProvider && (
+          {/* {isProvider && (
             <TouchableOpacity
               className="flex-row items-center gap-4 py-4 border-b border-gray-200"
               onPress={onMarkCompleted}
@@ -68,7 +119,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
                 {isCompleting ? 'Marking as completed...' : 'Mark service as completed'}
               </Text>
             </TouchableOpacity>
-          )}
+          )} */}
 
           <TouchableOpacity className="flex-row items-center gap-4 py-4 border-b border-gray-200" onPress={onShare}>
             <Image source={icons.shareIcon} className="w-5 h-5" />

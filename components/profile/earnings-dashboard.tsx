@@ -1,131 +1,78 @@
-import icons from "@/constants/icons";
-import { Ionicons } from '@expo/vector-icons'; // Assuming Ionicons are used for user/briefcase icons
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { useCurrency } from '@/context/currency-context';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import React from 'react';
+import { FlatList, Text, View } from 'react-native';
 
-// Define the type for an earning item
-interface EarningItem {
-  id: string;
+interface Transaction {
   amount: number;
-  currency: string;
-  type: 'Initial payment' | 'Balance' | 'Full payment'; // Example types
-  serviceName: string;
-  customerName: string;
-  date: string; // Keep as string for simplicity, could use Date object
+  type: string;
+  service: string;
+  user: string;
+  date: string;
 }
 
-// Dummy Data for Earnings History
-const DUMMY_EARNINGS: EarningItem[] = [
-  {
-    id: '1',
-    amount: 5000,
-    currency: '₦', // Nigerian Naira symbol
-    type: 'Initial payment',
-    serviceName: 'Wig installation',
-    customerName: 'John Doe',
-    date: '24th Jan 2049',
-  },
-  {
-    id: '2',
-    amount: 50000,
-    currency: '₦',
-    type: 'Balance',
-    serviceName: 'Wig installation',
-    customerName: 'John Doe',
-    date: '24th Jan 2049',
-  },
-  {
-    id: '3',
-    amount: 50000,
-    currency: '₦',
-    type: 'Balance',
-    serviceName: 'Wig installation',
-    customerName: 'John Doe',
-    date: '24th Jan 2049',
-  },
-  {
-    id: '4',
-    amount: 50000,
-    currency: '₦',
-    type: 'Balance',
-    serviceName: 'Wig installation',
-    customerName: 'John Doe',
-    date: '24th Jan 2049',
-  },
-  // Add more dummy items if needed
+const walletBalance = 23000;
+const lastPaymentDate = '2024-08-24';
+
+const transactions: Transaction[] = [
+  { amount: 5000, type: 'Initial payment', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
+  { amount: 50000, type: 'Balance', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
+  { amount: 50000, type: 'Balance', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
+  { amount: 50000, type: 'Balance', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
 ];
 
-// --- Earning Item Component ---
-const EarningItemCard = ({ item }: { item: EarningItem }) => {
-  // Format amount with commas
-  const formattedAmount = item.amount.toLocaleString('en-US');
-
-  return (
-    <View className="mb-6 border-b border-gray-100 pb-4">
-      <View className="flex-row justify-between items-start mb-2">
-        <View>
-          <Text className="text-lg font-rubikMedium text-gray-800">
-            {item.currency}{formattedAmount} - <Text className="text-gray-500 font-rubikRegular">[{item.type}]</Text>
-          </Text>
-        </View>
-        <Text className="text-xs font-rubikRegular text-gray-400">{item.date}</Text>
-      </View>
-      <View className="flex-row items-center mb-1">
-        <Ionicons name="briefcase-outline" size={16} color="#9CA3AF" style={{ marginRight: 6 }} />
-        <Text className="text-sm text-gray-600 font-rubikRegular">{item.serviceName}</Text>
-      </View>
-      <View className="flex-row items-center">
-        <Ionicons name="person-outline" size={16} color="#9CA3AF" style={{ marginRight: 6 }} />
-        <Text className="text-sm text-gray-600 font-rubikRegular">{item.customerName}</Text>
-      </View>
-    </View>
-  );
-};
-
-// --- Header Component for FlatList ---
-const ListHeader = () => (
-  <View>
-    {/* Wallet Balance Card */}
-    <View className="flex-row items-center justify-between p-8 bg-[#ECECF5] rounded-lg mb-6">
-      <View className="">
-        <Text className="text-md font-normal text-[#3E3F93]">EserveOne Wallet Balance:</Text>
-        {/* TODO: Replace KES 10,000 with actual data */}
-        <Text className="text-2xl py-2 font-bold text-[#3E3F93]">₦23,000.00</Text>
-        <View className="flex-row items-center gap-2">
-          <Text className="text-md font-semibold text-[#3E3F93]/50">Last payment received:</Text>
-          {/* TODO: Replace date with actual data */}
-          <Text className="text-md font-semibold text-[#3E3F93]">24th Aug, 2024</Text>
-        </View>
-      </View>
-      <View>
-        <Image source={icons.rightArrow} className="w-6 h-6" />
-      </View>
-    </View>
-
-    {/* Earnings History Title */}
-    <Text className="text-lg font-rubikMedium text-black mb-4">Earnings history:</Text>
-  </View>
-);
-
-export default function EarningsDashboard() {
-  return (
-    <FlatList
-      className="flex-1 bg-white"
-      data={DUMMY_EARNINGS}
-      renderItem={({ item }) => <EarningItemCard item={item} />}
-      keyExtractor={(item) => item.id}
-      ListHeaderComponent={ListHeader} // Use the header component
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.listContentContainer} // Apply padding via style
-    // ListFooterComponent={<View style={{ height: 20 }} />} // Optional: Add space at the bottom
-    />
-  )
+function formatDate(date: string) {
+  const d = new Date(date);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-// Styles for FlatList padding
-const styles = StyleSheet.create({
-  listContentContainer: {
-    paddingHorizontal: 24, // Corresponds to p-6
-    paddingTop: 24,      // Corresponds to p-6
-    paddingBottom: 48,   // Add extra padding at the bottom if needed
-  }
-}); 
+export default function EarningsDashboard() {
+  const { format, symbol } = useCurrency();
+
+  return (
+    <View className="flex-1 bg-white">
+
+
+      {/* Wallet Card */}
+      <View className="bg-[#ECECF5] mx-3 rounded-lg mt-4">
+        <View className="bg-primary-50 rounded-xl p-4 shadow-sm relative">
+          <Text className="text-sm text-primary-900 mb-1"> Wallet Balance:</Text>
+          <View className="flex-row items-center justify-between">
+            <Text className="text-2xl font-bold text-primary-900">{symbol}{walletBalance.toLocaleString()}</Text>
+            <Ionicons name="chevron-forward" size={24} color="#7C6AED" />
+          </View>
+          <Text className="text-xs text-primary-300 mt-2 ">Last payment received: <Text className="font-semibold text-primary-600">24th Aug, 2024</Text></Text>
+        </View>
+      </View>
+
+      {/* Earnings History */}
+      <View className="px-4 mt-6 flex-1">
+        <Text className="font-bold text-base mb-3">Earnings history:</Text>
+        <FlatList
+          data={transactions}
+          keyExtractor={(_, idx) => idx.toString()}
+          ItemSeparatorComponent={() => <View className="h-px bg-gray-200 my-2" />}
+          renderItem={({ item }) => (
+            <View className="mb-2">
+              <View className="flex-row justify-between items-center">
+                <Text className="font-bold text-black text-base">
+                  {symbol}{item.amount.toLocaleString()} <Text className="font-normal text-gray-400 text-sm">- [ {item.type} ]</Text>
+                </Text>
+                <Text className="text-gray-400 text-xs">{formatDate(item.date)}</Text>
+              </View>
+              <View className="flex-row items-center mt-1">
+                <MaterialIcons name="work" size={16} color="#A3A3A3" />
+                <Text className="text-gray-500 text-sm ml-2">{item.service}</Text>
+              </View>
+              <View className="flex-row items-center mt-1">
+                <Ionicons name="person" size={16} color="#A3A3A3" />
+                <Text className="text-gray-500 text-sm ml-2">{item.user}</Text>
+              </View>
+            </View>
+          )}
+          ListFooterComponent={<View style={{ height: 24 }} />}
+        />
+      </View>
+    </View>
+  )
+} 

@@ -1,4 +1,6 @@
 import ProfileHeader from '@/components/common/profile-header'
+import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
+import { formatDate } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
 import { Feather } from '@expo/vector-icons'
 import React from 'react'
@@ -7,13 +9,17 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileInformation() {
   const { user } = useAuthStore();
+  const { data: userProfileDetails } = useGetUserProfileDetails()
+  console.log('user profile details', userProfileDetails?.data)
+
+  const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
 
 
   const { firstName, lastName, email } = user || {};
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName=''>
-        <ProfileHeader title='Profile information' showNotification={false} />
+        <ProfileHeader title='Profile information' showNotification={false} showBackArrow={true} />
 
         <View className='px-7'>
           {/* Profile Picture and Basic Info */}
@@ -21,11 +27,11 @@ export default function ProfileInformation() {
             <View className='w-24 h-24 rounded-full bg-gray-100 items-center justify-center mb-4'>
               <Feather name="user" size={40} color="#6B7280" />
             </View>
-            <Text className='text-2xl font-semibold'>{firstName} {lastName}</Text>
+            <Text className='text-2xl font-semibold'>{fullName}</Text>
             <View className='flex-row items-center mt-2'>
-              <Text className='text-gray-600'>{email}</Text>
+              <Text className='text-gray-600'>{userProfileDetails?.data?.emailAddress}</Text>
               <Text className='text-gray-400 mx-2'>•</Text>
-              <Text className='text-gray-600'>Joined 24th August, 2032</Text>
+              <Text className='text-gray-600'>Joined {formatDate(userProfileDetails?.data?.dateCreated)}</Text>
             </View>
           </View>
 
@@ -36,7 +42,7 @@ export default function ProfileInformation() {
               <Feather name="edit-2" size={15} color="#6B7280" />
             </View>
             <Text className='text-gray-600 leading-6'>
-              As a passionate hairstylist with a keen eye for trends and techniques, I thrive on transforming looks and boosting confidence. With a love for helping clients express their individuality, I offer personalized styles that cater to each person's unique hair type and preferences. I believe in the magic of collaboration and am always excited to work with fellow creatives and clients to bring their hair dreams to life. Let's team up and make your hair vision a reality!
+              {userProfileDetails?.data?.userBio}
             </Text>
           </View>
 
@@ -46,7 +52,7 @@ export default function ProfileInformation() {
               <Text className='text-xl font-semibold'>Home address</Text>
               <Feather name="edit-2" size={15} color="#6B7280" />
             </View>
-            <Text className='text-gray-600'>456 Maple Avenue, Toronto, ON, M5A 1A1, Canada</Text>
+            <Text className='text-gray-600'>{userProfileDetails?.data?.address}</Text>
           </View>
         </View>
 

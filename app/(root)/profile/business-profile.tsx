@@ -7,7 +7,7 @@ export default function BusinessProfile() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName=''>
-        <ProfileHeader title='Business profile' showNotification={false} />
+        <ProfileHeader title='Business profile' showNotification={false} showBackArrow={true} />
       </ScrollView>
     </SafeAreaView>
   )

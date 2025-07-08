@@ -1,22 +1,33 @@
-import icons from '@/constants/icons'
-import { ProfileHeaderProps } from '@/constants/types'
-import { useNavigation } from '@react-navigation/native'
-import { useRouter } from 'expo-router'
+import { useCurrency } from '@/context/currency-context'
+import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
+import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
 import React from 'react'
-import { Image, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 
+interface ProfileHeaderProps {
+  title: string
+  showBackArrow?: boolean
+  showNotification?: boolean
+  showCurrency?: boolean
+  onBackPress?: () => void
+  onNotificationPress?: () => void
+  rightComponent?: React.ReactNode
+  backDestination?: string
+}
 
 export default function ProfileHeader({
   title,
   showBackArrow = true,
-  showNotification = true,
+  showNotification = false,
+  showCurrency = true,
   onBackPress,
   onNotificationPress,
   rightComponent,
   backDestination
 }: ProfileHeaderProps) {
-  const navigation = useNavigation()
-  const router = useRouter()
+  const { data: userProfileDetails } = useGetUserProfileDetails()
+  const { currency } = useCurrency()
 
   const handleBackPress = () => {
     if (onBackPress) {
@@ -24,31 +35,38 @@ export default function ProfileHeader({
     } else if (backDestination) {
       router.push(backDestination as any)
     } else {
-      navigation.goBack()
+      router.back()
     }
   }
 
   return (
-    <View>
-      <View className='flex flex-row justify-between items-center mt-7 px-7'>
-        <View className='flex flex-row gap-3 items-center'>
-          {showBackArrow && (
-            <TouchableOpacity onPress={handleBackPress}>
-              <Image source={icons.backArrow2} className='size-5' />
-            </TouchableOpacity>
-          )}
-          <Text className='text-xl font-bold text-black-300'>{title}</Text>
-        </View>
-
-        {rightComponent || (
-          showNotification && (
-            <TouchableOpacity onPress={onNotificationPress}>
-              <Image source={icons.bell} className='size-5' />
-            </TouchableOpacity>
-          )
+    <View className="flex-row items-center justify-between py-4 px-5 border-b border-gray-200">
+      {/* Left Section */}
+      <View className="flex-row items-center flex-1">
+        {showBackArrow && (
+          <TouchableOpacity onPress={handleBackPress} className="mr-3">
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
         )}
+        <Text className="text-xl font-semibold text-black flex-1">{title}</Text>
       </View>
-      <View className='border-b border-gray-100 mt-4' />
+
+      {/* Right Section */}
+      <View className="flex-row items-center">
+        {showCurrency && currency && (
+          <View className="mr-4">
+            <Text className="text-sm p-1 rounded-md text-black bg-slate-300">{currency}</Text>
+          </View>
+        )}
+
+        {showNotification && (
+          <TouchableOpacity onPress={onNotificationPress} className="mr-4">
+            <Ionicons name="notifications-outline" size={24} color="#000" />
+          </TouchableOpacity>
+        )}
+
+        {rightComponent}
+      </View>
     </View>
   )
 }

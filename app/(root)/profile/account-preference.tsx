@@ -8,7 +8,7 @@ export default function AccountPreference() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName=''>
-        <ProfileHeader title='Account preferences' showNotification={false} />
+        <ProfileHeader title='Account preferences' showNotification={false} showBackArrow={true} />
 
         <View className='px-7'>
           <PreferencesScreen />
