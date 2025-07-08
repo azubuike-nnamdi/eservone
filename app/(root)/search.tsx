@@ -2,6 +2,7 @@ import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
 import SearchBar from "@/components/common/search-bar";
 import SeekerServiceCard from "@/components/services/seeker-service-card";
+import { useCurrency } from '@/context/currency-context';
 import useSearchServices from "@/hooks/query/useSearchServices";
 import { useDebounce } from "@/lib/helper";
 import { useRecentSearchesStore } from "@/store/recent-searches-store";
@@ -14,6 +15,7 @@ export default function Search() {
   const debouncedSearchQuery = useDebounce(searchQuery.toLowerCase(), 500);
   const router = useRouter();
   const addRecentSearch = useRecentSearchesStore((s) => s.addSearch);
+  const { format } = useCurrency();
   // const recentSearches = useRecentSearchesStore((s) => s.recent);
   // const clearRecent = useRecentSearchesStore((s) => s.clear);
   // const { data, isPending, error } = useGetAllServices();
@@ -21,6 +23,8 @@ export default function Search() {
   // Use "all" as default for API if search query is empty
   const apiSearchQuery = searchQuery.trim() ? debouncedSearchQuery : 'all';
   const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(apiSearchQuery);
+
+  console.log(searchData)
 
   const services = searchData?.data;
 
@@ -50,15 +54,22 @@ export default function Search() {
       <View className="flex-1 ">
         <FlatList
           data={services}
-          renderItem={({ item }) => (
-            <SeekerServiceCard
-              {...item}
-              title={item.serviceName}
-              studio={item.studioName || "XYZ Studios"}
-              priceRange={`$${item.minimumPrice} - $${item.maximumPrice}`}
-              onPress={() => handleServicePress(item.id.toString())}
-            />
-          )}
+          renderItem={({ item }) => {
+            const formattedMinPrice = format(item.minimumPrice);
+            const formattedMaxPrice = format(item.maximumPrice);
+
+            return (
+              <SeekerServiceCard
+                {...item}
+                title={item.serviceName}
+                serviceDeliveryType={item.serviceDeliveryType}
+                studio={item.studioName || "XYZ Studios"}
+                priceRange={`${formattedMinPrice} - ${formattedMaxPrice}`}
+                currency={item.currency}
+                onPress={() => handleServicePress(item.id.toString())}
+              />
+            );
+          }}
           keyExtractor={(item) => item.id.toString()}
           className="px-3 w-full"
 
