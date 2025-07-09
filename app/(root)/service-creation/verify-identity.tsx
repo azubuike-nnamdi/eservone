@@ -130,7 +130,7 @@ export default function VerifyIdentity() {
           <View className='px-7 my-5 items-center'>
             <Text className='text-gray-700 text-md font-medium mb-2'>Verify Identity</Text>
             <Text className='text-gray-700 text-sm font-rubikRegular text-center px-7'>
-              Verifying your identity increases your chances of getting a job. It&apos;s a way to show that you&apos;re trusted EserveOne service provider.
+              Verifying your identity increases your chances of getting a job. It&apos;s a way to show that you&apos;re trusted eservone service provider.
             </Text>
           </View>
 
@@ -174,7 +174,7 @@ export default function VerifyIdentity() {
             </TouchableOpacity>
             <Text className='text-primary-500 font-rubikMedium text-base'>Upload a valid means of Identification</Text>
             <Text className='text-center text-gray-500 text-sm mt-1'>
-              The details on your means of ID must match the personal details on your EserveOne account
+              The details on your means of ID must match the personal details on your eservone account
             </Text>
           </View>
 

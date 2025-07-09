@@ -1,7 +1,7 @@
 
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-import { View, Text, TouchableOpacity, Linking } from "react-native";
+import { Linking, Text, TouchableOpacity, View } from "react-native";
 
 export default function ProfileSupport() {
 
@@ -26,7 +26,7 @@ export default function ProfileSupport() {
 
       {/* Description */}
       <Text className="text-base text-gray-500 mb-3">
-        At EserveOne, we’re committed to providing you with the best possible experience. If you have any questions, concerns, or need assistance, our support team is just a message or call away.
+        At eservone, we’re committed to providing you with the best possible experience. If you have any questions, concerns, or need assistance, our support team is just a message or call away.
       </Text>
 
       {/* Support Options */}

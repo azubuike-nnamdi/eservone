@@ -1,16 +1,16 @@
 {
    "expo": {
-      "name": "eserveone",
-      "slug": "eserveone",
+      "name": "eservone",
+      "slug": "eservone",
       "version": "1.0.0",
       "orientation": "portrait",
       "icon": "./assets/images/icon.png",
-      "scheme": "eserveone",
+      "scheme": "eservone",
       "userInterfaceStyle": "automatic",
       "newArchEnabled": true,
       "ios": {
          "supportsTablet": true,
-         "bundleIdentifier": "com.nnamdi.azubuike.eserveone",
+         "bundleIdentifier": "com.nnamdi.azubuike.eservone",
          "infoPlist": {
             "ITSAppUsesNonExemptEncryption": false
          }
@@ -20,7 +20,7 @@
             "foregroundImage": "./assets/images/adaptive-icon.png",
             "backgroundColor": "#ffffff"
          },
-         "package": "com.nnamdi.azubuike.eserveone"
+         "package": "com.nnamdi.azubuike.eservone"
       },
       "web": {
          "bundler": "metro",
