@@ -1,21 +1,23 @@
 {
-  "cli": {
-    "version": ">= 15.0.11",
-    "appVersionSource": "remote"
-  },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "distribution": "internal"
-    },
-    "production": {
-      "autoIncrement": true
-    }
-  },
-  "submit": {
-    "production": {}
-  }
+   "cli": {
+      "version": ">= 15.0.11",
+      "appVersionSource": "remote"
+   },
+   "build": {
+      "development": {
+         "developmentClient": true,
+         "distribution": "internal",
+         "autoIncrement": "buildNumber"
+      },
+      "preview": {
+         "distribution": "internal",
+         "autoIncrement": "buildNumber"
+      },
+      "production": {
+         "autoIncrement": "buildNumber"
+      }
+   },
+   "submit": {
+      "production": {}
+   }
 }

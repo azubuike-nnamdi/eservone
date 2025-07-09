@@ -3,6 +3,9 @@
       "name": "eservone",
       "slug": "eservone",
       "version": "1.0.0",
+      "runtimeVersion": {
+         "policy": "appVersion"
+      },
       "orientation": "portrait",
       "icon": "./assets/images/icon.png",
       "scheme": "eservone",
@@ -48,7 +51,7 @@
             "origin": false
          },
          "eas": {
-            "projectId": "5a23da15-ecd6-44ea-87bf-d7070423d8d6"
+            "projectId": "7eda3ddb-757f-4432-bc54-cc5356be0314"
          }
       }
    }
