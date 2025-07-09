@@ -7,14 +7,14 @@
       "development": {
          "developmentClient": true,
          "distribution": "internal",
-         "autoIncrement": "buildNumber"
+         "autoIncrement": true
       },
       "preview": {
          "distribution": "internal",
-         "autoIncrement": "buildNumber"
+         "autoIncrement": true
       },
       "production": {
-         "autoIncrement": "buildNumber"
+         "autoIncrement": true
       }
    },
    "submit": {
