@@ -4,7 +4,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useSignupStore } from "@/store/signup-store";
 import axios from "axios";
 
-export const baseURL = process.env.EXPO_PUBLIC_API_URL;
+export const baseURL = process.env.EXPO_PUBLIC_API_URL || "https://api.eservone.com";
 export const chatBaseURL = "https://chat.eservone.com"; // or from env
 
 const api = axios.create({
