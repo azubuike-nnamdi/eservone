@@ -19,6 +19,48 @@ type FlatListData = {
   onPress?: (appointment: Appointment) => void;
 };
 
+// Helper to section appointments
+function sectionAppointments(appointments: Appointment[] = []) {
+  const upcoming: Appointment[] = [];
+  const history: Appointment[] = [];
+  appointments.forEach((appointment) => {
+    if (appointment.serviceStatus === 'PENDING') {
+      upcoming.push(appointment);
+    } else if (["COMPLETED", "CANCELED"].includes(appointment.serviceStatus)) {
+      history.push(appointment);
+    }
+  });
+  return { upcoming, history };
+}
+
+// Helper to build FlatList data
+function buildFlatListData(
+  upcoming: Appointment[],
+  history: Appointment[],
+  onPress: (appointment: Appointment) => void
+): FlatListData[] {
+  const data: FlatListData[] = [];
+  if (upcoming.length) {
+    data.push({ type: 'section' as const, title: 'Upcoming', appointmentType: 'upcoming' });
+    data.push(...upcoming.map((appointment) => ({
+      type: 'appointment' as const,
+      appointmentType: 'upcoming' as const,
+      appointment,
+      onPress,
+    })));
+  }
+  if (history.length) {
+    data.push({ type: 'section' as const, title: 'History', appointmentType: 'history' });
+    data.push(...history.map((appointment) => ({
+      type: 'appointment' as const,
+      appointmentType: 'history' as const,
+      appointment,
+      onPress,
+    })));
+  }
+  return data;
+}
+
 export default function Appointments() {
 
   const user = useAuthStore((state) => state.user);
@@ -26,86 +68,29 @@ export default function Appointments() {
   const { data: appointments, isPending, error } = hookResult();
   const router = useRouter();
 
-  // Section appointments based on status
-  const { upcomingAppointments, historyAppointments } = useMemo(() => {
-    if (!appointments?.data) {
-      return { upcomingAppointments: [], historyAppointments: [] };
-    }
+  const handleAppointmentPress = useCallback(
+    (appointment: Appointment) => router.push(`/appointments/${appointment.id}`),
+    [router]
+  );
 
-    const upcoming: Appointment[] = [];
-    const history: Appointment[] = [];
+  const { upcoming, history } = useMemo(
+    () => sectionAppointments(appointments?.data),
+    [appointments?.data]
+  );
 
-    appointments.data.forEach((appointment: Appointment) => {
-      if (appointment.serviceStatus === 'PENDING') {
-        upcoming.push(appointment);
-      } else if (appointment.serviceStatus === 'COMPLETED' || appointment.serviceStatus === 'CANCELED') {
-        history.push(appointment);
-      }
-    });
-
-    return { upcomingAppointments: upcoming, historyAppointments: history };
-  }, [appointments?.data]);
-
-  const handleUpcomingAppointmentPress = useCallback((appointment: Appointment) => {
-    router.push(`/appointments/${appointment.id}`);
-  }, [router]);
-
-  const handleHistoryAppointmentPress = useCallback((appointment: Appointment) => {
-    router.push(`/appointments/${appointment.id}`);
-  }, [router]);
-
-  // Create FlatList data with sections and appointments
-  const flatListData: FlatListData[] = useMemo(() => {
-    const data: FlatListData[] = [];
-
-    // Add upcoming section if there are upcoming appointments
-    if (upcomingAppointments.length > 0) {
-      data.push({
-        type: 'section',
-        title: 'Upcoming',
-        appointmentType: 'upcoming'
-      });
-
-      upcomingAppointments.forEach(appointment => {
-        data.push({
-          type: 'appointment',
-          appointmentType: 'upcoming',
-          appointment,
-          onPress: handleUpcomingAppointmentPress
-        });
-      });
-    }
-
-    // Add history section if there are history appointments
-    if (historyAppointments.length > 0) {
-      data.push({
-        type: 'section',
-        title: 'History',
-        appointmentType: 'history'
-      });
-
-      historyAppointments.forEach(appointment => {
-        data.push({
-          type: 'appointment',
-          appointmentType: 'history',
-          appointment,
-          onPress: handleHistoryAppointmentPress
-        });
-      });
-    }
-
-    return data;
-  }, [upcomingAppointments, historyAppointments, handleUpcomingAppointmentPress, handleHistoryAppointmentPress]);
+  const flatListData = useMemo(
+    () => buildFlatListData(upcoming, history, handleAppointmentPress),
+    [upcoming, history, handleAppointmentPress]
+  );
 
   const renderItem = useCallback(({ item }: { item: FlatListData }) => {
     if (item.type === 'section') {
       return (
-        <View className="px-7 mt-6 mb-4">
+        <View className="px-7 mt-3 mb-2">
           <Text className="text-lg font-bold">{item.title}</Text>
         </View>
       );
     }
-
     if (item.type === 'appointment' && item.appointment && item.appointmentType) {
       return (
         <View className="px-7 mb-4">
@@ -117,16 +102,16 @@ export default function Appointments() {
         </View>
       );
     }
-
     return null;
   }, []);
 
-  const keyExtractor = useCallback((item: FlatListData, index: number) => {
-    if (item.type === 'section') {
-      return `section-${item.title}-${index}`;
-    }
-    return `appointment-${item.appointment?.id}-${index}`;
-  }, []);
+  const keyExtractor = useCallback(
+    (item: FlatListData, index: number) =>
+      item.type === 'section'
+        ? `section-${item.title}-${index}`
+        : `appointment-${item.appointment?.id}-${index}`,
+    []
+  );
 
   // Show loading state
   if (isPending) {
@@ -160,7 +145,6 @@ export default function Appointments() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ProfileHeader title='Appointments' showNotification={false} showCurrency={true} showBackArrow={true} />
-
       <FlatList
         data={flatListData}
         renderItem={renderItem}
@@ -168,7 +152,7 @@ export default function Appointments() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 32 }}
         ListEmptyComponent={
-          <View className="flex-1 justify-center items-center mt-20 px-4">
+          <View className="justify-center items-center mt-2x px-4">
             <Text className="text-zinc-500 text-center">
               No appointments found
             </Text>
