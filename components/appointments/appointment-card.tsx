@@ -18,7 +18,7 @@ export default function AppointmentCard({ type, appointment, onPress }: Appointm
   const month = dateObj.toLocaleString('default', { month: 'short' });
   const day = dateObj.getDate();
   const time = dateObj.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  const provider = 'XYZ Studios'; // Placeholder, replace with real provider if available
+  const provider = appointment.serviceStatus;
   const rating = 5.0; // Placeholder, replace with real rating if available
 
   const faded = type === 'history';
