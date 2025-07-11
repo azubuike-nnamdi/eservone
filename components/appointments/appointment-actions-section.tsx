@@ -2,6 +2,7 @@ import icons from "@/constants/icons";
 import { Appointment } from "@/constants/types";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import Button from "../common/button";
 import AcceptBookingModal from "./accept-booking-modal";
 
 interface AppointmentActionsSectionProps {
@@ -168,19 +169,21 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
         </TouchableOpacity>
       )}
 
-      {/* Payment Section - Only for completed appointments and seekers */}
-      {isCompleted && isSeeker && (
+      {/* Payment Section - Only for accepted appointments (not completed) and seekers */}
+      {appointment.serviceAppointmentStatus === 'ACCEPT' && appointment.serviceStatus !== 'COMPLETED' && isSeeker && (
         <View className="bg-white mb-6">
           <Text className="text-lg font-bold mb-4">Payment</Text>
-          <TouchableOpacity
+          <Button
             className="bg-green-600 py-4 rounded-lg"
             onPress={onPayNow}
             disabled={isMakingPayment}
+            loadingText="Processing Payment..."
+            loading={isMakingPayment}
           >
             <Text className="text-center text-white font-semibold text-lg">
-              {isMakingPayment ? 'Processing Payment...' : 'Pay Now'}
+              Pay Now
             </Text>
-          </TouchableOpacity>
+          </Button>
           <Text className="text-sm text-gray-500 mt-2 text-center">
             Amount: ₦{appointment.costOfService}
           </Text>

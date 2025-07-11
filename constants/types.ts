@@ -237,6 +237,13 @@ type AcceptBookingPayload = {
   serviceAppointmentId: number
 }
 
+type InitiatePaymentPayload = {
+  amount: number
+  beneficiaryName: string
+  narration: string
+  senderEmail: string
+}
+
 interface ServiceProviderInfoModalProps {
   visible: boolean;
   onClose: () => void;
@@ -307,5 +314,5 @@ type CurrencyStore = {
   formatCurrency: (amount: number, currency?: string) => string;
 }
 
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, ForgotPasswordPayload, FormData, LoadingStateProps, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 

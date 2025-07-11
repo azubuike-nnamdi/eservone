@@ -33,6 +33,7 @@ export default function AppointmentDetails() {
     isCompleting,
     isCreatingRating,
     isCreatingReview,
+    isMakingPayment,
     isReporting,
     handleReschedule,
     handleChat,
@@ -97,7 +98,7 @@ export default function AppointmentDetails() {
           onReview={handleReview}
           onPayNow={handlePayNow}
           isCompleting={isCompleting}
-          isMakingPayment={false}
+          isMakingPayment={isMakingPayment}
           onAcceptBooking={handleAcceptBooking}
           isAcceptingBooking={isAcceptingBooking}
         />
