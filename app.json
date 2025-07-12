@@ -23,6 +23,7 @@
             "foregroundImage": "./assets/images/adaptive-icon.png",
             "backgroundColor": "#ffffff"
          },
+         "targetSdkVersion": 34,
          "package": "com.nnamdi.azubuike.eservone"
       },
       "web": {
