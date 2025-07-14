@@ -28,14 +28,14 @@
       "web": {
          "bundler": "metro",
          "output": "static",
-         "favicon": "./assets/images/eservone-logo.png"
+         "favicon": "./assets/icons/eservone-logo-square.png"
       },
       "plugins": [
          "expo-router",
          [
             "expo-splash-screen",
             {
-               "image": "./assets/images/eservone-logo.png",
+               "image": "./assets/icons/eservone-logo-square.png",
                "imageWidth": 200,
                "resizeMode": "contain",
                "backgroundColor": "#ffffff"
