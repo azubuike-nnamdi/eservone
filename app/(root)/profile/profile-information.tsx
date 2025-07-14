@@ -3,14 +3,13 @@ import ProfileHeader from '@/components/common/profile-header'
 import useUpdateUserBio from '@/hooks/mutation/useUpdateUserBio'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { formatDate } from '@/lib/helper'
-import { useAuthStore } from '@/store/auth-store'
 import { Feather } from '@expo/vector-icons'
 import React, { useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileInformation() {
-  const { user } = useAuthStore();
+
   const { data: userProfileDetails } = useGetUserProfileDetails()
   const { handleUpdateUserBio, isPending } = useUpdateUserBio()
 
@@ -31,7 +30,6 @@ export default function ProfileInformation() {
     handleUpdateUserBio({ userBio: newBio })
   };
 
-  const { firstName, lastName, email } = user || {};
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName=''>

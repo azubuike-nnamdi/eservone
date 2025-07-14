@@ -1,7 +1,7 @@
 import ProfileHeader from '@/components/common/profile-header'
 import GeneralSetting from '@/components/profile/general-setting'
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
-import { BUSINESS_PROFILE, CERTIFICATES, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
+import { CERTIFICATES, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { useAuthStore } from '@/store/auth-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -13,6 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function Profile() {
   const { clearAuth, user, isAuthenticated } = useAuthStore()
   const { data: userProfileDetails } = useGetUserProfileDetails();
+
+  const isBusinessProfile = userProfileDetails?.data?.businessAccount
+  console.log('isBusinessProfile', isBusinessProfile)
 
   const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
   const handleSignOut = async () => {
@@ -42,22 +45,48 @@ export default function Profile() {
               source={{ uri: userProfileDetails?.data?.profilePicture }}
               className='size-16 rounded-full bg-gray-100'
             />
-            <View className='ml-4'>
+            <View className='ml-4 flex-1'>
               <Text className='text-lg font-rubikMedium'>{fullName}</Text>
               <Text className='text-gray-400'>{userProfileDetails?.data?.emailAddress}</Text>
             </View>
           </View>
 
+          {/* Business Profile Upgrade Section */}
+          {isBusinessProfile === false && (
+            <View className='mb-6 p-4 bg-primary-300/10 rounded-lg border border-primary-200'>
+              <View className='flex-row items-center justify-between'>
+                <View className='flex-1'>
+                  <Text className='text-lg font-rubikMedium text-primary-300 mb-1'>
+                    Upgrade to Business Profile
+                  </Text>
+                  <Text className='text-sm text-primary-300 mb-3'>
+                    Unlock premium features and grow your business
+                  </Text>
+                </View>
+              </View>
+              <View className='bg-primary-300 rounded-lg py-3 px-4'>
+                <Text
+                  className='text-white text-center font-rubikMedium'
+                // onPress={() => {
+                //   router.push(BUSINESS_PROFILE)
+                // }}
+                >
+                  Upgrade Now
+                </Text>
+              </View>
+            </View>
+          )}
+
           {/* Business Profile Section */}
           {user?.userRole === 'SERVICE_PROVIDER' && (
             <>
-              <View className='mb-4'>
+              {/* <View className='mb-4'>
                 <GeneralSetting
                   title='Business profile - [ XYZ Studios ]'
                   showArrow={false}
                   href={BUSINESS_PROFILE}
                 />
-              </View>
+              </View> */}
 
               {/* Services Section */}
               <View className='mb-4'>
