@@ -23,8 +23,8 @@ type FlatListData = {
 function sectionAppointments(appointments: Appointment[] = []) {
   const upcoming: Appointment[] = [];
   const history: Appointment[] = [];
-  appointments.forEach((appointment) => {
-    if (appointment.serviceStatus === 'PENDING') {
+  appointments?.forEach((appointment) => {
+    if (appointment?.serviceStatus === 'PENDING') {
       upcoming.push(appointment);
     } else if (["COMPLETED", "CANCELED"].includes(appointment.serviceStatus)) {
       history.push(appointment);
@@ -153,7 +153,7 @@ export default function Appointments() {
         contentContainerStyle={{ paddingBottom: 32 }}
         ListEmptyComponent={
           <View className="justify-center items-center mt-2x px-4">
-            <Text className="text-zinc-500 text-center">
+            <Text className="text-zinc-500 text-center py-12">
               No appointments found
             </Text>
           </View>
