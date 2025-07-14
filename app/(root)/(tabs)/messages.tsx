@@ -6,7 +6,6 @@ import useGetAppointmentByUserId from "@/hooks/query/useGetAppointmentByUserId";
 import useGetProviderAppointments from "@/hooks/query/useGetProviderAppointments";
 import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
-import React from "react";
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,6 +16,7 @@ export default function Messages() {
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
   const { data: appointments, isPending, error } = hookResult()
 
+  const notificationMessage = user?.userRole === 'SERVICE_SEEKER' ? 'After booking a service, all your messages with the provider will appear here.' : 'Once a client books your service, their messages will appear here.';
   // Filter to show only pending appointments
   const pendingAppointments = appointments?.data?.filter(
     (appointment: Appointment) => appointment.serviceStatus === 'PENDING'
@@ -52,8 +52,8 @@ export default function Messages() {
 
     return (
       <View className="flex-1 justify-center items-center mt-20">
-        <Text className="text-zinc-500 text-center">
-          No pending appointments found
+        <Text className="text-zinc-500 text-center px-4">
+          {notificationMessage}
         </Text>
       </View>
     );
