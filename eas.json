@@ -18,7 +18,11 @@
          "android": {
             "buildType": "app-bundle",
             "gradleCommand": ":app:bundleRelease",
-            "credentialsSource": "remote"
+            "credentialsSource": "remote",
+            "gradleProperties": {
+               "android.targetSdkVersion": "35",
+               "android.compileSdkVersion": "35"
+            }
          }
       }
    },
