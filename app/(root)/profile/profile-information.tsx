@@ -64,7 +64,7 @@ export default function ProfileInformation() {
           <View className='mt-8'>
             <View className='flex-row justify-between items-center mb-2'>
               <Text className='text-xl font-semibold'>Home address</Text>
-              <Feather name="edit-2" size={15} color="#6B7280" />
+              {/* <Feather name="edit-2" size={15} color="#6B7280" /> */}
             </View>
             <Text className='text-gray-600'>{userProfileDetails?.data?.address}</Text>
           </View>
