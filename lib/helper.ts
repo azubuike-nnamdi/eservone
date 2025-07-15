@@ -40,7 +40,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-function mergeDateAndTimeToISO(date: string, time: string): string {
+export function mergeDateAndTimeToISO(date: string, time: string): string {
   if (!date || !time) return '';
   let hour = 0, minute = 0;
   let timeString = time.trim().toLowerCase();

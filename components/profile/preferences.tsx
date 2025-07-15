@@ -7,7 +7,7 @@ import DeleteAccountModal from "./delete-profile"
 
 export default function PreferencesScreen() {
   // State for toggle switches
-  const [disableProfile, setDisableProfile] = useState(true)
+  // const [disableProfile, setDisableProfile] = useState(true)
   const [emailNotifications, setEmailNotifications] = useState(false)
   const [newsletterSubscriptions, setNewsletterSubscriptions] = useState(false)
   const [onlineStatus, setOnlineStatus] = useState(true)

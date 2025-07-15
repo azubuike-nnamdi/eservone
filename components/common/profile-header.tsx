@@ -1,5 +1,4 @@
 import { useCurrency } from '@/context/currency-context'
-import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import React from 'react'
@@ -26,7 +25,6 @@ export default function ProfileHeader({
   rightComponent,
   backDestination
 }: ProfileHeaderProps) {
-  const { data: userProfileDetails } = useGetUserProfileDetails()
   const { currency } = useCurrency()
 
   const handleBackPress = () => {

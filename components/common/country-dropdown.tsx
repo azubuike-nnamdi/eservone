@@ -28,7 +28,7 @@ export default function CountryDropdown({
   const [searchQuery, setSearchQuery] = useState('');
   const { data: countriesResponse, isPending } = useGetAllCountries();
 
-  const countries = countriesResponse?.data || [];
+  const countries = useMemo(() => countriesResponse?.data || [], [countriesResponse?.data]);
 
   const filteredCountries = useMemo(() => {
     if (!searchQuery.trim()) {

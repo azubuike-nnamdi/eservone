@@ -13,7 +13,7 @@ interface Transaction {
 }
 
 const walletBalance = 23000;
-const lastPaymentDate = '2024-08-24';
+// const lastPaymentDate = '2024-08-24';
 
 const transactions: Transaction[] = [
   { amount: 5000, type: 'Initial payment', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
@@ -28,7 +28,7 @@ function formatDate(date: string) {
 }
 
 export default function EarningsDashboard() {
-  const { format, symbol } = useCurrency();
+  const { symbol } = useCurrency();
   const { data: accountBalance, isPending } = useGetAccountBalance();
 
   console.log('accountBalance', accountBalance)

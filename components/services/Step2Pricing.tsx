@@ -1,4 +1,3 @@
-import { useCurrency } from '@/context/currency-context';
 import { formatNumberWithCommas } from '@/lib/helper';
 import { useServiceCreationStore } from '@/store/service-creation-store';
 import React, { useState } from 'react';
@@ -8,7 +7,7 @@ import { Text, TextInput, View } from 'react-native';
 
 export default function Step2Pricing() {
   const { minFee, maxFee, setField } = useServiceCreationStore()
-  const { format } = useCurrency()
+
 
   // Local state for display values
   const [minFeeDisplay, setMinFeeDisplay] = useState<string>(minFee ? String(minFee) : '')
