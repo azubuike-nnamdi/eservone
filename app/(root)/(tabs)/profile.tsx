@@ -1,7 +1,8 @@
+import Button from '@/components/common/button'
 import ProfileHeader from '@/components/common/profile-header'
 import GeneralSetting from '@/components/profile/general-setting'
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
-import { CERTIFICATES, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
+import { CERTIFICATES, CREATE_BUSINESS, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { useAuthStore } from '@/store/auth-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -64,16 +65,16 @@ export default function Profile() {
                   </Text>
                 </View>
               </View>
-              <View className='bg-primary-300 rounded-lg py-3 px-4'>
+              <Button className='bg-primary-300 rounded-lg py-3 px-4' onPress={() => {
+                router.push(CREATE_BUSINESS)
+              }}>
                 <Text
                   className='text-white text-center font-rubikMedium'
-                // onPress={() => {
-                //   router.push(BUSINESS_PROFILE)
-                // }}
+
                 >
                   Upgrade Now
                 </Text>
-              </View>
+              </Button>
             </View>
           )}
 
