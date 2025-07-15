@@ -5,6 +5,8 @@ import bag from "@/assets/icons/bag.png";
 import bath from "@/assets/icons/bath.png";
 import bed from "@/assets/icons/bed.png";
 import bell from "@/assets/icons/bell.png";
+import blueBadge from "@/assets/icons/blue-badge.png";
+import businessIcon from "@/assets/icons/business-icon.png";
 import calendar from "@/assets/icons/calendar.png";
 import cancelIcon from "@/assets/icons/cancel-icon.png";
 import carPark from "@/assets/icons/car-park.png";
@@ -17,6 +19,7 @@ import dumbell from "@/assets/icons/dumbell.png";
 import edit from "@/assets/icons/edit.png";
 import filter from "@/assets/icons/filter.png";
 import google from "@/assets/icons/google.png";
+import greenBadge from "@/assets/icons/green-badge.png";
 import heart from "@/assets/icons/heart.png";
 import home from "@/assets/icons/home.png";
 import info from "@/assets/icons/info.png";
@@ -85,5 +88,8 @@ export default {
   markCompletedIcon,
   shareIcon,
   reportIcon,
-  cancelIcon
+  cancelIcon,
+  businessIcon,
+  blueBadge,
+  greenBadge
 };
