@@ -2,6 +2,7 @@ import { SIGN_IN } from "@/constants/routes"
 import { SignUpPayload } from "@/constants/types"
 import { useToast } from "@/context/toast-context"
 import { api } from "@/lib/api"
+import { useOnboardingStore } from "@/store/onboarding-store"
 import { useSignupStore } from "@/store/signup-store"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { router } from "expo-router"
@@ -10,6 +11,7 @@ import { router } from "expo-router"
 const useSignUpMutate = () => {
   const queryClient = useQueryClient()
   const clearJwtToken = useSignupStore((state) => state.clearJwtToken)
+  const { resetOnboarding } = useOnboardingStore()
   // const jwtToken = useSignupStore((state) => state.jwtToken)
   const { showToast } = useToast()
   const { mutate, isPending } = useMutation({
@@ -24,6 +26,7 @@ const useSignUpMutate = () => {
         queryClient.invalidateQueries({ queryKey: ["user"] })
         queryClient.setQueryData(["user"], data)
         clearJwtToken()
+        resetOnboarding();
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
