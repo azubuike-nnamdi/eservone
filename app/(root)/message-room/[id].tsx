@@ -126,7 +126,7 @@ export default function MessageRoom() {
       sender: user.email
     };
 
-    console.log("Sending message with payload:", payload);
+    // console.log("Sending message with payload:", payload);
 
     handleSendMessage(payload, optimisticMessage);
   };

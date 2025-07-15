@@ -24,8 +24,6 @@ export default function Search() {
   const apiSearchQuery = searchQuery.trim() ? debouncedSearchQuery : 'all';
   const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(apiSearchQuery);
 
-  console.log(searchData)
-
   const services = searchData?.data;
 
   // Add to recent searches when a real search is performed

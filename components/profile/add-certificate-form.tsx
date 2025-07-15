@@ -127,7 +127,7 @@ export default function AddCertificateForm() {
       setFormData(prev => ({ ...prev, document: result }));
       setErrorMessage('');
     } catch (err) {
-      console.log(err)
+
       setErrorMessage('Error selecting document');
     }
   };

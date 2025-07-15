@@ -47,7 +47,7 @@ export default function SignUp() {
 
       handleInitializeEmail(emailInput);
     } catch (error: any) {
-      console.log('Sign-up error:', error);
+
       setIsValidEmail(false);
       setErrorMessage(error.message || "An error occurred. Please try again.");
     }

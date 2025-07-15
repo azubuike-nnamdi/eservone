@@ -5,7 +5,7 @@ import ServiceSeekerHomepage from "./service-seeker-homepage";
 
 export default function Homepage() {
    const { user } = useAuthStore();
-   console.log('user', user)
+
 
 
    const isServiceSeeker = user?.userRole === "SERVICE_SEEKER";

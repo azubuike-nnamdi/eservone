@@ -48,10 +48,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (newToken && newToken !== 'null' && newToken !== 'undefined') {
         // Save the new token
         await SecureStore.setItemAsync(TOKEN_KEY, newToken);
-        console.log('New token saved successfully');
+        // console.log('New token saved successfully');
         setToken(newToken);
       } else {
-        console.log('Token cleared successfully');
+        // console.log('Token cleared successfully');
         setToken(null);
       }
     } catch (error) {
