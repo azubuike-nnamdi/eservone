@@ -1,15 +1,16 @@
 import Button from '@/components/common/button'
+import CustomModal from '@/components/common/Modal'
 import ProfileHeader from '@/components/common/profile-header'
 import { UpdateProfilePayload } from '@/constants/types'
 import useUpdateProfile from '@/hooks/mutation/useUpdateProfile'
+import { useModal } from '@/hooks/useModal'
 import { useAuthStore } from '@/store/auth-store'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-import { Buffer } from 'buffer'
 import * as DocumentPicker from 'expo-document-picker'
+import * as FileSystem from 'expo-file-system'
 import * as ImagePicker from 'expo-image-picker'
 import React, { useEffect, useState } from 'react'
 import {
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -29,6 +30,7 @@ export default function VerifyIdentity() {
   const [email, setEmail] = useState(user?.email || '')
   const [phoneNumber, setPhoneNumber] = useState('')
   const { handleUpdateProfile, isPending } = useUpdateProfile()
+  const { modalState, showError, hideModal } = useModal()
 
   useEffect(() => {
     setEmail(user?.email || '')
@@ -38,7 +40,10 @@ export default function VerifyIdentity() {
     // Request media library permissions
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
-      Alert.alert("Permission Required", "You need to allow access to your photos to upload a profile picture.");
+      showError(
+        'Permission Required',
+        'You need to allow access to your photos to upload a profile picture.'
+      )
       return;
     }
 
@@ -70,46 +75,51 @@ export default function VerifyIdentity() {
       }
     } catch (error) {
       console.error('Error picking document:', error)
-      Alert.alert('Error', 'Could not pick document.')
+      showError('Error', 'Could not pick document.')
     }
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const profileImageUri = profileImage;
     const documentAsset = idDocument?.assets?.[0]
 
     if (!profileImageUri) {
-      Alert.alert('Missing Information', 'Please upload a profile picture.')
+      showError('Missing Information', 'Please upload a profile picture.')
       return
     }
     if (!documentAsset) {
-      Alert.alert('Missing Information', 'Please upload a valid means of identification.')
+      showError('Missing Information', 'Please upload a valid means of identification.')
       return
     }
     if (!homeAddress || !phoneNumber) { // Email is fetched from store, not strictly required here
-      Alert.alert('Missing Information', 'Please fill in Home Address and Phone Number.')
+      showError('Missing Information', 'Please fill in Home Address and Phone Number.')
       return
     }
 
-    // Get filenames
-    // Extract filename from profile image URI (might need adjustment based on URI format)
-    const profileImageFilename = profileImageUri.split('/').pop() || `profile_${Date.now()}.jpg`;
-    const idDocumentFilename = documentAsset.name;
+    try {
+      // Convert profile image to base64
+      const profileImageBase64 = await FileSystem.readAsStringAsync(profileImageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
-    // Encode filenames in Base64 using Buffer polyfill
-    const encodedProfileFilename = Buffer.from(profileImageFilename, 'utf8').toString('base64');
-    const encodedIdDocumentFilename = Buffer.from(idDocumentFilename, 'utf8').toString('base64');
+      // Convert document to base64
+      const documentBase64 = await FileSystem.readAsStringAsync(documentAsset.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
-    // Create the payload with Base64 encoded filenames
-    const payload: UpdateProfilePayload = {
-      homeAddress,
-      meansOfIdentification: encodedIdDocumentFilename, // Send encoded filename
-      phoneNumber,
-      profilePicture: encodedProfileFilename, // Send encoded filename
+      // Create the payload with actual base64 image data
+      const payload: UpdateProfilePayload = {
+        homeAddress,
+        meansOfIdentification: documentBase64, // Send actual document data
+        phoneNumber,
+        profilePicture: profileImageBase64, // Send actual image data
+      }
+
+      handleUpdateProfile(payload)
+    } catch (error) {
+      console.error('Error converting files to base64:', error);
+      showError('Error', 'Failed to process files. Please try again.');
     }
-
-
-    handleUpdateProfile(payload)
   }
 
   const documentName = idDocument?.assets?.[0]?.name;
@@ -232,6 +242,19 @@ export default function VerifyIdentity() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Custom Modal */}
+      <CustomModal
+        visible={modalState.visible}
+        type={modalState.type}
+        title={modalState.title}
+        message={modalState.message}
+        onClose={hideModal}
+        onConfirm={modalState.onConfirm}
+        confirmText={modalState.confirmText}
+        cancelText={modalState.cancelText}
+        showCancel={modalState.showCancel}
+      />
     </SafeAreaView>
   )
 }
