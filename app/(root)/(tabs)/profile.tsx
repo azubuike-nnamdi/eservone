@@ -13,10 +13,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Profile() {
   const { clearAuth, user, isAuthenticated } = useAuthStore()
+
   const { data: userProfileDetails } = useGetUserProfileDetails();
 
   const isBusinessProfile = userProfileDetails?.data?.businessAccount
-  console.log('isBusinessProfile', isBusinessProfile)
+  console.log('userProfileDetails', userProfileDetails?.data)
 
   const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
   const handleSignOut = async () => {
@@ -53,7 +54,7 @@ export default function Profile() {
           </View>
 
           {/* Business Profile Upgrade Section */}
-          {isBusinessProfile === false && (
+          {user?.userRole === 'SERVICE_PROVIDER' && isBusinessProfile === false && (
             <View className='mb-6 p-4 bg-primary-300/10 rounded-lg border border-primary-200'>
               <View className='flex-row items-center justify-between'>
                 <View className='flex-1'>
