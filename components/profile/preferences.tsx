@@ -39,7 +39,7 @@ export default function PreferencesScreen() {
 
   // Function to handle delete account confirmation
   const handleDeleteConfirm = () => {
-    console.log("Account deletion confirmed")
+
     setDeleteModalVisible(false)
     // Here you would handle the actual account deletion process
   }
@@ -48,7 +48,7 @@ export default function PreferencesScreen() {
     <ScrollView className="flex-1 bg-white">
       <View className="py-6">
         {/* Disable service seeker profile */}
-        <View className="mb-6">
+        {/* <View className="mb-6">
           <View className="flex-row justify-between items-center mb-2">
             <Text className="text-lg font-semibold text-black">Disable service seeker profile</Text>
             <View className="scale-[0.8]">
@@ -64,9 +64,9 @@ export default function PreferencesScreen() {
           <Text className="text-base text-gray-500">
             Temporarily pause your account. You won't be able to search for service providers until you reactivate.
           </Text>
-        </View>
+        </View> */}
 
-        <View className="h-px bg-gray-200 my-2" />
+        {/* <View className="h-px bg-gray-200 my-2" /> */}
 
         {/* Email notifications */}
         <View className="mb-6 mt-4">

@@ -6,7 +6,7 @@ import { Linking, Text, TouchableOpacity, View } from "react-native";
 export default function ProfileSupport() {
 
   const handleEmailPress = () => {
-    Linking.openURL('mailto:support@platformname.com');
+    Linking.openURL('mailto:support@eservone.onmicrosoft.com');
   };
 
   const handlePhonePress = () => {
@@ -38,7 +38,7 @@ export default function ProfileSupport() {
             For general inquiries, technical issues, or account-related questions, please email us at:
           </Text>
           <TouchableOpacity onPress={handleEmailPress}>
-            <Text className="text-indigo-700 font-medium">support@platformname.com</Text>
+            <Text className="text-indigo-700 font-medium">support@eservone.onmicrosoft.com</Text>
           </TouchableOpacity>
           <Text className="text-base text-gray-600 mt-2">
             Our team will respond to your email within 24-48 hours.
