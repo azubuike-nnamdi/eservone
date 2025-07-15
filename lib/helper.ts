@@ -88,3 +88,33 @@ function formatNumberWithCommas(value: number | string): string {
 
 export { formatDate, formatNumberWithCommas, formatTime, formatTimeFromISO, getGreeting, useDebounce, validateEmail, validatePassword };
 
+export function passwordStrength(password: string) {
+  let score = 0;
+  let label = 'Very Weak';
+
+  if (password.length >= 8) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  switch (score) {
+    case 5:
+      label = 'Strong';
+      break;
+    case 4:
+      label = 'Good';
+      break;
+    case 3:
+      label = 'Medium';
+      break;
+    case 2:
+      label = 'Weak';
+      break;
+    default:
+      label = 'Very Weak';
+  }
+
+  return { score, label };
+}
+
