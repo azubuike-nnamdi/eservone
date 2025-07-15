@@ -1,7 +1,8 @@
 import images from "@/constants/images";
+import { PRIVACY_POLICY_URL, TERMS_URL, USER_AGREEMENT_URL } from "@/constants/routes";
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import Button from "./common/button";
 
 export const TermsStep = ({
@@ -18,6 +19,7 @@ export const TermsStep = ({
     await onSubmit(true);
   };
 
+
   return (
     <View className="items-center">
       {/* Terms Icon */}
@@ -31,13 +33,13 @@ export const TermsStep = ({
 
       {/* Terms Links */}
       <View className="w-full items-center gap-2 mb-8">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL)}>
           <Text className="text-primary-300">Terms of service</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => Linking.openURL(USER_AGREEMENT_URL)}>
           <Text className="text-primary-300">User agreement</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}>
           <Text className="text-primary-300">Privacy policy</Text>
         </TouchableOpacity>
       </View>
