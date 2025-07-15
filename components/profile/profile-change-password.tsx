@@ -1,6 +1,7 @@
 import Button from "@/components/common/button";
+import PasswordRequirements from "@/components/common/PasswordRequirements";
 import useChangePassword from "@/hooks/mutation/useChangePassword";
-import { validatePassword } from "@/lib/helper";
+import { passwordStrength, validatePassword } from "@/lib/helper";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -28,7 +29,7 @@ export default function ProfileChangePassword() {
 
     // Use the imported validatePassword function
     if (!validatePassword(password)) {
-      setError("Password must be at least 8 characters long with a mix of letters, numbers, and symbols");
+      setError("Password must have at least 8 characters, one lowercase, one uppercase, one special character, and one digit.");
       return;
     }
 
@@ -52,6 +53,8 @@ export default function ProfileChangePassword() {
       setConfirmPassword("")
     }
   };
+
+  const strength = passwordStrength(password);
 
   return (
     <KeyboardAvoidingView
@@ -82,7 +85,7 @@ export default function ProfileChangePassword() {
         </View>
 
         <Text className="text-lg font-bold mb-2 text-black">New password</Text>
-        <View className="relative mb-6">
+        <View className="relative mb-2">
           <TextInput
             className="w-full h-14 border border-gray-200 rounded-md px-4 text-base text-black pr-12"
             value={password}
@@ -102,6 +105,14 @@ export default function ProfileChangePassword() {
             />
           </TouchableOpacity>
         </View>
+        {/* Password Strength Indicator */}
+        <View className="mb-4 mt-1 flex-row items-center">
+          <View className={`h-2 rounded w-1/4 mr-1 ${strength.score >= 1 ? 'bg-red-400' : 'bg-gray-200'}`} />
+          <View className={`h-2 rounded w-1/4 mr-1 ${strength.score >= 2 ? 'bg-orange-400' : 'bg-gray-200'}`} />
+          <View className={`h-2 rounded w-1/4 mr-1 ${strength.score >= 3 ? 'bg-yellow-400' : 'bg-gray-200'}`} />
+          <View className={`h-2 rounded w-1/4 ${strength.score >= 4 ? 'bg-green-400' : 'bg-gray-200'}`} />
+        </View>
+        <Text className={`text-xs font-medium mb-2 ${strength.score >= 4 ? 'text-green-600' : strength.score === 3 ? 'text-yellow-600' : strength.score === 2 ? 'text-orange-600' : 'text-red-600'}`}>{strength.label}</Text>
 
         <Text className="text-lg font-bold mb-2 text-black">Confirm password</Text>
         <View className="relative mb-6">
@@ -126,10 +137,7 @@ export default function ProfileChangePassword() {
         </View>
 
         <View className="flex-row items-start mb-6">
-          <Ionicons name="information-circle-outline" size={24} color="#999" />
-          <Text className="ml-2 text-gray-400 flex-1 text-sm">
-            Your password must be at least 8 character long, with a mix of letters, numbers, and symbols.
-          </Text>
+          <PasswordRequirements password={password} />
         </View>
 
         {error ? <Text className="text-red-500 mb-4">{error}</Text> : null}
