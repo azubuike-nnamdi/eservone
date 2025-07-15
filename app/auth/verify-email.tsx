@@ -6,6 +6,7 @@ import type { ValidateResetPasswordEmailPayload, VerificationPayload } from "@/c
 import useValidateResetPasswordEmail from "@/hooks/mutation/useValidateResetPasswordEmail"
 import ValidateEmail from "@/hooks/mutation/verify-email"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import * as Clipboard from 'expo-clipboard'
 import { useEffect, useRef, useState } from "react"
 import {
   Image,
@@ -26,6 +27,8 @@ export default function VerifyEmail() {
   const [errorMessage, setErrorMessage] = useState("")
   const [requestId, setRequestId] = useState<string | null>(null)
   const [countdown, setCountdown] = useState(30);
+  const [showPastePrompt, setShowPastePrompt] = useState(false);
+  const [clipboardOtp, setClipboardOtp] = useState("");
 
   const inputRefs = useRef<(TextInput | null)[]>([])
   const { handleValidateEmail, isPending } = ValidateEmail()
@@ -50,6 +53,26 @@ export default function VerifyEmail() {
 
     getStoredData()
   }, [])
+
+  // Check clipboard for 6-digit OTP when screen is focused
+  useEffect(() => {
+    const checkClipboardForOtp = async () => {
+      const clipboardContent = await Clipboard.getStringAsync();
+      // Find the most recent 6-digit code in the clipboard (last occurrence)
+      const matches = clipboardContent.match(/\d{6}(?!.*\d{6})/);
+      if (matches && matches[0]) {
+        const code = matches[0];
+        if (code !== otp.join("")) {
+          setClipboardOtp(code);
+          setShowPastePrompt(true);
+        }
+      } else {
+        setShowPastePrompt(false);
+      }
+    };
+    checkClipboardForOtp();
+    // Optionally, you can add AppState listener for more robust focus detection
+  }, []); // Only on mount, or add navigation focus if using React Navigation
 
   // Countdown timer effect
   useEffect(() => {
@@ -111,10 +134,38 @@ export default function VerifyEmail() {
     // TODO: Add resend code logic here
   };
 
+  // Handle user accepting to paste OTP
+  const handlePasteOtp = () => {
+    if (clipboardOtp && /^\d{6}$/.test(clipboardOtp)) {
+      setOtp(clipboardOtp.split(""));
+      setShowPastePrompt(false);
+      setIsValidOtp(true);
+      setErrorMessage("");
+      // Optionally, focus the last input
+      inputRefs.current[5]?.focus();
+    }
+  };
+  // Handle user declining to paste OTP
+  const handleDeclinePaste = () => {
+    setShowPastePrompt(false);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
         <View className="flex-1 items-center justify-center px-6">
+          {/* Paste OTP Prompt */}
+          {showPastePrompt && (
+            <View className="w-full bg-primary-100 border border-primary-300 rounded-lg p-4 mb-4 flex-row items-center justify-between">
+              <Text className="text-black flex-1">Paste the 6-digit code from your clipboard?</Text>
+              <TouchableOpacity className="ml-2 px-3 py-1 bg-primary-300 rounded" onPress={handlePasteOtp}>
+                <Text className="text-white font-semibold">Paste</Text>
+              </TouchableOpacity>
+              <TouchableOpacity className="ml-2 px-3 py-1 bg-gray-300 rounded" onPress={handleDeclinePaste}>
+                <Text className="text-black font-semibold">No</Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <View className="bg-primary-100 rounded-full p-4 w-52 h-52 flex items-center justify-center">
             <Image source={images.SendEmail} className="w-20 h-20" />
           </View>
@@ -128,20 +179,51 @@ export default function VerifyEmail() {
           {/* OTP Input */}
 
           <View className="w-full flex-row justify-between mt-8">
-            {otp.map((digit, index) => (
-              <TextInput
-                key={index}
-                ref={(ref) => (inputRefs.current[index] = ref)}
-                className={`w-12 h-12 border-2 rounded-lg text-center text-xl ${isValidOtp ? 'border-gray-200' : 'border-danger text-center px-4 py-1'
-                  }`}
-                maxLength={1}
-                keyboardType="number-pad"
-                value={digit ? "*" : ""}
-                onChangeText={(text) => handleOtpChange(text, index)}
-                onKeyPress={(e) => handleKeyPress(e, index)}
-                selectTextOnFocus
-              />
-            ))}
+            {otp.map((digit, index) => {
+              // Conditionally add onPaste for web only
+              const textInputProps = Platform.OS === 'web' ? {
+                onPaste: (e: any) => {
+                  const pasted = e.clipboardData.getData('Text');
+                  // Find the most recent 6-digit code in the pasted text
+                  const matches = pasted.match(/\d{6}(?!.*\d{6})/);
+                  if (matches && matches[0]) {
+                    setOtp(matches[0].split(""));
+                    setIsValidOtp(true);
+                    setErrorMessage("");
+                    inputRefs.current[5]?.focus();
+                    e.preventDefault();
+                  } else {
+                    handleOtpChange(pasted, index);
+                  }
+                }
+              } : {};
+              return (
+                <TextInput
+                  key={index}
+                  ref={(ref) => (inputRefs.current[index] = ref)}
+                  className={`w-12 h-12 border-2 rounded-lg text-center text-xl ${isValidOtp ? 'border-gray-200' : 'border-danger text-center px-4 py-1'
+                    }`}
+                  maxLength={1}
+                  keyboardType="number-pad"
+                  value={digit ? "*" : ""}
+                  onChangeText={(text) => {
+                    // If user pastes a 6-digit code, auto-fill all fields
+                    const matches = text.match(/\d{6}(?!.*\d{6})/);
+                    if (matches && matches[0]) {
+                      setOtp(matches[0].split(""));
+                      setIsValidOtp(true);
+                      setErrorMessage("");
+                      inputRefs.current[5]?.focus();
+                    } else {
+                      handleOtpChange(text, index);
+                    }
+                  }}
+                  onKeyPress={(e) => handleKeyPress(e, index)}
+                  selectTextOnFocus
+                  {...textInputProps}
+                />
+              )
+            })}
           </View>
 
           {!isValidOtp && (

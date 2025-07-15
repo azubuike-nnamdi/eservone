@@ -16,7 +16,7 @@ import useSignUpMutate from '@/hooks/mutation/useSignUpMutate'
 export default function ContinueSignUp() {
   const [currentStep, setCurrentStep] = useState(1);
   const { handleSignUp, isPending } = useSignUpMutate()
-  const { data, setServiceType, setSecurity, setTermsAccepted, resetOnboarding } = useOnboardingStore()
+  const { data, setServiceType, setSecurity, setTermsAccepted } = useOnboardingStore()
 
   const updateStep = (step: number) => {
     if (step < 4) {
@@ -46,7 +46,7 @@ export default function ContinueSignUp() {
         />;
       case 4:
         return <TermsStep
-          onSubmit={async (accepted) => {
+          onSubmit={(accepted) => {
             setTermsAccepted(accepted);
 
             const payload: SignUpPayload = {
@@ -58,16 +58,8 @@ export default function ContinueSignUp() {
               userRole: data.serviceType,
               country: data.personalDetails.country,
             }
+            handleSignUp(payload);
 
-            console.log('payload', payload)
-
-            try {
-              await handleSignUp(payload);
-              // Clear onboarding data on successful signup
-              resetOnboarding();
-            } catch (error) {
-              console.error('Signup failed:', error);
-            }
           }}
           isPending={isPending}
         />;

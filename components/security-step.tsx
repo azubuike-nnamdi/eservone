@@ -1,9 +1,10 @@
-import { validatePassword } from "@/lib/helper";
+import { passwordStrength, validatePassword } from "@/lib/helper";
 import { useOnboardingStore } from "@/store/onboarding-store";
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Button from "./common/button";
+import PasswordRequirements from "./common/PasswordRequirements";
 
 export const SecurityStep = ({
   onNext
@@ -38,6 +39,8 @@ export const SecurityStep = ({
     onNext({ password, confirmPassword });
   };
 
+  const strength = passwordStrength(password);
+
   return (
     <View>
       {/* Password Field */}
@@ -66,6 +69,14 @@ export const SecurityStep = ({
             />
           </TouchableOpacity>
         </View>
+        {/* Password Strength Indicator */}
+        <View className="mt-2 mb-1 flex-row items-center">
+          <View className={`h-2 rounded w-1/4 mr-1 ${strength.score >= 1 ? 'bg-red-400' : 'bg-gray-200'}`} />
+          <View className={`h-2 rounded w-1/4 mr-1 ${strength.score >= 2 ? 'bg-orange-400' : 'bg-gray-200'}`} />
+          <View className={`h-2 rounded w-1/4 mr-1 ${strength.score >= 3 ? 'bg-yellow-400' : 'bg-gray-200'}`} />
+          <View className={`h-2 rounded w-1/4 ${strength.score >= 4 ? 'bg-green-400' : 'bg-gray-200'}`} />
+        </View>
+        <Text className={`text-xs font-medium mb-1 ${strength.score >= 4 ? 'text-green-600' : strength.score === 3 ? 'text-yellow-600' : strength.score === 2 ? 'text-orange-600' : 'text-red-600'}`}>{strength.label}</Text>
       </View>
 
       {/* Confirm Password Field */}
@@ -97,19 +108,12 @@ export const SecurityStep = ({
       </View>
 
       {/* Password Requirements */}
-      <View className="mb-6">
-        <View className="flex-row items-center">
-          <Ionicons name="information-circle-outline" size={20} color="#CCCCCC" />
-          <Text className="text-gray-400 text-sm ml-2">
-            Password must have at least 6 characters, one lowercase, one uppercase, one special character, and one digit.
-          </Text>
-        </View>
-        {error ? (
-          <Text className="text-danger text-sm mt-2">
-            {error}
-          </Text>
-        ) : null}
-      </View>
+      <PasswordRequirements password={password} />
+      {error ? (
+        <Text className="text-danger text-sm mt-2">
+          {error}
+        </Text>
+      ) : null}
 
       <Button
         onPress={handleNext}
