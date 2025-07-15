@@ -1,7 +1,8 @@
 import { useCurrency } from '@/context/currency-context';
+import { useGetAccountBalance } from '@/hooks/query/useGetAccountBalance';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
 interface Transaction {
   amount: number;
@@ -28,11 +29,15 @@ function formatDate(date: string) {
 
 export default function EarningsDashboard() {
   const { format, symbol } = useCurrency();
+  const { data: accountBalance, isPending } = useGetAccountBalance();
 
+  console.log('accountBalance', accountBalance)
+
+  if (isPending) {
+    return <ActivityIndicator className='flex-1 justify-center items-center' />
+  }
   return (
     <View className="flex-1 bg-white">
-
-
       {/* Wallet Card */}
       <View className="bg-[#ECECF5] mx-3 rounded-lg mt-4">
         <View className="bg-primary-50 rounded-xl p-4 shadow-sm relative">
