@@ -23,6 +23,7 @@ export default function ProductById() {
   const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
   const { format } = useCurrency();
 
+  // console.log('serviceData', serviceData)
   // Form state
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
   const [date, setDate] = useState(new Date());
@@ -54,9 +55,23 @@ export default function ProductById() {
 
   const service = serviceData?.data;
 
+  // Determine if service is WALK_IN_SERVICE
+  const isWalkInService = service?.serviceDeliveryType === 'WALK_IN_SERVICE';
+
   // Format prices using the service's currency
   const formattedMinPrice = service ? format(service.minimumPrice) : '';
   const formattedMaxPrice = service ? format(service.maximumPrice) : '';
+
+  // Set initial service type and address based on serviceDeliveryType
+  React.useEffect(() => {
+    if (isWalkInService) {
+      setServiceType('VISIT_PROVIDER');
+      setAddress(service?.address || '');
+    } else {
+      setServiceType('HOME_SERVICE');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isWalkInService, service?.address]);
 
   // Generate 24-hour time options
   const generate24HourOptions = () => {
@@ -128,13 +143,14 @@ export default function ProductById() {
             {/* Service type buttons */}
             <View className="flex-row mb-3">
               <TouchableOpacity
-                className={`flex-1 mr-2 py-3 rounded-md border ${serviceType === 'HOME_SERVICE' ? 'bg-primary-300' : 'bg-white border-gray-300'}`}
-                onPress={() => setServiceType('HOME_SERVICE')}
+                className={`flex-1 mr-2 py-3 rounded-md border ${serviceType === 'HOME_SERVICE' ? 'bg-primary-300' : 'bg-white border-gray-300'} ${isWalkInService ? 'opacity-50' : ''}`}
+                onPress={() => !isWalkInService && setServiceType('HOME_SERVICE')}
+                disabled={isWalkInService}
               >
                 <Text className={`text-center ${serviceType === 'HOME_SERVICE' ? 'text-white font-semibold' : 'text-gray-700'}`}>Home service</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className={`flex-1 py-3 rounded-md border ${serviceType === 'VISIT_PROVIDER' ? 'bg-primary-300 text-white font-normal' : 'bg-white border-gray-300'}`}
+                className={`flex-1 py-3 rounded-md border ${serviceType === 'VISIT_PROVIDER' ? 'bg-primary-300' : 'bg-white border-gray-300'}`}
                 onPress={() => setServiceType('VISIT_PROVIDER')}
               >
                 <Text className={`text-center ${serviceType === 'VISIT_PROVIDER' ? 'text-white font-semibold' : 'text-gray-700'}`}>Visit service provider</Text>
@@ -146,7 +162,13 @@ export default function ProductById() {
           <View className="mb-2 flex-row justify-between items-center">
             <Text className="text-base font-semibold">Your address</Text>
           </View>
-          <TextInput value={address} onChangeText={setAddress} placeholder="Enter your address" />
+          <TextInput
+            value={address}
+            onChangeText={setAddress}
+            placeholder="Enter your address"
+            editable={!isWalkInService}
+            pointerEvents={isWalkInService ? 'none' : 'auto'}
+          />
 
           {/* Date and Time */}
           <View className="flex-row mb-2 gap-2">
