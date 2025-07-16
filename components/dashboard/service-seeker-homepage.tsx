@@ -1,10 +1,14 @@
 import ProfileHeader from "@/components/common/profile-header";
 import SearchBar from "@/components/common/search-bar";
+import { useGetAccountBalance } from "@/hooks/query/useGetAccountBalance";
 import { getGreeting } from "@/lib/helper";
 import { useAuthStore } from "@/store/auth-store";
 import { useRecentSearchesStore } from "@/store/recent-searches-store";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useState } from 'react';
 import {
+   Animated,
    KeyboardAvoidingView,
    Platform,
    ScrollView,
@@ -19,6 +23,13 @@ export default function ServiceSeekerHomepage() {
    const { user } = useAuthStore();
    const recentSearches = useRecentSearchesStore((s) => s.recent);
    const clearRecent = useRecentSearchesStore((s) => s.clear);
+   const { data: accountBalance, isPending: isAccountBalancePending } = useGetAccountBalance();
+   const [showBalance, setShowBalance] = useState(false);
+   // beneficiaryName and senderEmail are derived from user store
+   const beneficiaryName = user ? `${user.firstName} ${user.lastName}` : '';
+   const senderEmail = user?.email || '';
+   const [narration, setNarration] = useState('');
+   const slideAnim = useState(new Animated.Value(0))[0];
 
    // Handler to go to search page with a pre-filled term
    const handleRecentPress = (term: string) => {
@@ -44,6 +55,7 @@ export default function ServiceSeekerHomepage() {
                   showBackArrow={false}
                />
                <View className="px-7">
+
                   <View className="flex-row items-baseline mt-4">
                      <Text className="text-2xl font-bold">{getGreeting()},</Text>
                      <Text className="text-2xl text-black-300/50 font-medium ml-1">
@@ -51,7 +63,31 @@ export default function ServiceSeekerHomepage() {
                      </Text>
                   </View>
 
-                  <View className="mt-4">
+                  {/* Account Balance Card */}
+                  <View className=" rounded-xl p-4 mt-4 mb-6 border border-gray-200">
+                     <Text className="text-start text-lg text-gray-500 mb-2">Account Balance:</Text>
+                     <View className="flex-row items-center justify-between">
+                        <View className="flex-row items-center justify-center">
+                           <Text className="text-base font-bold mr-2">{accountBalance?.data?.currency || ''}</Text>
+                           {isAccountBalancePending ? (
+                              <Text className="text-2xl font-normal text-black/50">****</Text>
+                           ) : showBalance ? (
+                              <Text className="text-2xl font-semibold text-black">{Number(accountBalance?.data?.accountBalance).toLocaleString()}</Text>
+                           ) : (
+                              <Text className="text-5xl font-normal text-black tracking-widest">{'*'.repeat(6)}</Text>
+                           )}
+                        </View>
+                        <TouchableOpacity
+                           onPress={() => setShowBalance((prev) => !prev)}
+                           className="ml-4 border border-gray-300 rounded-lg p-2"
+                           accessibilityLabel={showBalance ? 'Hide balance' : 'Show balance'}
+                        >
+                           <Ionicons name={showBalance ? 'eye-off-outline' : 'eye-outline'} size={24} color="#222" />
+                        </TouchableOpacity>
+                     </View>
+                  </View>
+
+                  {/* <View className="mt-4">
                      <Text className="text-[22px] text-black-300 font-rubikBold font-bold leading-8">
                         Find the right talent and {"\n"}take your ideas to the next
                         level.
@@ -59,9 +95,9 @@ export default function ServiceSeekerHomepage() {
                      <Text className="text-base text-black-300 font-rubikLight">
                         No hassle, just great work.
                      </Text>
-                  </View>
+                  </View> */}
 
-                  <View className="mt-12">
+                  <View className="">
                      <Text className="text-base text-black-300 font-rubikLight mb-2">
                         What are you looking for?
                      </Text>
