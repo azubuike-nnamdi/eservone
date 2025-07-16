@@ -8,7 +8,6 @@
       "scheme": "eservone",
       "userInterfaceStyle": "automatic",
       "newArchEnabled": true,
-      "deepLinking": true,
       "ios": {
          "supportsTablet": true,
          "bundleIdentifier": "com.nnamdi.azubuike.eservone",
