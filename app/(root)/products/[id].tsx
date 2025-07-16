@@ -23,7 +23,6 @@ export default function ProductById() {
   const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
   const { format } = useCurrency();
 
-  // console.log('serviceData', serviceData)
   // Form state
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
   const [date, setDate] = useState(new Date());
@@ -43,6 +42,20 @@ export default function ProductById() {
     { label: '100', value: '100' },
   ];
 
+
+  // Set initial service type and address based on serviceDeliveryType
+  React.useEffect(() => {
+    if (serviceData?.data) {
+      const service = serviceData.data;
+      if (service.serviceDeliveryType === 'WALK_IN_SERVICE') {
+        setServiceType('VISIT_PROVIDER');
+        setAddress(service.address || '');
+      } else {
+        setServiceType('HOME_SERVICE');
+      }
+    }
+  }, [serviceData]);
+
   if (isPending) {
     return (
       <SafeAreaView className="flex-1 bg-white">
@@ -61,17 +74,6 @@ export default function ProductById() {
   // Format prices using the service's currency
   const formattedMinPrice = service ? format(service.minimumPrice) : '';
   const formattedMaxPrice = service ? format(service.maximumPrice) : '';
-
-  // Set initial service type and address based on serviceDeliveryType
-  React.useEffect(() => {
-    if (isWalkInService) {
-      setServiceType('VISIT_PROVIDER');
-      setAddress(service?.address || '');
-    } else {
-      setServiceType('HOME_SERVICE');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWalkInService, service?.address]);
 
   // Generate 24-hour time options
   const generate24HourOptions = () => {
