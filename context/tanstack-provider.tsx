@@ -4,6 +4,7 @@ import {
 } from '@tanstack/react-query';
 import { AuthProvider } from './auth-context';
 import { CurrencyProvider } from './currency-context';
+import { DeepLinkProvider } from './DeepLinkContext';
 import { ToastProvider } from './toast-context';
 
 const TanstackProvider = ({ children }: { children: React.ReactNode }) => {
@@ -13,7 +14,9 @@ const TanstackProvider = ({ children }: { children: React.ReactNode }) => {
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
-            {children}
+            <DeepLinkProvider>
+              {children}
+            </DeepLinkProvider>
           </CurrencyProvider>
         </QueryClientProvider>
       </ToastProvider>
