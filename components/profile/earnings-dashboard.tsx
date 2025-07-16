@@ -1,5 +1,6 @@
 import { useCurrency } from '@/context/currency-context';
 import { useGetAccountBalance } from '@/hooks/query/useGetAccountBalance';
+import { useGetTransactionHistory } from '@/hooks/query/useGetTransactionHistory';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
@@ -30,12 +31,26 @@ function formatDate(date: string) {
 export default function EarningsDashboard() {
   const { symbol } = useCurrency();
   const { data: accountBalance, isPending } = useGetAccountBalance();
+  const { data: transactionHistory, isPending: isTransactionHistoryPending } = useGetTransactionHistory();
 
-  console.log('accountBalance', accountBalance)
+  const balance = accountBalance?.data?.accountBalance
+  const currency = accountBalance?.data?.currency
 
-  if (isPending) {
+  if (isPending || isTransactionHistoryPending) {
     return <ActivityIndicator className='flex-1 justify-center items-center' />
   }
+
+  // Map API transaction data to UI format
+  const mappedTransactions = Array.isArray(transactionHistory?.data)
+    ? transactionHistory.data.map((tx: any) => ({
+      amount: tx.amount,
+      type: tx.transType === 'C' ? 'Credit' : 'Debit',
+      service: tx.description,
+      user: tx.walletId,
+      date: tx.transactionDate,
+    }))
+    : [];
+
   return (
     <View className="flex-1 bg-white">
       {/* Wallet Card */}
@@ -43,40 +58,44 @@ export default function EarningsDashboard() {
         <View className="bg-primary-50 rounded-xl p-4 shadow-sm relative">
           <Text className="text-sm text-primary-900 mb-1"> Wallet Balance:</Text>
           <View className="flex-row items-center justify-between">
-            <Text className="text-2xl font-bold text-primary-900">{symbol}{walletBalance.toLocaleString()}</Text>
+            <Text className="text-2xl font-bold text-primary-900">{currency} {balance}</Text>
             <Ionicons name="chevron-forward" size={24} color="#7C6AED" />
           </View>
-          <Text className="text-xs text-primary-300 mt-2 ">Last payment received: <Text className="font-semibold text-primary-600">24th Aug, 2024</Text></Text>
+          {/* <Text className="text-xs text-primary-300 mt-2 ">Last payment received: <Text className="font-semibold text-primary-600">24th Aug, 2024</Text></Text> */}
         </View>
       </View>
 
       {/* Earnings History */}
       <View className="px-4 mt-6 flex-1">
         <Text className="font-bold text-base mb-3">Earnings history:</Text>
-        <FlatList
-          data={transactions}
-          keyExtractor={(_, idx) => idx.toString()}
-          ItemSeparatorComponent={() => <View className="h-px bg-gray-200 my-2" />}
-          renderItem={({ item }) => (
-            <View className="mb-2">
-              <View className="flex-row justify-between items-center">
-                <Text className="font-bold text-black text-base">
-                  {symbol}{item.amount.toLocaleString()} <Text className="font-normal text-gray-400 text-sm">- [ {item.type} ]</Text>
-                </Text>
-                <Text className="text-gray-400 text-xs">{formatDate(item.date)}</Text>
+        {mappedTransactions.length === 0 ? (
+          <Text className="text-gray-400 text-center mt-8">No transactions found.</Text>
+        ) : (
+          <FlatList
+            data={mappedTransactions}
+            keyExtractor={(_, idx) => idx.toString()}
+            ItemSeparatorComponent={() => <View className="h-px bg-gray-200 my-2" />}
+            renderItem={({ item }) => (
+              <View className="mb-2">
+                <View className="flex-row justify-between items-center">
+                  <Text className="font-bold text-black text-base">
+                    {symbol}{item.amount.toLocaleString()} <Text className="font-normal text-gray-400 text-sm">- [ {item.type} ]</Text>
+                  </Text>
+                  <Text className="text-gray-400 text-xs">{formatDate(item.date)}</Text>
+                </View>
+                <View className="flex-row items-center mt-1">
+                  <MaterialIcons name="work" size={16} color="#A3A3A3" />
+                  <Text className="text-gray-500 text-sm ml-2">{item.service}</Text>
+                </View>
+                <View className="flex-row items-center mt-1">
+                  <Ionicons name="person" size={16} color="#A3A3A3" />
+                  <Text className="text-gray-500 text-sm ml-2">{item.user}</Text>
+                </View>
               </View>
-              <View className="flex-row items-center mt-1">
-                <MaterialIcons name="work" size={16} color="#A3A3A3" />
-                <Text className="text-gray-500 text-sm ml-2">{item.service}</Text>
-              </View>
-              <View className="flex-row items-center mt-1">
-                <Ionicons name="person" size={16} color="#A3A3A3" />
-                <Text className="text-gray-500 text-sm ml-2">{item.user}</Text>
-              </View>
-            </View>
-          )}
-          ListFooterComponent={<View style={{ height: 24 }} />}
-        />
+            )}
+            ListFooterComponent={<View style={{ height: 24 }} />}
+          />
+        )}
       </View>
     </View>
   )

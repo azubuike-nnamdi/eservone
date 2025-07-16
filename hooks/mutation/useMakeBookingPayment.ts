@@ -13,7 +13,7 @@ const useMakeBookingPayment = () => {
     onSuccess: (data) => {
       if (data) {
         showToast(data?.data?.description || "Payment successful", "success");
-        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        queryClient.invalidateQueries({ queryKey: ["payment"] });
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
