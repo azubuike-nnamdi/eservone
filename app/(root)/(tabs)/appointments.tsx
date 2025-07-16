@@ -86,20 +86,19 @@ export default function Appointments() {
   const renderItem = useCallback(({ item }: { item: FlatListData }) => {
     if (item.type === 'section') {
       return (
-        <View className="px-7 mt-3 mb-2">
+        <View className="px-4 mt-2 mb-1">
           <Text className="text-lg font-bold">{item.title}</Text>
         </View>
       );
     }
     if (item.type === 'appointment' && item.appointment && item.appointmentType) {
       return (
-        <View className="px-7 mb-4">
-          <AppointmentCard
-            type={item.appointmentType}
-            appointment={item.appointment}
-            onPress={() => item.onPress?.(item.appointment!)}
-          />
-        </View>
+        <AppointmentCard
+          type={item.appointmentType}
+          appointment={item.appointment}
+          onPress={() => item.onPress?.(item.appointment!)}
+          noMargin
+        />
       );
     }
     return null;
