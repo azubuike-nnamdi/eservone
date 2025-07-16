@@ -97,11 +97,7 @@ export default function Profile() {
                   showArrow={false}
                   href={MANAGE_SERVICES}
                 />
-                <GeneralSetting
-                  title='Earnings'
-                  showArrow={false}
-                  href={EARNINGS}
-                />
+                {/* Earnings moved to General section */}
                 <GeneralSetting
                   title='Industrial certificates'
                   showArrow={false}
@@ -122,6 +118,11 @@ export default function Profile() {
                 href={setting.href}
               />
             ))}
+            <GeneralSetting
+              title='Earnings'
+              showArrow={false}
+              href={EARNINGS}
+            />
           </View>
 
           {/* Legal Section */}
