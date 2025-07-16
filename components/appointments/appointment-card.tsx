@@ -5,12 +5,13 @@ import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 
 interface AppointmentCardProps {
-  type: 'upcoming' | 'history'
-  appointment: Appointment
-  onPress?: () => void
+  type: 'upcoming' | 'history';
+  appointment: Appointment;
+  onPress?: () => void;
+  noMargin?: boolean;
 }
 
-export default function AppointmentCard({ type, appointment, onPress }: AppointmentCardProps) {
+export default function AppointmentCard({ type, appointment, onPress, noMargin = false }: AppointmentCardProps) {
   const { format } = useCurrency();
   const formattedCost = format(parseFloat(appointment.costOfService));
 
@@ -26,17 +27,17 @@ export default function AppointmentCard({ type, appointment, onPress }: Appointm
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`flex-row items-center rounded-xl border border-gray-200 mb-3 ${faded ? 'bg-zinc-50 opacity-60' : 'bg-white'} p-0`}
-      style={{ minHeight: 80 }}
+      className={`flex-row items-center border border-gray-100 mx-4 ${faded ? 'bg-zinc-50 opacity-60' : 'bg-white'} p-0`}
+      style={{ minHeight: 56 }}
       activeOpacity={0.85}
     >
       {/* Date Box */}
-      <View className={`h-full px-4 py-3 items-center justify-center rounded-l-xl ${faded ? 'bg-zinc-100' : 'bg-primary-100'}`} style={{ minWidth: 64 }}>
+      <View className={`h-full px-4 py-1 items-center justify-center ${faded ? 'bg-zinc-100' : 'bg-primary-100'}`} style={{ minWidth: 64 }}>
         <Text className={`text-base font-bold ${faded ? 'text-zinc-400' : 'text-primary-500'}`}>{month} {day}</Text>
         <Text className={`text-xs mt-1 ${faded ? 'text-zinc-400' : 'text-primary-400'}`}>{time}</Text>
       </View>
       {/* Details */}
-      <View className="flex-1 px-4 py-3 justify-center">
+      <View className="flex-1 px-4 py-1 justify-center">
         <Text className={`text-base font-bold mb-1 ${faded ? 'text-zinc-400' : 'text-black'}`} numberOfLines={1}>{appointment.serviceName}</Text>
         <Text className={`text-xs mb-1 ${faded ? 'text-zinc-300' : 'text-zinc-500'}`} numberOfLines={1}>{provider}</Text>
         <Text className={`text-xs ${faded ? 'text-zinc-400' : 'text-zinc-500'}`}>Price: <Text className="font-bold text-black">{formattedCost}</Text></Text>
