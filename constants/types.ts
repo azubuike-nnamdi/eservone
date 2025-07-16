@@ -297,6 +297,13 @@ type PaymentPayload = {
   paymentMethod: string;
 }
 
+type MakeBookingPaymentPayload = {
+  amount: string | null;
+  description: string;
+  receiverWalletId: string | null;
+  senderWalletId: string | null;
+}
+
 type Country = {
   code: string;
   name: string;
@@ -314,5 +321,5 @@ type CurrencyStore = {
   formatCurrency: (amount: number, currency?: string) => string;
 }
 
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 

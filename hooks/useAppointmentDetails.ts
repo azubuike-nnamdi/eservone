@@ -7,7 +7,7 @@ import useAcceptBooking from "./mutation/useAcceptBooking";
 import useCancelAppointment from "./mutation/useCancelAppointment";
 import useCompleteAppointment from "./mutation/useCompleteAppointment";
 import useCreateRating from "./mutation/useCreateRating";
-import useInitiatePayment from "./mutation/useInitiatePayment";
+import useMakeBookingPayment from "./mutation/useMakeBookingPayment";
 import useSubmitReview from "./mutation/useSubmitReview";
 import useGetAppointmentByUserId from "./query/useGetAppointmentByUserId";
 import useGetProviderAppointments from "./query/useGetProviderAppointments";
@@ -33,7 +33,7 @@ export const useAppointmentDetails = () => {
   const { handleCreateRating, isPending: isCreatingRating } = useCreateRating();
   const { handleCreateRating: handleCreateReview, isPending: isCreatingReview } = useSubmitReview();
   const { handleAcceptBooking: acceptBooking, isPending: isAcceptingBooking } = useAcceptBooking();
-  const { handleInitiatePayment, isPending: isMakingPayment } = useInitiatePayment();
+  const { handleMakeBookingPayment, isPending: isMakingPayment } = useMakeBookingPayment();
 
   // Effects
   useEffect(() => {
@@ -96,13 +96,13 @@ export const useAppointmentDetails = () => {
   const handlePayNow = () => {
     if (appointment && user) {
       const payload = {
-        amount: parseInt(appointment.costOfService),
-        beneficiaryName: `${user.firstName} ${user.lastName}`,
-        narration: `Payment for ${appointment.serviceName}`,
-        senderEmail: user.email
+        amount: String(appointment.costOfService),
+        description: `Payment for ${appointment.serviceName}`,
+        receiverWalletId: appointment?.serviceProviderEmail,
+        senderWalletId: user?.email
       };
 
-      handleInitiatePayment(payload);
+      handleMakeBookingPayment(payload);
     }
   };
 
