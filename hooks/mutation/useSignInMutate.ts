@@ -16,7 +16,7 @@ const useSignInMutate = () => {
     mutationFn: (payload: SignInPayload) => axios.post(`${baseURL}/eserve-one/user-login`, payload),
     onSuccess: async (data) => {
       if (data) {
-        console.log('Sign in success:', data?.data?.data)
+
         try {
           // Store auth data in Zustand store
           setAuth(
@@ -32,7 +32,6 @@ const useSignInMutate = () => {
           )
           queryClient.invalidateQueries({ queryKey: ["user"] })
           queryClient.setQueryData(["user"], data)
-          console.log('Auth data saved, navigating to home', data?.data?.data)
 
           router.push(HOME)
         } catch (error) {
