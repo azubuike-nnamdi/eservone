@@ -99,6 +99,7 @@ export const useAppointmentDetails = () => {
         amount: String(appointment.costOfService),
         description: `Payment for ${appointment.serviceName}`,
         receiverWalletId: appointment?.serviceProviderEmail,
+        serviceAppointmentId: appointment?.id,
         senderWalletId: user?.email
       };
 
