@@ -5,24 +5,6 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
-interface Transaction {
-  amount: number;
-  type: string;
-  service: string;
-  user: string;
-  date: string;
-}
-
-const walletBalance = 23000;
-// const lastPaymentDate = '2024-08-24';
-
-const transactions: Transaction[] = [
-  { amount: 5000, type: 'Initial payment', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
-  { amount: 50000, type: 'Balance', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
-  { amount: 50000, type: 'Balance', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
-  { amount: 50000, type: 'Balance', service: 'Wig installation', user: 'John Doe', date: '2049-01-24' },
-];
-
 function formatDate(date: string) {
   const d = new Date(date);
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -46,7 +28,6 @@ export default function EarningsDashboard() {
       amount: tx.amount,
       type: tx.transType === 'C' ? 'Credit' : 'Debit',
       service: tx.description,
-      user: tx.walletId,
       date: tx.transactionDate,
     }))
     : [];
@@ -75,24 +56,25 @@ export default function EarningsDashboard() {
             data={mappedTransactions}
             keyExtractor={(_, idx) => idx.toString()}
             ItemSeparatorComponent={() => <View className="h-px bg-gray-200 my-2" />}
-            renderItem={({ item }) => (
-              <View className="mb-2">
-                <View className="flex-row justify-between items-center">
-                  <Text className="font-bold text-black text-base">
-                    {symbol}{item.amount.toLocaleString()} <Text className="font-normal text-gray-400 text-sm">- [ {item.type} ]</Text>
-                  </Text>
-                  <Text className="text-gray-400 text-xs">{formatDate(item.date)}</Text>
+            renderItem={({ item }) => {
+              const isCredit = item.type === 'Credit';
+              const textColor = isCredit ? 'text-green-600' : 'text-red-600';
+
+              return (
+                <View className="mb-2">
+                  <View className="flex-row justify-between items-center">
+                    <Text className={`font-bold text-base ${textColor}`}>
+                      {symbol}{item.amount.toLocaleString()} <Text className={`font-normal text-sm ${textColor}`}>- [ {item.type} ]</Text>
+                    </Text>
+                    <Text className={`text-xs ${textColor}`}>{formatDate(item.date)}</Text>
+                  </View>
+                  <View className="flex-row items-center mt-1">
+                    <MaterialIcons name="work" size={16} color="#A3A3A3" />
+                    <Text className="text-gray-500 text-sm ml-2">{item.service}</Text>
+                  </View>
                 </View>
-                <View className="flex-row items-center mt-1">
-                  <MaterialIcons name="work" size={16} color="#A3A3A3" />
-                  <Text className="text-gray-500 text-sm ml-2">{item.service}</Text>
-                </View>
-                <View className="flex-row items-center mt-1">
-                  <Ionicons name="person" size={16} color="#A3A3A3" />
-                  <Text className="text-gray-500 text-sm ml-2">{item.user}</Text>
-                </View>
-              </View>
-            )}
+              );
+            }}
             ListFooterComponent={<View style={{ height: 24 }} />}
           />
         )}
