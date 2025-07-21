@@ -170,25 +170,28 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
       )}
 
       {/* Payment Section - Only for accepted appointments (not completed) and seekers */}
-      {appointment.serviceAppointmentStatus === 'ACCEPT' && appointment.serviceStatus !== 'COMPLETED' && isSeeker && (
-        <View className="bg-white mb-6">
-          <Text className="text-lg font-bold mb-4">Payment</Text>
-          <Button
-            className="bg-green-600 py-4 rounded-lg"
-            onPress={onPayNow}
-            disabled={isMakingPayment}
-            loadingText="Processing Payment..."
-            loading={isMakingPayment}
-          >
-            <Text className="text-center text-white font-semibold text-lg">
-              Pay Now
+      {appointment.serviceAppointmentStatus === 'ACCEPT' &&
+        appointment.serviceStatus !== 'COMPLETED' &&
+        isSeeker &&
+        appointment.paymentStatus !== 'SUCCESSFUL' && (
+          <View className="bg-white mb-6">
+            <Text className="text-lg font-bold mb-4">Payment</Text>
+            <Button
+              className="bg-green-600 py-4 rounded-lg"
+              onPress={onPayNow}
+              disabled={isMakingPayment}
+              loadingText="Processing Payment..."
+              loading={isMakingPayment}
+            >
+              <Text className="text-center text-white font-semibold text-lg">
+                Pay Now
+              </Text>
+            </Button>
+            <Text className="text-sm text-gray-500 mt-2 text-center">
+              Amount: ₦{appointment.costOfService}
             </Text>
-          </Button>
-          <Text className="text-sm text-gray-500 mt-2 text-center">
-            Amount: ₦{appointment.costOfService}
-          </Text>
-        </View>
-      )}
+          </View>
+        )}
     </>
   );
 };
