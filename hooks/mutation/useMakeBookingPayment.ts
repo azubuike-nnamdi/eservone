@@ -2,8 +2,10 @@ import { MakeBookingPaymentPayload } from "@/constants/types";
 import { useToast } from "@/context/toast-context";
 import { api } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 
 const useMakeBookingPayment = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
@@ -13,6 +15,7 @@ const useMakeBookingPayment = () => {
     onSuccess: (data) => {
       if (data) {
         showToast(data?.data?.description || "Payment successful", "success");
+        router.back();
         queryClient.invalidateQueries({ queryKey: ["payment"] });
       }
     },
