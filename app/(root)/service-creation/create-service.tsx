@@ -72,10 +72,18 @@ export default function CreateService() {
 
     // Determine serviceDeliveryType
     let serviceDeliveryType = "WALK_IN_SERVICE";
-    if (store.deliveryType.homeService) {
-      serviceDeliveryType = "HOME_SERVICE";
-    } else if (store.deliveryType.walkIn) {
-      serviceDeliveryType = "WALK_IN_SERVICE";
+    switch (true) {
+      case store.deliveryType.homeService:
+        serviceDeliveryType = "HOME_SERVICE";
+        break;
+      case store.deliveryType.virtualService:
+        serviceDeliveryType = "VIRTUAL_SERVICE";
+        break;
+      case store.deliveryType.walkIn:
+        serviceDeliveryType = "WALK_IN_SERVICE";
+        break;
+      default:
+        serviceDeliveryType = "WALK_IN_SERVICE";
     }
 
     // --- Convert images to Base64 (with manipulation) ---
@@ -109,12 +117,12 @@ export default function CreateService() {
     // --- Construct JSON Payload ---
     const apiPayload = {
       serviceName: store.serviceName,
-      serviceCategoryId: store.serviceCategory as number, // Casting, ensure it's valid number
+      serviceCategoryId: store.serviceCategory as number,
       serviceDescription: store.serviceDescription,
       serviceDeliveryType: serviceDeliveryType,
       minimumPrice: store.minFee ?? 0,
       maximumPrice: store.maxFee ?? 0,
-      // receivablePrice: 0, // Include if needed by API, otherwise omit
+      address: store.serviceAddress,
       uploadImage: uploadImage, // Use the processed Base64 images
     };
 
