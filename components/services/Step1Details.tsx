@@ -46,7 +46,13 @@ export default function Step1Details() {
         placeholder="e.g., Professional Barbering Services"
         value={store.serviceName}
         onChangeText={(text) => store.setField('serviceName', text)}
-      // Add validation error if needed
+      />
+
+      <TextInput
+        label="Address"
+        placeholder="e.g., 123 Main St, Anytown, USA"
+        value={store.serviceAddress}
+        onChangeText={(text) => store.setField('serviceAddress', text)}
       />
 
       <Select
@@ -77,12 +83,29 @@ export default function Step1Details() {
         <Checkbox
           label="Walk-in service"
           checked={store.deliveryType.walkIn}
-          onChange={(checked) => store.setDeliveryType('walkIn', checked)}
+          onChange={() => {
+            store.setDeliveryType('walkIn', true);
+            store.setDeliveryType('homeService', false);
+            store.setDeliveryType('virtualService', false);
+          }}
         />
         <Checkbox
           label="Home service"
           checked={store.deliveryType.homeService}
-          onChange={(checked) => store.setDeliveryType('homeService', checked)}
+          onChange={() => {
+            store.setDeliveryType('walkIn', false);
+            store.setDeliveryType('homeService', true);
+            store.setDeliveryType('virtualService', false);
+          }}
+        />
+        <Checkbox
+          label="Virtual service"
+          checked={store.deliveryType.virtualService}
+          onChange={() => {
+            store.setDeliveryType('walkIn', false);
+            store.setDeliveryType('homeService', false);
+            store.setDeliveryType('virtualService', true);
+          }}
         />
         {/* Add validation error if needed (e.g., at least one must be selected) */}
       </View>
