@@ -5,9 +5,11 @@ interface ServiceCreationState {
   serviceName: string
   serviceCategory: string | number | null
   serviceDescription: string
+  serviceAddress: string
   deliveryType: {
     walkIn: boolean
     homeService: boolean
+    virtualService: boolean
   }
   minFee: number | null
   maxFee: number | null
@@ -27,9 +29,11 @@ const initialState = {
   serviceName: '',
   serviceCategory: null,
   serviceDescription: '',
+  serviceAddress: '',
   deliveryType: {
     walkIn: false,
     homeService: false,
+    virtualService: false,
   },
   minFee: null,
   maxFee: null,

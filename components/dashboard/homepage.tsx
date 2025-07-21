@@ -31,15 +31,11 @@ export default function Homepage() {
          narration: 'Wallet Top Up',
          senderEmail: userProfile?.data?.emailAddress,
       };
-      try {
-         const response = await handleInitiatePayment(payload);
-         const url = response?.data?.data?.authorization_url;
-         if (url) {
-            setModalVisible(false); // Close the amount modal
-            setPaystackUrl(url);    // Open the Paystack modal
-         }
-      } catch (e) {
-         // Optionally show error
+      const response = await handleInitiatePayment(payload);
+      const url = response?.data?.data?.authorization_url;
+      if (url) {
+         setModalVisible(false); // Close the amount modal
+         setPaystackUrl(url);    // Open the Paystack modal
       }
    };
 
@@ -85,6 +81,7 @@ export default function Homepage() {
                onClose={() => setPaystackUrl(null)}
                paystackUrl={paystackUrl}
                backendDomain="https://api.eservone.com"
+               paystackRedirectUrl="eservone://payment/thank-you"
                onComplete={url => {
                   setPaystackUrl(null);
                   // Extract reference from URL

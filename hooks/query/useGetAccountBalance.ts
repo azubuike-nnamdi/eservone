@@ -8,7 +8,7 @@ export const useGetAccountBalance = () => {
   }
 
   const { data, isPending, error } = useQuery({
-    queryKey: ['account-balance'],
+    queryKey: ['payment'],
     queryFn: getAccountBalance
   })
 

@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { ActivityIndicator, Modal, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { ActivityIndicator, Modal, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 interface PaystackWebviewRobustModalProps {
@@ -7,10 +7,39 @@ interface PaystackWebviewRobustModalProps {
   onClose: () => void;
   onComplete: (url: string) => void;
   paystackUrl: string;
-  backendDomain?: string; // e.g., 'api.your-backend.com'
+  backendDomain?: string;
+  paystackRedirectUrl: string;
 }
 
-const DEFAULT_BACKEND_DOMAIN = 'api.your-backend.com'; // Change this to your backend domain
+const DEFAULT_BACKEND_DOMAIN = 'api.your-backend.com';
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'flex-end',
+  },
+  webviewContainer: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    flex: 1,
+    minHeight: 500,
+    maxHeight: '90%',
+  },
+  loading: {
+    marginTop: 32,
+  },
+});
+
+const runFirst = `
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.innerHTML && e.target.innerHTML.includes('Cancel')) {
+      window.ReactNativeWebView.postMessage('cancel');
+    }
+  });
+  true;
+`;
 
 const PaystackWebviewRobustModal: React.FC<PaystackWebviewRobustModalProps> = ({
   visible,
@@ -18,17 +47,10 @@ const PaystackWebviewRobustModal: React.FC<PaystackWebviewRobustModalProps> = ({
   onComplete,
   paystackUrl,
   backendDomain = DEFAULT_BACKEND_DOMAIN,
+  paystackRedirectUrl,
 }) => {
-  const verified = useRef(false);
-
-  const runFirst = `
-    document.addEventListener('click', function(e) {
-      if (e.target && e.target.innerHTML && e.target.innerHTML.includes('Cancel')) {
-        window.ReactNativeWebView.postMessage('cancel');
-      }
-    });
-    true;
-  `;
+  const [verified, setVerified] = useState(false);
+  const webview = useRef<WebView>(null);
 
   const handleMessage = (event: any) => {
     if (event.nativeEvent.data === 'cancel') {
@@ -36,31 +58,46 @@ const PaystackWebviewRobustModal: React.FC<PaystackWebviewRobustModalProps> = ({
     }
   };
 
-  const handleNavChange = (navState: any) => {
-    if (verified.current) return;
-    const url = navState.url;
-    if (url.includes(backendDomain)) {
-      verified.current = true;
-      onComplete && onComplete(url);
-      onClose();
+  const handleShouldStartLoadWithRequest = (request: any) => {
+    const url = request.url;
+    // Intercept custom scheme or backend redirects
+    if (
+      url.startsWith(paystackRedirectUrl) ||
+      url.startsWith('eservone://') ||
+      (backendDomain && url.includes(backendDomain))
+    ) {
+      webview.current?.stopLoading();
+      if (!verified) {
+        setVerified(true);
+        onComplete && onComplete(url);
+        onClose();
+      }
+      return false;
     }
+    return true;
   };
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' }}>
-        <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, flex: 1, minHeight: 500, maxHeight: '90%' }}>
+      <View className="flex-1 bg-[rgba(0,0,0,0.3)] justify-end">
+        <View className="bg-white rounded-t-3xl flex-1 min-h-[500px] max-h-[90%]">
           <WebView
+            ref={webview}
             source={{ uri: paystackUrl }}
             injectedJavaScriptBeforeContentLoaded={runFirst}
             onMessage={handleMessage}
-            onNavigationStateChange={handleNavChange}
+            onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
             startInLoadingState
             renderLoading={() => <ActivityIndicator size="large" color="#7C6AED" style={{ marginTop: 32 }} />}
             style={{ flex: 1, borderTopLeftRadius: 24, borderTopRightRadius: 24 }}
-            onError={e => {
-              onClose();
-            }}
+            onError={onClose}
+            javaScriptEnabled
+            domStorageEnabled
+            mixedContentMode="always"
+            thirdPartyCookiesEnabled
+            sharedCookiesEnabled
+            allowUniversalAccessFromFileURLs
+            scrollEnabled
           />
         </View>
       </View>
