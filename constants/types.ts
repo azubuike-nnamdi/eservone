@@ -107,6 +107,7 @@ type Appointment = {
   latitude: string | null
   longitude: string | null
   serviceProviderEmail: string | null
+  paymentStatus?: 'SUCCESSFUL' | 'FAILED' | 'PENDING'
 }
 
 type AppointmentType = 'upcoming' | 'history'
