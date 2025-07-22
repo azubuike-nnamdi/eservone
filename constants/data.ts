@@ -1,6 +1,6 @@
 import icons from "./icons";
 import images from "./images";
-import { ACCOUNT_PREFERENCE, ACCOUNT_SECURITY, PRIVACY_POLICY, PROFILE_INFORMATION, SUPPORT, TERMS_OF_SERVICES } from "./routes";
+import { ACCOUNT_SECURITY, PRIVACY_POLICY, PROFILE_INFORMATION, SUPPORT, TERMS_OF_SERVICES } from "./routes";
 import { ServiceType, SettingItem, SlideItem } from "./types";
 
 export const slides: SlideItem[] = [
@@ -61,11 +61,11 @@ export const settings = [
 
 
 export const generalSettings: SettingItem[] = [
-  {
-    id: 'account-preferences',
-    title: 'Account preferences',
-    href: ACCOUNT_PREFERENCE,
-  },
+  // {
+  //   id: 'account-preferences',
+  //   title: 'Account preferences',
+  //   href: ACCOUNT_PREFERENCE,
+  // },
   {
     id: 'profile-information',
     title: 'Profile information',

@@ -141,6 +141,7 @@ interface DeleteAccountModalProps {
   visible: boolean
   onClose: () => void
   onConfirm: () => void
+  isPending: boolean
 }
 
 
@@ -236,6 +237,10 @@ type createReviewPayload = {
 
 type AcceptBookingPayload = {
   serviceAppointmentId: number
+}
+
+type DeleteProfilePayload = {
+  email: string
 }
 
 type InitiatePaymentPayload = {
@@ -343,5 +348,5 @@ type Service = {
   studioName?: string;
 };
 
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
 

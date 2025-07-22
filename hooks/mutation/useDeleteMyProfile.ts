@@ -1,6 +1,6 @@
 
 import { SIGN_IN } from "@/constants/routes"
-import { AcceptBookingPayload } from "@/constants/types"
+import { DeleteProfilePayload } from "@/constants/types"
 import { useToast } from "@/context/toast-context"
 import { api } from "@/lib/api"
 import { useAuthStore } from "@/store/auth-store"
@@ -15,7 +15,7 @@ const useDeleteMyProfile = () => {
   const { showToast } = useToast()
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (payload: AcceptBookingPayload) => api.post(`/eserve-one/delete-user`, payload),
+    mutationFn: (payload: DeleteProfilePayload) => api.post(`/eserve-one/delete-user`, payload),
     onSuccess: async (data) => {
       if (data) {
         showToast(data?.data?.description, "success")
@@ -24,19 +24,19 @@ const useDeleteMyProfile = () => {
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      showToast(error?.response?.data?.description ?? "Failed to create review", "error")
+      showToast(error?.response?.data?.description ?? "Failed to delete profile", "error")
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] })
     }
   })
 
-  const handleDeleteBooking = (payload: AcceptBookingPayload) => {
+  const handleDeleteProfile = (payload: DeleteProfilePayload) => {
 
     mutate(payload)
   }
 
-  return { handleDeleteBooking, isPending }
+  return { handleDeleteProfile, isPending }
 }
 
 export default useDeleteMyProfile

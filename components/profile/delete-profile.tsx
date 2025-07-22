@@ -1,10 +1,11 @@
-import type React from "react"
-import { Modal, View, Text, TouchableOpacity } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { DeleteAccountModalProps } from "@/constants/types"
+import { Ionicons } from "@expo/vector-icons"
+import type React from "react"
+import { Modal, Text, TouchableOpacity, View } from "react-native"
+import Button from "../common/button"
 
 
-const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ visible, onClose, onConfirm }) => {
+const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ visible, onClose, onConfirm, isPending }) => {
   return (
     <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>
       <View className="flex-1 justify-center items-center bg-black/50">
@@ -26,9 +27,13 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ visible, onClos
 
           <Text className="text-lg text-gray-600 text-center mb-8 font-medium">Are you sure you want to proceed?</Text>
 
-          <TouchableOpacity className="bg-red-500 w-full py-4 rounded-xl items-center mt-2" onPress={onConfirm}>
+          <Button className="bg-red-500 w-full py-4 rounded-xl items-center mt-2" onPress={onConfirm}
+            loading={isPending}
+            disabled={isPending}
+            loadingText="Deleting account..."
+          >
             <Text className="text-white text-lg font-semibold">Yes, delete account</Text>
-          </TouchableOpacity>
+          </Button>
         </View>
       </View>
     </Modal>
