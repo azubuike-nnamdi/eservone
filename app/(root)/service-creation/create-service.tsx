@@ -6,7 +6,6 @@ import Step3Media from "@/components/services/Step3Media";
 import useCreateService from "@/hooks/mutation/useCreateService";
 import { cn } from "@/lib/utils";
 import { useServiceCreationStore } from "@/store/service-creation-store";
-import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { router } from "expo-router";
 import React from "react";
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from "react-native";
@@ -86,27 +85,13 @@ export default function CreateService() {
         serviceDeliveryType = "WALK_IN_SERVICE";
     }
 
-    // --- Convert images to Base64 (with manipulation) ---
+    // --- Convert images to Base64 (already base64 in store) ---
     let uploadImage: { image: string; imageTitle: string }[] = [];
     try {
-      uploadImage = await Promise.all(
-        store.images.map(async (imageUri, index) => {
-          // Manipulate Image: Resize and Compress
-          const manipulatedImage = await manipulateAsync(
-            imageUri, // Original image URI
-            [{ resize: { width: 1024 } }], // Resize based on width
-            {
-              compress: 0.7, // JPEG quality
-              format: SaveFormat.JPEG,
-              base64: true, // Get Base64 directly
-            }
-          );
-          return {
-            image: manipulatedImage.base64!, // Use base64, assert non-null
-            imageTitle: `service_image_${index + 1}`,
-          };
-        })
-      );
+      uploadImage = store.images.map((base64, index) => ({
+        image: base64, // Already base64
+        imageTitle: `service_image_${index + 1}`,
+      }));
     } catch (error) {
       console.error("Error processing images:", error);
       alert("Failed to process images for upload. Please try again.");

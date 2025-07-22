@@ -1,15 +1,29 @@
 import { cn } from '@/lib/utils'
 import { Ionicons } from '@expo/vector-icons'
+import * as FileSystem from 'expo-file-system'
 import * as ImagePicker from 'expo-image-picker'
 import React from 'react'
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native'
 
 interface ImageUploadProps {
   images: string[]
-  onAddImage: (uri: string) => void
-  onRemoveImage: (uri: string) => void
+  onAddImage: (base64: string) => void
+  onRemoveImage: (base64: string) => void
   maxImages?: number
 }
+
+// Helper to convert file URI to base64
+const convertImageToBase64 = async (fileUri: string) => {
+  try {
+    const base64Data = await FileSystem.readAsStringAsync(fileUri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    return base64Data;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return null;
+  }
+};
 
 export default function ImageUpload({
   images,
@@ -32,15 +46,24 @@ export default function ImageUpload({
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false, // Allow multiple selections typically means no editing
-      quality: 0.8, // Adjust quality as needed
-      // allowsMultipleSelection: true, // Enable if you want multi-select (requires different handling)
+      allowsEditing: true,
+      quality: 0.8,
+      base64: true, // Get base64 string
     });
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      // For single image selection
-      onAddImage(result.assets[0].uri);
-      // If allowsMultipleSelection is true, loop through result.assets and call onAddImage for each
+      const asset = result.assets[0];
+      // Only allow jpeg/jpg/png
+      // (File type check can be re-enabled if needed)
+      let base64 = asset.base64;
+      if (!base64) {
+        base64 = await convertImageToBase64(asset.uri);
+        if (!base64) {
+          Alert.alert('Error', 'Could not convert image to base64.');
+          return;
+        }
+      }
+      onAddImage(base64);
     }
   };
 
@@ -77,12 +100,13 @@ export default function ImageUpload({
         <View className='mb-4'>
           <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Uploaded images:</Text>
           <View className='flex-row flex-wrap -mx-1'>
-            {images.map((uri, index) => (
+            {images.map((base64, index) => (
               <View key={index} className='w-1/2 p-1'>
                 <View className='relative aspect-square bg-gray-100 rounded-lg overflow-hidden'>
-                  <Image source={{ uri }} className='w-full h-full' resizeMode='cover' />
+                  {/* Show as data uri */}
+                  <Image source={{ uri: `data:image/jpeg;base64,${base64}` }} className='w-full h-full' resizeMode='cover' />
                   <TouchableOpacity
-                    onPress={() => onRemoveImage(uri)}
+                    onPress={() => onRemoveImage(base64)}
                     className='absolute top-1 right-1 bg-black/50 rounded-full p-1'
                   >
                     <Ionicons name="close" size={16} color="white" />
