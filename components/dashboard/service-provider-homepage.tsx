@@ -34,12 +34,12 @@ const EmptyState = ({ firstName }: { firstName?: string }) => (
 export default function ServiceProviderHomepage() {
   const { user } = useAuthStore()
   const { data, isPending } = useGetAllServices()
-  const { data: appointments, isPending: appointmentsPending, } = useGetProviderAppointments();
+  const { data: appointments, isPending: appointmentsPending, refetch: refetchAppointments } = useGetProviderAppointments();
 
   const renderContent = () => {
     if (isPending || appointmentsPending) return <DashboardSkeleton />
     if (!data) return <EmptyState firstName={user?.firstName} />
-    return <DashboardScreen appointments={appointments} />
+    return <DashboardScreen appointments={appointments} refetchAppointments={refetchAppointments} />
   }
 
   return (

@@ -1,16 +1,18 @@
 import ProfileHeader from "@/components/common/profile-header";
 import SearchBar from "@/components/common/search-bar";
 import { useGetAccountBalance } from "@/hooks/query/useGetAccountBalance";
+import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
 import { getGreeting } from "@/lib/helper";
 import { useAuthStore } from "@/store/auth-store";
 import { useRecentSearchesStore } from "@/store/recent-searches-store";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
-   Animated,
+   ActivityIndicator,
    KeyboardAvoidingView,
    Platform,
+   RefreshControl,
    ScrollView,
    Text,
    TouchableOpacity,
@@ -23,13 +25,23 @@ export default function ServiceSeekerHomepage() {
    const { user } = useAuthStore();
    const recentSearches = useRecentSearchesStore((s) => s.recent);
    const clearRecent = useRecentSearchesStore((s) => s.clear);
-   const { data: accountBalance, isPending: isAccountBalancePending } = useGetAccountBalance();
+   const { data: accountBalance, isPending: isAccountBalancePending, refetch: refetchBalance } = useGetAccountBalance();
+   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
    const [showBalance, setShowBalance] = useState(false);
-   // beneficiaryName and senderEmail are derived from user store
-   const beneficiaryName = user ? `${user.firstName} ${user.lastName}` : '';
-   const senderEmail = user?.email || '';
-   const [narration, setNarration] = useState('');
-   const slideAnim = useState(new Animated.Value(0))[0];
+   const [refreshing, setRefreshing] = useState(false);
+
+
+   const onRefresh = useCallback(async () => {
+      setRefreshing(true);
+      try {
+         await Promise.all([
+            refetchBalance(),
+            refetchUserProfile(),
+         ]);
+      } finally {
+         setRefreshing(false);
+      }
+   }, [refetchBalance, refetchUserProfile]);
 
    // Handler to go to search page with a pre-filled term
    const handleRecentPress = (term: string) => {
@@ -48,6 +60,16 @@ export default function ServiceSeekerHomepage() {
             <ScrollView
                showsVerticalScrollIndicator={false}
                contentContainerClassName="pb-32"
+               refreshControl={
+                  <RefreshControl
+                     refreshing={refreshing}
+                     onRefresh={onRefresh}
+                     colors={['#7C6AED', '#3E3F93']}
+                     tintColor="#7C6AED"
+                     progressBackgroundColor="#ffffff"
+                     progressViewOffset={10}
+                  />
+               }
             >
                <ProfileHeader
                   title="Hire a service"
@@ -137,6 +159,16 @@ export default function ServiceSeekerHomepage() {
                   </View>
                </View>
             </ScrollView>
+
+            {/* Loading Overlay during refresh */}
+            {refreshing && (
+               <View className="absolute inset-0 bg-black/20 justify-center items-center z-50">
+                  <View className="bg-white rounded-lg p-6 shadow-lg">
+                     <ActivityIndicator size="large" color="#7C6AED" />
+                     <Text className="text-gray-600 mt-3 font-medium">Refreshing...</Text>
+                  </View>
+               </View>
+            )}
          </KeyboardAvoidingView>
       </SafeAreaView>
    );

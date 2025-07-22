@@ -1,17 +1,32 @@
 import Button from '@/components/common/button';
+import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails';
 import { getGreeting } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
 import Entypo from '@expo/vector-icons/Entypo';
-import React, { useMemo } from 'react';
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, FlatList, RefreshControl, SafeAreaView, Text, View } from 'react-native';
 interface StatItem {
   id: string;
   label: string;
   value: string;
 }
 
-const DashboardScreen = ({ appointments }: { appointments: any }) => {
+const DashboardScreen = ({ appointments, refetchAppointments }: { appointments: any; refetchAppointments?: () => void }) => {
   const { user } = useAuthStore()
+  const { refetch: refetchUserProfile } = useGetUserProfileDetails();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        refetchAppointments?.(),
+        refetchUserProfile(),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetchAppointments, refetchUserProfile]);
 
   // Calculate appointment statistics
   const appointmentStats = useMemo(() => {
@@ -68,6 +83,16 @@ const DashboardScreen = ({ appointments }: { appointments: any }) => {
           keyExtractor={item => item.id}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#7C6AED', '#3E3F93']}
+              tintColor="#7C6AED"
+              progressBackgroundColor="#ffffff"
+              progressViewOffset={10}
+            />
+          }
           ListFooterComponent={
             <View className='my-12 flex-col items-center justify-between'>
               <Text className='text-xl text-black-300 font-bold'>Average customer rating:</Text>
@@ -97,6 +122,16 @@ const DashboardScreen = ({ appointments }: { appointments: any }) => {
           <Text className='text-lg text-black-300 font-bold'>Average customer rating:</Text>
           <Text className='text-lg text-black-300 font-bold'>4.5</Text>
         </View>
+
+        {/* Loading Overlay during refresh */}
+        {refreshing && (
+          <View className="absolute inset-0 bg-black/20 justify-center items-center z-50">
+            <View className="bg-white rounded-lg p-6 shadow-lg">
+              <ActivityIndicator size="large" color="#7C6AED" />
+              <Text className="text-gray-600 mt-3 font-medium">Refreshing...</Text>
+            </View>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

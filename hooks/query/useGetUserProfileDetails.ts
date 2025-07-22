@@ -7,12 +7,12 @@ const useGetUserProfileDetails = () => {
     return response.data;
   };
 
-  const { data, isPending, error } = useQuery({
+  const { data, isPending, error, refetch } = useQuery({
     queryKey: ["userProfileDetails"],
     queryFn: getUserProfileDetails,
   });
 
-  return { data, isPending, error };
+  return { data, isPending, error, refetch };
 };
 
 export default useGetUserProfileDetails;

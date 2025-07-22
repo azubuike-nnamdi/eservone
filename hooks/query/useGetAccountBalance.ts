@@ -7,10 +7,10 @@ export const useGetAccountBalance = () => {
     return response.data
   }
 
-  const { data, isPending, error } = useQuery({
+  const { data, isPending, error, refetch } = useQuery({
     queryKey: ['payment'],
     queryFn: getAccountBalance
   })
 
-  return { data, isPending, error }
+  return { data, isPending, error, refetch }
 }

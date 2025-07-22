@@ -8,12 +8,12 @@ const useGetAppointmentByUserId = () => {
     return response.data;
   };
 
-  const { data, isPending, error, isError } = useQuery({
+  const { data, isPending, error, isError, refetch } = useQuery({
     queryKey: ["appointments"],
     queryFn: getAppointmentByUserId,
   });
 
-  return { data, isPending, error, isError };
+  return { data, isPending, error, isError, refetch };
 };
 
 export default useGetAppointmentByUserId;
