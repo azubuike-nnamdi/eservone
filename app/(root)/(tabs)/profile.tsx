@@ -16,8 +16,8 @@ export default function Profile() {
 
   const { data: userProfileDetails } = useGetUserProfileDetails();
 
-  const isBusinessProfile = userProfileDetails?.data?.businessAccount
-  // console.log('userProfileDetails', userProfileDetails?.data)
+  const isBusinessProfile = userProfileDetails?.data?.businessAccountVerified
+
 
   const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
   const handleSignOut = async () => {

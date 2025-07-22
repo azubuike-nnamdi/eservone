@@ -1,21 +1,23 @@
 import Button from '@/components/common/button'
 import icons from '@/constants/icons'
-import React, { useState } from 'react'
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import useCheckBusinessName from '@/hooks/query/useCheckBusinessName'
+import React, { useEffect, useState } from 'react'
+import { Image, ScrollView, Text, TextInput, View } from 'react-native'
 
 export default function CreateBusinessScreen() {
   const [businessName, setBusinessName] = useState('')
-  const [checking, setChecking] = useState(false)
-  const [available, setAvailable] = useState<null | boolean>(null)
+  const [debouncedBusinessName, setDebouncedBusinessName] = useState('')
 
-  // Dummy check availability handler
-  const handleCheckAvailability = () => {
-    setChecking(true)
-    setTimeout(() => {
-      setAvailable(true)
-      setChecking(false)
-    }, 1000)
-  }
+  // Debounce businessName input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedBusinessName(businessName.trim())
+    }, 400) // 400ms debounce
+    return () => clearTimeout(handler)
+  }, [businessName])
+
+  // Always call the hook, let the hook's enabled option control the API call
+  const { data, isPending, isSuccess, error, isError } = useCheckBusinessName(debouncedBusinessName)
 
   return (
     <View className='flex-1 bg-white'>
@@ -60,16 +62,25 @@ export default function CreateBusinessScreen() {
             onChangeText={setBusinessName}
           />
         </View>
-        <TouchableOpacity onPress={handleCheckAvailability} disabled={checking}>
-          <Text className='text-primary-500 font-rubikMedium mb-6'>
-            {checking ? 'Checking...' : 'Check availability'}
+        {debouncedBusinessName.length > 0 && (
+          <Text className='text-primary-500 font-rubikMedium '>
+            {isPending && 'Checking...'}
           </Text>
-        </TouchableOpacity>
-        {available === true && (
+        )}
+        {/* Show available only if statusCode 200 and data is null, and not error */}
+        {isSuccess && !isError && data?.data === null && (
           <Text className='text-green-600 mb-4'>Business name is available!</Text>
         )}
-        {available === false && (
+        {isSuccess && !isError && data?.available === false && (
           <Text className='text-red-600 mb-4'>Business name is not available.</Text>
+        )}
+        {/* Do not show availability on error */}
+        {isError && (
+          <Text className='text-red-600 mb-4'>
+            {typeof error === 'object' && error !== null && 'response' in error && (error as any).response?.data?.message
+              ? (error as any).response.data.message
+              : 'An error occurred while checking business name.'}
+          </Text>
         )}
 
         {/* Spacer to push button to bottom */}
@@ -78,7 +89,7 @@ export default function CreateBusinessScreen() {
 
       {/* Payment Button - Fixed at bottom */}
       <View className='pb-6 pt-4 bg-white border-t border-gray-100'>
-        <Button variant='primary' onPress={() => { }}>
+        <Button variant='primary' onPress={() => { }} disabled={!(isSuccess && !isError && data?.statusCode === 200 && data?.data === null)}>
           Make payment
         </Button>
       </View>
