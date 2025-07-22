@@ -158,7 +158,7 @@ interface ServiceType {
 }
 
 type UpdateProfilePayload = {
-  homeAddress: string
+  address: string
   meansOfIdentification: string
   phoneNumber: string
   profilePicture: string

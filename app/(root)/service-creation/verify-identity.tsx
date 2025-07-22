@@ -26,7 +26,7 @@ export default function VerifyIdentity() {
   const user = useAuthStore((state) => state.user)
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [idDocument, setIdDocument] = useState<DocumentPicker.DocumentPickerSuccessResult | null>(null)
-  const [homeAddress, setHomeAddress] = useState('')
+  const [address, setAddress] = useState('')
   const [email, setEmail] = useState(user?.email || '')
   const [phoneNumber, setPhoneNumber] = useState('')
   const { handleUpdateProfile, isPending } = useUpdateProfile()
@@ -91,7 +91,7 @@ export default function VerifyIdentity() {
       showError('Missing Information', 'Please upload a valid means of identification.')
       return
     }
-    if (!homeAddress || !phoneNumber) { // Email is fetched from store, not strictly required here
+    if (!address || !phoneNumber) { // Email is fetched from store, not strictly required here
       showError('Missing Information', 'Please fill in Home Address and Phone Number.')
       return
     }
@@ -109,7 +109,7 @@ export default function VerifyIdentity() {
 
       // Create the payload with actual base64 image data
       const payload: UpdateProfilePayload = {
-        homeAddress,
+        address,
         meansOfIdentification: documentBase64, // Send actual document data
         phoneNumber,
         profilePicture: profileImageBase64, // Send actual image data
@@ -195,8 +195,8 @@ export default function VerifyIdentity() {
               <TextInput
                 className='border border-gray-300 rounded-lg p-5 bg-gray-50'
                 placeholder='Enter your home address'
-                value={homeAddress}
-                onChangeText={setHomeAddress}
+                value={address}
+                onChangeText={setAddress}
               />
             </View>
             <View className='py-4'>
