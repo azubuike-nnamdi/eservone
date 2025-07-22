@@ -118,3 +118,14 @@ export function passwordStrength(password: string) {
   return { score, label };
 }
 
+
+export function getProfileImageUri(base64String?: string): string | undefined {
+  if (!base64String) return undefined;
+  // Remove leading/trailing quotes or apostrophes
+  const clean = base64String.replace(/^['"]+|['"]+$/g, "");
+  // Add prefix if not present
+  if (!clean.startsWith("data:image")) {
+    return `data:image/jpeg;base64,${clean}`;
+  }
+  return clean;
+} 

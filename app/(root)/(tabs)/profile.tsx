@@ -4,6 +4,7 @@ import GeneralSetting from '@/components/profile/general-setting'
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
 import { CERTIFICATES, CREATE_BUSINESS, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
+import { getProfileImageUri } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
@@ -44,7 +45,7 @@ export default function Profile() {
           {/* User Profile Section */}
           <View className='flex-row items-center mt-6 mb-8'>
             <Image
-              source={{ uri: userProfileDetails?.data?.profilePicture }}
+              source={{ uri: getProfileImageUri(userProfileDetails?.data?.profilePicture) }}
               className='size-16 rounded-full bg-gray-100'
             />
             <View className='ml-4 flex-1'>
