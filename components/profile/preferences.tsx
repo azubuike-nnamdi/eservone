@@ -1,4 +1,6 @@
 
+import useDeleteMyProfile from "@/hooks/mutation/useDeleteMyProfile"
+import { useAuthStore } from "@/store/auth-store"
 import { Ionicons } from "@expo/vector-icons"
 import { useState } from "react"
 import { Alert, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native"
@@ -8,10 +10,13 @@ import DeleteAccountModal from "./delete-profile"
 export default function PreferencesScreen() {
   // State for toggle switches
   // const [disableProfile, setDisableProfile] = useState(true)
-  const [emailNotifications, setEmailNotifications] = useState(false)
-  const [newsletterSubscriptions, setNewsletterSubscriptions] = useState(false)
+  // const [emailNotifications, setEmailNotifications] = useState(false)
+  // const [newsletterSubscriptions, setNewsletterSubscriptions] = useState(false)
   const [onlineStatus, setOnlineStatus] = useState(true)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const { user } = useAuthStore()
+
+  const { handleDeleteProfile, isPending } = useDeleteMyProfile()
 
   // Function to handle toggle changes with confirmation if needed
   const handleToggle = (
@@ -39,9 +44,8 @@ export default function PreferencesScreen() {
 
   // Function to handle delete account confirmation
   const handleDeleteConfirm = () => {
+    handleDeleteProfile({ email: user?.email || "" })
 
-    setDeleteModalVisible(false)
-    // Here you would handle the actual account deletion process
   }
 
   return (
@@ -69,7 +73,7 @@ export default function PreferencesScreen() {
         {/* <View className="h-px bg-gray-200 my-2" /> */}
 
         {/* Email notifications */}
-        <View className="mb-6 mt-4">
+        {/* <View className="mb-6 mt-4">
           <View className="flex-row justify-between items-center mb-2">
             <Text className="text-lg font-semibold text-black">Email notifications</Text>
             <View className="scale-[0.8]">
@@ -83,12 +87,12 @@ export default function PreferencesScreen() {
             </View>
           </View>
           <Text className="text-base text-gray-500">Stay updated on job invites, messages, and platform updates.</Text>
-        </View>
+        </View> */}
 
-        <View className="h-px bg-gray-200 my-2" />
+        {/* <View className="h-px bg-gray-200 my-2" /> */}
 
         {/* Newsletter subscriptions */}
-        <View className="mb-6 mt-4">
+        {/* <View className="mb-6 mt-4">
           <View className="flex-row justify-between items-center mb-2">
             <Text className="text-lg font-semibold text-black">Newsletter subscriptions</Text>
             <View className="scale-[0.8]">
@@ -104,9 +108,9 @@ export default function PreferencesScreen() {
           <Text className="text-base text-gray-500">
             Get the latest freelancing tips, platform updates, and exclusive opportunities straight to your inbox.
           </Text>
-        </View>
+        </View> */}
 
-        <View className="h-px bg-gray-200 my-2" />
+        {/* <View className="h-px bg-gray-200 my-2" /> */}
 
         {/* Online status */}
         <View className="mb-6 mt-4">
@@ -151,6 +155,7 @@ export default function PreferencesScreen() {
         visible={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
         onConfirm={handleDeleteConfirm}
+        isPending={isPending}
       />
     </ScrollView>
   )
