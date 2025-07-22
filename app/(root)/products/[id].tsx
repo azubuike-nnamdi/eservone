@@ -91,6 +91,22 @@ export default function ProductById() {
 
   const filteredTimeOptions = getFilteredTimeOptions();
 
+  // Validation function to check if all required fields are filled
+  const isFormValid = () => {
+    const hasAddress = address.trim().length > 0;
+    const hasDate = date !== null;
+    const hasTime = time.trim().length > 0;
+    const hasBuzzCode = buzzCode.trim().length > 0;
+    const hasUpfront = upfront.trim().length > 0;
+
+    // For virtual services, address is not required
+    if (isVirtualService) {
+      return hasDate && hasTime && hasBuzzCode && hasUpfront;
+    }
+
+    return hasAddress && hasDate && hasTime && hasBuzzCode && hasUpfront;
+  };
+
   const handleBookService = () => {
     // Format date as YYYY-MM-DD
     const dateString = date.toISOString().split('T')[0];
@@ -215,7 +231,7 @@ export default function ProductById() {
           {/* Book service button */}
           <Button className="mt-4"
             onPress={handleBookService}
-            disabled={isBookingPending}
+            disabled={isBookingPending || !isFormValid()}
             loading={isBookingPending}
             loadingText="Booking service..."
           >Book service</Button>

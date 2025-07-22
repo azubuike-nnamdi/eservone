@@ -7,17 +7,8 @@ import useGetProviderAppointments from "@/hooks/query/useGetProviderAppointments
 import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
-import { FlatList, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// Define the data structure for FlatList
-type FlatListData = {
-  type: 'section' | 'appointment';
-  title?: string;
-  appointmentType?: 'upcoming' | 'history';
-  appointment?: Appointment;
-  onPress?: (appointment: Appointment) => void;
-};
 
 // Helper to section appointments
 function sectionAppointments(appointments: Appointment[] = []) {
@@ -33,36 +24,7 @@ function sectionAppointments(appointments: Appointment[] = []) {
   return { upcoming, history };
 }
 
-// Helper to build FlatList data
-function buildFlatListData(
-  upcoming: Appointment[],
-  history: Appointment[],
-  onPress: (appointment: Appointment) => void
-): FlatListData[] {
-  const data: FlatListData[] = [];
-  if (upcoming.length) {
-    data.push({ type: 'section' as const, title: 'Upcoming', appointmentType: 'upcoming' });
-    data.push(...upcoming.map((appointment) => ({
-      type: 'appointment' as const,
-      appointmentType: 'upcoming' as const,
-      appointment,
-      onPress,
-    })));
-  }
-  if (history.length) {
-    data.push({ type: 'section' as const, title: 'History', appointmentType: 'history' });
-    data.push(...history.map((appointment) => ({
-      type: 'appointment' as const,
-      appointmentType: 'history' as const,
-      appointment,
-      onPress,
-    })));
-  }
-  return data;
-}
-
 export default function Appointments() {
-
   const user = useAuthStore((state) => state.user);
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
   const { data: appointments, isPending, error } = hookResult();
@@ -78,46 +40,12 @@ export default function Appointments() {
     [appointments?.data]
   );
 
-  const flatListData = useMemo(
-    () => buildFlatListData(upcoming, history, handleAppointmentPress),
-    [upcoming, history, handleAppointmentPress]
-  );
-
-  const renderItem = useCallback(({ item }: { item: FlatListData }) => {
-    if (item.type === 'section') {
-      return (
-        <View className="px-4 mt-2 mb-1">
-          <Text className="text-lg font-bold">{item.title}</Text>
-        </View>
-      );
-    }
-    if (item.type === 'appointment' && item.appointment && item.appointmentType) {
-      return (
-        <AppointmentCard
-          type={item.appointmentType}
-          appointment={item.appointment}
-          onPress={() => item.onPress?.(item.appointment!)}
-          noMargin
-        />
-      );
-    }
-    return null;
-  }, []);
-
-  const keyExtractor = useCallback(
-    (item: FlatListData, index: number) =>
-      item.type === 'section'
-        ? `section-${item.title}-${index}`
-        : `appointment-${item.appointment?.id}-${index}`,
-    []
-  );
-
   // Show loading state
   if (isPending) {
     return (
       <SafeAreaView className='flex-1 bg-white'>
         <ProfileHeader title='Appointments' showNotification={false} showCurrency={true} showBackArrow={true} />
-        <View className="mt-6 px-7">
+        <View className="mt-2 px-4">
           <LoadingSkeleton count={6} />
         </View>
       </SafeAreaView>
@@ -144,20 +72,48 @@ export default function Appointments() {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ProfileHeader title='Appointments' showNotification={false} showCurrency={true} showBackArrow={true} />
-      <FlatList
-        data={flatListData}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 32 }}
-        ListEmptyComponent={
-          <View className="justify-center items-center mt-2x px-4">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Upcoming Appointments */}
+        {upcoming.length > 0 && (
+          <View className="px-4 mt-3">
+            <Text className="text-lg font-bold mb-3">Upcoming</Text>
+            {upcoming.map((appointment) => (
+              <AppointmentCard
+                key={appointment.id}
+                type="upcoming"
+                appointment={appointment}
+                onPress={() => handleAppointmentPress(appointment)}
+                noMargin
+              />
+            ))}
+          </View>
+        )}
+
+        {/* History Appointments */}
+        {history.length > 0 && (
+          <View className="px-4 mt-4">
+            <Text className="text-lg font-bold mb-3">History</Text>
+            {history.map((appointment) => (
+              <AppointmentCard
+                key={appointment.id}
+                type="history"
+                appointment={appointment}
+                onPress={() => handleAppointmentPress(appointment)}
+                noMargin
+              />
+            ))}
+          </View>
+        )}
+
+        {/* Empty State */}
+        {upcoming.length === 0 && history.length === 0 && (
+          <View className="justify-center items-center mt-20 px-4">
             <Text className="text-zinc-500 text-center py-12">
               No appointments found
             </Text>
           </View>
-        }
-      />
+        )}
+      </ScrollView>
     </SafeAreaView>
   )
 }

@@ -20,37 +20,45 @@ export default function AppointmentCard({ type, appointment, onPress, noMargin =
   const day = dateObj.getDate();
   const time = dateObj.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   const provider = appointment.serviceStatus;
-  const rating = 5.0; // Placeholder, replace with real rating if available
+  const rating = 5.0;
 
   const faded = type === 'history';
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`flex-row items-center border border-gray-100 mx-4 ${faded ? 'bg-zinc-50 opacity-60' : 'bg-white'} p-0`}
-      style={{ minHeight: 56 }}
+      className={`flex-row items-center border border-gray-100 mb-4 rounded-lg ${faded ? 'bg-zinc-50 opacity-60 ' : 'bg-white'} ${noMargin ? '' : 'mb-3'}`}
+      style={{ height: 70 }}
       activeOpacity={0.85}
     >
       {/* Date Box */}
-      <View className={`h-full px-4 py-1 items-center justify-center ${faded ? 'bg-zinc-100' : 'bg-primary-100'}`} style={{ minWidth: 64 }}>
-        <Text className={`text-base font-bold ${faded ? 'text-zinc-400' : 'text-primary-500'}`}>{month} {day}</Text>
-        <Text className={`text-xs mt-1 ${faded ? 'text-zinc-400' : 'text-primary-400'}`}>{time}</Text>
+      <View className={`h-full px-3 items-center justify-center ${faded ? 'bg-zinc-100' : 'bg-primary-100'}`} style={{ width: 55 }}>
+        <Text className={`text-xs font-bold ${faded ? 'text-black-400' : 'text-primary-500'}`}>{month} {day}</Text>
+        <Text className={`text-xs ${faded ? 'text-black-400' : 'text-primary-400'}`}>{time}</Text>
       </View>
+
       {/* Details */}
-      <View className="flex-1 px-4 py-1 justify-center">
-        <Text className={`text-base font-bold mb-1 ${faded ? 'text-zinc-400' : 'text-black'}`} numberOfLines={1}>{appointment.serviceName}</Text>
-        <Text className={`text-xs mb-1 ${faded ? 'text-zinc-300' : 'text-zinc-500'}`} numberOfLines={1}>{provider}</Text>
-        <Text className={`text-xs ${faded ? 'text-zinc-400' : 'text-zinc-500'}`}>Price: <Text className="font-bold text-black">{formattedCost}</Text></Text>
+      <View className="flex-1 px-3 py-2 justify-center">
+        <Text className={`text-sm font-bold mb-1 ${faded ? 'text-black-600' : 'text-black'}`} numberOfLines={1}>
+          {appointment.serviceName}
+        </Text>
+        <Text className={`text-xs mb-1 ${faded ? 'text-black-300' : 'text-black-500'}`} numberOfLines={1}>
+          {provider}
+        </Text>
+        <Text className={`text-xs ${faded ? 'text-black-400' : 'text-black-500'}`}>
+          Price: <Text className="font-bold text-black">{formattedCost}</Text>
+        </Text>
       </View>
+
       {/* Chevron or Rating */}
-      <View className="flex-row items-center pr-4">
+      <View className="flex-row items-center pr-3">
         {type === 'history' ? (
           <View className="flex-row items-center">
-            <Ionicons name="star" size={16} color="#FFD700" style={{ marginRight: 2 }} />
+            <Ionicons name="star" size={12} color="#FFD700" style={{ marginRight: 2 }} />
             <Text className="text-xs font-bold text-zinc-500">{rating.toFixed(1)}</Text>
           </View>
         ) : (
-          <Ionicons name="chevron-forward" size={22} color="#B0B0B0" />
+          <Ionicons name="chevron-forward" size={16} color="#B0B0B0" />
         )}
       </View>
     </TouchableOpacity>

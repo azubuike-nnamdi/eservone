@@ -28,6 +28,8 @@ export default function Messages() {
     router.push(`/message-room/${chatRoomId}?receiverEmail=${serviceProviderEmail}&userEmail=${userEmail}`);
   };
 
+
+
   const renderEmptyComponent = () => {
     if (isPending) {
       return (

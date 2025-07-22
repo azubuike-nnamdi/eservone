@@ -20,11 +20,12 @@ const useBookAppointment = () => {
         console.log("data for appointment", data?.data)
         showToast(data?.data?.description, "success")
 
+        // Update ref with appointment data that contains the emails
+        serviceDataRef.current = data?.data
 
-        // Get the chatRoomId from the stored service data
-        const chatRoomId = serviceDataRef.current?.chatRoomId
-        const userEmail = serviceDataRef.current?.userEmail
-        const receiverEmail = serviceDataRef.current?.receiverEmail
+        const chatRoomId = data?.data?.data?.chatRoomId
+        const userEmail = data?.data?.data?.userEmail
+        const receiverEmail = data?.data?.data?.serviceProviderEmail
 
         if (chatRoomId) {
           router.push(`/message-room/${chatRoomId}?userEmail=${userEmail}&receiverEmail=${receiverEmail}`)
