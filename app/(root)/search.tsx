@@ -2,7 +2,9 @@ import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import ProfileHeader from "@/components/common/profile-header";
 import SearchBar from "@/components/common/search-bar";
 import SeekerServiceCard from "@/components/services/seeker-service-card";
+import { Service } from "@/constants/types";
 import { useCurrency } from '@/context/currency-context';
+import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
 import useSearchServices from "@/hooks/query/useSearchServices";
 import { useDebounce } from "@/lib/helper";
 import { useRecentSearchesStore } from "@/store/recent-searches-store";
@@ -16,6 +18,8 @@ export default function Search() {
   const router = useRouter();
   const addRecentSearch = useRecentSearchesStore((s) => s.addSearch);
   const { format } = useCurrency();
+  const { data: userProfileDetails } = useGetUserProfileDetails();
+  console.log('user details in search', userProfileDetails?.data.country)
   // const recentSearches = useRecentSearchesStore((s) => s.recent);
   // const clearRecent = useRecentSearchesStore((s) => s.clear);
   // const { data, isPending, error } = useGetAllServices();
@@ -24,7 +28,15 @@ export default function Search() {
   const apiSearchQuery = searchQuery.trim() ? debouncedSearchQuery : 'all';
   const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(apiSearchQuery);
 
-  const services = searchData?.data;
+  const services: Service[] | undefined = searchData?.data;
+
+  const userCountry = userProfileDetails?.data?.country;
+  const filteredServices = services?.filter(
+    (service: Service) =>
+      service.country?.toLowerCase() === userCountry?.toLowerCase()
+  );
+
+  console.log('services', filteredServices)
 
   // Add to recent searches when a real search is performed
   useEffect(() => {
@@ -51,7 +63,7 @@ export default function Search() {
       <ProfileHeader title="Search" showNotification={false} showBackArrow={true} />
       <View className="flex-1 ">
         <FlatList
-          data={services}
+          data={filteredServices}
           renderItem={({ item }) => {
             const formattedMinPrice = format(item.minimumPrice);
             const formattedMaxPrice = format(item.maximumPrice);
