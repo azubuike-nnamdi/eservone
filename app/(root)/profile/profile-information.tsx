@@ -1,14 +1,18 @@
 import UserBioModal from '@/components/appointments/user-bio-modal'
 import ProfileHeader from '@/components/common/profile-header'
+import ProfileImageModal from '@/components/profile/ProfileImageModal'
 import useUpdateUserBio from '@/hooks/mutation/useUpdateUserBio'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
-import { formatDate } from '@/lib/helper'
+import { formatDate, getProfileImageUri } from '@/lib/helper'
 import { Feather } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileInformation() {
+
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   const { data: userProfileDetails } = useGetUserProfileDetails()
   const { handleUpdateUserBio, isPending } = useUpdateUserBio()
@@ -38,9 +42,12 @@ export default function ProfileInformation() {
         <View className='px-7'>
           {/* Profile Picture and Basic Info */}
           <View className='items-left mt-6'>
-            <View className='w-24 h-24 rounded-full bg-gray-100 items-center justify-center mb-4'>
-              <Feather name="user" size={40} color="#6B7280" />
-            </View>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Image
+                source={{ uri: getProfileImageUri(userProfileDetails?.data?.profilePicture) }}
+                className='size-16 rounded-full bg-gray-100'
+              />
+            </TouchableOpacity>
             <Text className='text-2xl font-semibold'>{fullName}</Text>
             <View className='flex-row items-center mt-2'>
               <Text className='text-gray-600'>{userProfileDetails?.data?.emailAddress}</Text>
@@ -77,6 +84,12 @@ export default function ProfileInformation() {
         onSubmit={handleBioSubmit}
         initialBio={bio}
         isLoading={isPending}
+      />
+
+      <ProfileImageModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        imageUri={getProfileImageUri(userProfileDetails?.data?.profilePicture) || ""}
       />
     </SafeAreaView>
   )
