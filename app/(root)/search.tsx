@@ -4,7 +4,7 @@ import SearchBar from "@/components/common/search-bar";
 import SeekerServiceCard from "@/components/services/seeker-service-card";
 import { Service } from "@/constants/types";
 import { useCurrency } from '@/context/currency-context';
-import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
+import useGetAllServices from "@/hooks/query/useGetAllServices";
 import useSearchServices from "@/hooks/query/useSearchServices";
 import { useDebounce } from "@/lib/helper";
 import { useRecentSearchesStore } from "@/store/recent-searches-store";
@@ -18,23 +18,21 @@ export default function Search() {
   const router = useRouter();
   const addRecentSearch = useRecentSearchesStore((s) => s.addSearch);
   const { format } = useCurrency();
-  const { data: userProfileDetails } = useGetUserProfileDetails();
 
-  // const recentSearches = useRecentSearchesStore((s) => s.recent);
-  // const clearRecent = useRecentSearchesStore((s) => s.clear);
-  // const { data, isPending, error } = useGetAllServices();
 
-  // Use "all" as default for API if search query is empty
-  const apiSearchQuery = searchQuery.trim() ? debouncedSearchQuery : 'all';
-  const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(apiSearchQuery);
-
-  const services: Service[] | undefined = searchData?.data;
-
-  const userCountry = userProfileDetails?.data?.country;
-  const filteredServices = services?.filter(
-    (service: Service) =>
-      service.country?.toLowerCase() === userCountry?.toLowerCase()
+  const { data: allServicesData, isPending: allPending, error: allError } = useGetAllServices();
+  const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(
+    searchQuery.trim() ? debouncedSearchQuery : ''
   );
+
+  const isSearching = !!searchQuery.trim();
+  const services: Service[] | undefined = isSearching
+    ? searchData?.data
+    : allServicesData?.data;
+
+  const isPending = isSearching ? searchPending : allPending;
+  const error = isSearching ? searchError : allError;
+
 
 
   // Add to recent searches when a real search is performed
@@ -62,7 +60,7 @@ export default function Search() {
       <ProfileHeader title="Search" showNotification={false} showBackArrow={true} />
       <View className="flex-1 ">
         <FlatList
-          data={filteredServices}
+          data={services}
           renderItem={({ item }) => {
             const formattedMinPrice = format(item.minimumPrice);
             const formattedMaxPrice = format(item.maximumPrice);
@@ -120,23 +118,23 @@ export default function Search() {
                 )} */}
               </View>
 
-              {(searchPending) && (
+              {(isPending) && (
                 <LoadingSkeleton count={3} />
               )}
-              {(searchError) && (
+              {(error) && (
                 <Text className="text-red-500 text-center text-lg">
-                  {searchError?.message}
+                  {error?.message}
                 </Text>
               )}
 
-              {!searchPending && !searchError && searchQuery.trim() && (
+              {!isPending && !error && searchQuery.trim() && (
                 <Text className="text-md text-black mb-3 font-bold">
                   Search Results for:{" "}
                   <Text className="text-accent">{searchQuery}</Text>
                 </Text>
               )}
 
-              {!searchPending && !searchError && !searchQuery.trim() && (
+              {!isPending && !error && !searchQuery.trim() && (
                 <Text className="text-md text-black mb-3 font-bold">
                   All Services
                 </Text>
@@ -144,7 +142,7 @@ export default function Search() {
             </>
           }
           ListEmptyComponent={
-            !searchPending && !searchError ? (
+            !isPending && !error ? (
               <View className="mt-10 px-5">
                 <Text className="text-gray-400 text-center">
                   {searchQuery.trim() ? 'No services found' : 'No services available'}
