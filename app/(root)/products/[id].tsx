@@ -9,17 +9,16 @@ import { BookAppointmentPayload } from "@/constants/types";
 import { useCurrency } from '@/context/currency-context';
 import useBookAppointment from "@/hooks/mutation/useBookAppointment";
 import useGetServiceById from "@/hooks/query/useGetServiceById";
+import { getProfileImageUri } from '@/lib/helper';
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Image, Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Calendar } from 'react-native-calendars';
 
-// Fallback image URL
-const FALLBACK_IMAGE = 'https://images.pexels.com/photos/3998414/pexels-photo-3998414.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
-
 export default function ProductById() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: serviceData, isPending } = useGetServiceById(id as string);
+
   const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
   const { format } = useCurrency();
 
@@ -32,7 +31,9 @@ export default function ProductById() {
   const [upfront, setUpfront] = useState('0');
   const [details, setDetails] = useState('');
   const [hasPets, setHasPets] = useState(false);
-  const [serviceType, setServiceType] = useState('HOME_SERVICE');
+
+  // Add state for image modal
+  const [modalImage, setModalImage] = useState<string | null>(null);
 
   const upfrontOptions = [
     { label: '0', value: '0' },
@@ -43,18 +44,6 @@ export default function ProductById() {
   ];
 
 
-  // Set initial service type and address based on serviceDeliveryType
-  React.useEffect(() => {
-    if (serviceData?.data) {
-      const service = serviceData.data;
-      if (service.serviceDeliveryType === 'WALK_IN_SERVICE') {
-        setServiceType('VISIT_PROVIDER');
-        setAddress(service.address || '');
-      } else {
-        setServiceType('HOME_SERVICE');
-      }
-    }
-  }, [serviceData]);
 
   if (isPending) {
     return (
@@ -68,8 +57,9 @@ export default function ProductById() {
 
   const service = serviceData?.data;
 
-  // Determine if service is WALK_IN_SERVICE
+  // Determine if service is WALK_IN_SERVICE or VIRTUAL_SERVICE
   const isWalkInService = service?.serviceDeliveryType === 'WALK_IN_SERVICE';
+  const isVirtualService = service?.serviceDeliveryType === 'VIRTUAL_SERVICE';
 
   // Format prices using the service's currency
   const formattedMinPrice = service ? format(service.minimumPrice) : '';
@@ -131,46 +121,52 @@ export default function ProductById() {
       <ProfileHeader title="Book Service" showNotification={false} showBackArrow={true} />
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
         <View className="p-5">
-          {/* Service Card */}
-          <View className="bg-white rounded-xl  mb-4">
-            {/* Placeholder image */}
-            <Image source={{ uri: FALLBACK_IMAGE }} className="w-full h-40 rounded-lg mb-3" />
-
+          {/* Service Images */}
+          <View className="bg-white rounded-xl mb-4">
+            <View className="flex-row flex-wrap gap-2 mb-3">
+              {service?.uploadImage?.slice(0, 4).map((img: { image: string }, idx: number) => (
+                <TouchableOpacity key={idx} onPress={() => setModalImage(img.image)}>
+                  <Image
+                    source={{ uri: getProfileImageUri(img.image) || undefined }}
+                    className="w-20 h-20 rounded-lg"
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
           <View>
             <Text className="text-lg font-bold mb-1">{service?.serviceName || ''}</Text>
             <Text className="text-gray-500 mb-1">XYZ Studios</Text>
             <Text className="text-gray-700 mb-1">{formattedMinPrice} - {formattedMaxPrice}</Text>
             <Text className="text-gray-600 mb-2">{service?.serviceDescription || 'No description provided.'}</Text>
-            {/* Service type buttons */}
-            <View className="flex-row mb-3">
-              <TouchableOpacity
-                className={`flex-1 mr-2 py-3 rounded-md border ${serviceType === 'HOME_SERVICE' ? 'bg-primary-300' : 'bg-white border-gray-300'} ${isWalkInService ? 'opacity-50' : ''}`}
-                onPress={() => !isWalkInService && setServiceType('HOME_SERVICE')}
-                disabled={isWalkInService}
-              >
-                <Text className={`text-center ${serviceType === 'HOME_SERVICE' ? 'text-white font-semibold' : 'text-gray-700'}`}>Home service</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className={`flex-1 py-3 rounded-md border ${serviceType === 'VISIT_PROVIDER' ? 'bg-primary-300' : 'bg-white border-gray-300'}`}
-                onPress={() => setServiceType('VISIT_PROVIDER')}
-              >
-                <Text className={`text-center ${serviceType === 'VISIT_PROVIDER' ? 'text-white font-semibold' : 'text-gray-700'}`}>Visit service provider</Text>
-              </TouchableOpacity>
+            {/* Service type display */}
+            <View className="mb-3">
+              <View className="py-3 rounded-md bg-primary-300">
+                <Text className="text-center text-white font-semibold text-base">
+                  {service?.serviceDeliveryType === 'HOME_SERVICE' && 'Home service'}
+                  {service?.serviceDeliveryType === 'WALK_IN_SERVICE' && 'Visit service provider'}
+                  {service?.serviceDeliveryType === 'VIRTUAL_SERVICE' && 'Virtual service'}
+                </Text>
+              </View>
             </View>
           </View>
 
           {/* Address */}
-          <View className="mb-2 flex-row justify-between items-center">
-            <Text className="text-base font-semibold">Your address</Text>
-          </View>
-          <TextInput
-            value={address}
-            onChangeText={setAddress}
-            placeholder="Enter your address"
-            editable={!isWalkInService}
-            pointerEvents={isWalkInService ? 'none' : 'auto'}
-          />
+          {!isVirtualService && (
+            <>
+              <View className="mb-2 flex-row justify-between items-center">
+                <Text className="text-base font-semibold">Your address</Text>
+              </View>
+              <TextInput
+                value={address}
+                onChangeText={setAddress}
+                placeholder="Enter your address"
+                editable={!isWalkInService}
+                pointerEvents={isWalkInService ? 'none' : 'auto'}
+              />
+            </>
+          )}
 
           {/* Date and Time */}
           <View className="flex-row mb-2 gap-2">
@@ -212,7 +208,9 @@ export default function ProductById() {
           />
 
           {/* Pets checkbox */}
-          <Checkbox label="Do you have pets?" checked={hasPets} onChange={setHasPets} />
+          {!isVirtualService && (
+            <Checkbox label="Do you have pets?" checked={hasPets} onChange={setHasPets} />
+          )}
 
           {/* Book service button */}
           <Button className="mt-4"
@@ -248,6 +246,30 @@ export default function ProductById() {
               minDate={new Date().toISOString().split('T')[0]}
             />
           </View>
+        </View>
+      </Modal>
+
+      {/* Image Modal */}
+      <Modal
+        visible={!!modalImage}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setModalImage(null)}
+      >
+        <View className="flex-1 bg-black/90 justify-center items-center">
+          <TouchableOpacity
+            style={{ position: 'absolute', top: 60, right: 30, zIndex: 10 }}
+            onPress={() => setModalImage(null)}
+          >
+            <Text style={{ color: 'white', fontSize: 32, fontWeight: 'bold' }}>×</Text>
+          </TouchableOpacity>
+          {modalImage && (
+            <Image
+              source={{ uri: getProfileImageUri(modalImage) || undefined }}
+              style={{ width: '90%', height: '60%', borderRadius: 16 }}
+              resizeMode="contain"
+            />
+          )}
         </View>
       </Modal>
 
