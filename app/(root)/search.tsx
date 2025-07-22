@@ -19,7 +19,7 @@ export default function Search() {
   const addRecentSearch = useRecentSearchesStore((s) => s.addSearch);
   const { format } = useCurrency();
   const { data: userProfileDetails } = useGetUserProfileDetails();
-  console.log('user details in search', userProfileDetails?.data.country)
+
   // const recentSearches = useRecentSearchesStore((s) => s.recent);
   // const clearRecent = useRecentSearchesStore((s) => s.clear);
   // const { data, isPending, error } = useGetAllServices();
@@ -36,7 +36,6 @@ export default function Search() {
       service.country?.toLowerCase() === userCountry?.toLowerCase()
   );
 
-  console.log('services', filteredServices)
 
   // Add to recent searches when a real search is performed
   useEffect(() => {
