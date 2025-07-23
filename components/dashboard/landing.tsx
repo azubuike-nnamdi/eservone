@@ -11,7 +11,7 @@ interface StatItem {
   value: string;
 }
 
-const DashboardScreen = ({ appointments, refetchAppointments }: { appointments: any; refetchAppointments?: () => void }) => {
+const DashboardScreen = ({ appointments, refetchAppointments, reviewCount }: { appointments: any; refetchAppointments?: () => void, reviewCount: number }) => {
   const { user } = useAuthStore()
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
@@ -96,7 +96,7 @@ const DashboardScreen = ({ appointments, refetchAppointments }: { appointments: 
           ListFooterComponent={
             <View className='my-12 flex-col items-center justify-between'>
               <Text className='text-xl text-black-300 font-bold'>Average customer rating:</Text>
-              <Text className='text-5xl  font-bold my-4 text-primary-300'>4.5</Text>
+              <Text className='text-5xl  font-bold my-4 text-primary-300'>{reviewCount ?? 0}</Text>
 
               <View className='flex-row items-center justify-between gap-3'>
                 <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
@@ -106,7 +106,7 @@ const DashboardScreen = ({ appointments, refetchAppointments }: { appointments: 
                 <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
               </View>
 
-              <Text className='text-lg text-black-300 font-medium mt-4'>60 reviews</Text>
+              <Text className='text-lg text-black-300 font-medium mt-4'>{reviewCount ?? 0} reviews</Text>
 
               <Button type='button' variant='outline' className='mt-4 w-6/12'>
                 <Text className='font-bold text-primary-300 text-lg'>Read all reviews</Text>

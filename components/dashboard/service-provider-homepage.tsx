@@ -4,6 +4,7 @@ import images from '@/constants/images'
 import { CREATE_SERVICE } from '@/constants/routes'
 import useGetAllServices from '@/hooks/query/useGetAllServices'
 import useGetProviderAppointments from '@/hooks/query/useGetProviderAppointments'
+import { useGetAllReviews } from '@/hooks/query/useGetReviews'
 import { getGreeting } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
 import { router } from 'expo-router'
@@ -35,11 +36,14 @@ export default function ServiceProviderHomepage() {
   const { user } = useAuthStore()
   const { data, isPending } = useGetAllServices()
   const { data: appointments, isPending: appointmentsPending, refetch: refetchAppointments } = useGetProviderAppointments();
+  const { data: reviews, isPending: reviewsPending } = useGetAllReviews()
+
+  const reviewCount = reviews?.length ?? 0
 
   const renderContent = () => {
-    if (isPending || appointmentsPending) return <DashboardSkeleton />
+    if (isPending || appointmentsPending || reviewsPending) return <DashboardSkeleton />
     if (!data) return <EmptyState firstName={user?.firstName} />
-    return <DashboardScreen appointments={appointments} refetchAppointments={refetchAppointments} />
+    return <DashboardScreen appointments={appointments} refetchAppointments={refetchAppointments} reviewCount={reviewCount} />
   }
 
   return (
