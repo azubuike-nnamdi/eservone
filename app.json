@@ -17,7 +17,7 @@
       },
       "android": {
          "adaptiveIcon": {
-            "foregroundImage": "./assets/images/adaptive-icon.png",
+            "foregroundImage": "./assets/icons/eservone-logo-square.png",
             "backgroundColor": "#ffffff"
          },
          "package": "com.nnamdi.azubuike.eservone"
@@ -50,6 +50,7 @@
          "eas": {
             "projectId": "7eda3ddb-757f-4432-bc54-cc5356be0314"
          }
-      }
+      },
+      "owner": "nnamdi.azubuike"
    }
 }
