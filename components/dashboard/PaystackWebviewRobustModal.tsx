@@ -11,7 +11,7 @@ interface PaystackWebviewRobustModalProps {
   paystackRedirectUrl: string;
 }
 
-const DEFAULT_BACKEND_DOMAIN = 'api.your-backend.com';
+const DEFAULT_BACKEND_DOMAIN = 'https://api.eservone.com';
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -61,10 +61,12 @@ const PaystackWebviewRobustModal: React.FC<PaystackWebviewRobustModalProps> = ({
   const handleShouldStartLoadWithRequest = (request: any) => {
     const url = request.url;
     // Intercept custom scheme or backend redirects
+    const thankYouPath = 'eservone://payment/thank-you';
     if (
       url.startsWith(paystackRedirectUrl) ||
       url.startsWith('eservone://') ||
-      (backendDomain && url.includes(backendDomain))
+      (backendDomain && url.includes(backendDomain)) ||
+      url.includes(thankYouPath)
     ) {
       webview.current?.stopLoading();
       if (!verified) {

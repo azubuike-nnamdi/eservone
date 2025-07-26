@@ -1,9 +1,8 @@
 import useInitiatePayment from "@/hooks/mutation/useInitiatePayment";
-import useGetTransactionQuery from '@/hooks/query/useGetTransactionQuery';
 import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
 import { useAuthStore } from "@/store/auth-store";
 import React, { useState } from "react";
-import { ActivityIndicator, Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import PaystackWebviewRobustModal from "./PaystackWebviewRobustModal";
 import ServiceProviderHomepage from "./service-provider-homepage";
 import ServiceSeekerHomepage from "./service-seeker-homepage";
@@ -20,7 +19,7 @@ export default function Homepage() {
    const { handleInitiatePayment, isPending } = useInitiatePayment();
    const [amount, setAmount] = useState('');
 
-   const { data: transactionData, isPending: isVerifying, error: verifyError } = useGetTransactionQuery(transactionReference || '');
+   // const { data: transactionData, isPending: isVerifying, error: verifyError } = useGetTransactionQuery(transactionReference || '');
 
    // This function is called when user presses "Top Up" in the modal
    const handleTopUp = async () => {
@@ -92,7 +91,7 @@ export default function Homepage() {
                }}
             />
          )}
-         {showStatusModal && (
+         {/* {showStatusModal && (
             <Modal
                visible={showStatusModal}
                transparent
@@ -132,7 +131,7 @@ export default function Homepage() {
                   </View>
                </View>
             </Modal>
-         )}
+         )} */}
       </>
    );
 }
