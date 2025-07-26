@@ -1,5 +1,6 @@
 import AuthHeader from '@/components/common/auth-header'
 import Button from '@/components/common/button'
+import VersionDisplay from '@/components/common/version-display'
 import { FORGOT_PASSWORD, SIGN_UP } from '@/constants/routes'
 import { SignInPayload } from '@/constants/types'
 import useSignInMutate from '@/hooks/mutation/useSignInMutate'
@@ -170,6 +171,11 @@ export default function SignIn() {
                 Create an account
               </Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Version Number */}
+          <View className="absolute bottom-8 left-0 right-0">
+            <VersionDisplay />
           </View>
         </View>
       </KeyboardAvoidingView>

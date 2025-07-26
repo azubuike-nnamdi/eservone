@@ -1,5 +1,6 @@
 import Button from '@/components/common/button'
 import ProfileHeader from '@/components/common/profile-header'
+import VersionDisplay from '@/components/common/version-display'
 import DeleteAccountModal from '@/components/profile/delete-profile'
 import GeneralSetting from '@/components/profile/general-setting'
 import ProfileImageModal from '@/components/profile/ProfileImageModal'
@@ -201,6 +202,11 @@ export default function Profile() {
           >
             Sign Out
           </Text>
+        </View>
+
+        {/* Version Display */}
+        <View className='mt-4 mb-8'>
+          <VersionDisplay />
         </View>
 
       </ScrollView>

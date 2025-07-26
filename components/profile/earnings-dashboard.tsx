@@ -15,7 +15,7 @@ export default function EarningsDashboard() {
   const { data: accountBalance, isPending } = useGetAccountBalance();
   const { data: transactionHistory, isPending: isTransactionHistoryPending } = useGetTransactionHistory();
 
-  const balance = accountBalance?.data?.accountBalance
+  const balance = accountBalance?.data?.accountBalance ?? 0
   const currency = accountBalance?.data?.currency
 
   if (isPending || isTransactionHistoryPending) {
