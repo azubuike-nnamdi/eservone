@@ -98,7 +98,7 @@ export default function Step1Details() {
             store.setDeliveryType('virtualService', false);
           }}
         />
-        <Checkbox
+        {/* <Checkbox
           label="Virtual service"
           checked={store.deliveryType.virtualService}
           onChange={() => {
@@ -106,7 +106,7 @@ export default function Step1Details() {
             store.setDeliveryType('homeService', false);
             store.setDeliveryType('virtualService', true);
           }}
-        />
+        /> */}
         {/* Add validation error if needed (e.g., at least one must be selected) */}
       </View>
 

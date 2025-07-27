@@ -75,9 +75,9 @@ export default function CreateService() {
       case store.deliveryType.homeService:
         serviceDeliveryType = "HOME_SERVICE";
         break;
-      case store.deliveryType.virtualService:
-        serviceDeliveryType = "VIRTUAL_SERVICE";
-        break;
+      // case store.deliveryType.virtualService:
+      //   serviceDeliveryType = "VIRTUAL_SERVICE";
+      //   break;
       case store.deliveryType.walkIn:
         serviceDeliveryType = "WALK_IN_SERVICE";
         break;
