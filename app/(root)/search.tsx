@@ -25,6 +25,8 @@ export default function Search() {
     searchQuery.trim() ? debouncedSearchQuery : ''
   );
 
+
+
   const isSearching = !!searchQuery.trim();
   const services: Service[] | undefined = isSearching
     ? searchData?.data
