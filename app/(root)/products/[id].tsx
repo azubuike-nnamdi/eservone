@@ -9,21 +9,25 @@ import { BookAppointmentPayload } from "@/constants/types";
 import { useCurrency } from '@/context/currency-context';
 import useBookAppointment from "@/hooks/mutation/useBookAppointment";
 import useGetServiceById from "@/hooks/query/useGetServiceById";
+import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
 import { getProfileImageUri } from '@/lib/helper';
 import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Calendar } from 'react-native-calendars';
 
 export default function ProductById() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: serviceData, isPending } = useGetServiceById(id as string);
+  const { data: userProfileData } = useGetUserProfileDetails();
 
   const { handleBookAppointment, isPending: isBookingPending } = useBookAppointment()
   const { format } = useCurrency();
 
   // Form state
+  const [selectedServiceType, setSelectedServiceType] = useState<'HOME_SERVICE' | 'WALK_IN_SERVICE'>('HOME_SERVICE');
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
+  const [isAddressEditable, setIsAddressEditable] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [time, setTime] = useState('9:00 am');
@@ -43,7 +47,32 @@ export default function ProductById() {
     { label: '100', value: '100' },
   ];
 
+  // Initialize service type based on service data
+  useEffect(() => {
+    if (serviceData?.data) {
+      const serviceType = serviceData.data.serviceDeliveryType;
+      if (serviceType === 'HOME_SERVICE' || serviceType === 'WALK_IN_SERVICE') {
+        setSelectedServiceType(serviceType);
+      }
+    }
+  }, [serviceData]);
 
+  // Update address based on selected service type
+  useEffect(() => {
+    if (selectedServiceType === 'WALK_IN_SERVICE') {
+      // Use service provider's address
+      setAddress(serviceData?.data?.address || 'Address not available');
+      setIsAddressEditable(false);
+    } else if (selectedServiceType === 'HOME_SERVICE') {
+      // Use user's home address from profile data
+      const userAddress = userProfileData?.data?.address;
+      if (userAddress) {
+        setAddress(userAddress);
+      }
+      // Reset address editability when switching to home service
+      setIsAddressEditable(false);
+    }
+  }, [selectedServiceType, serviceData?.data?.address, userProfileData?.data?.address]);
 
   if (isPending) {
     return (
@@ -57,9 +86,9 @@ export default function ProductById() {
 
   const service = serviceData?.data;
 
-  // Determine if service is WALK_IN_SERVICE or VIRTUAL_SERVICE
-  const isWalkInService = service?.serviceDeliveryType === 'WALK_IN_SERVICE';
-  const isVirtualService = service?.serviceDeliveryType === 'VIRTUAL_SERVICE';
+  // Determine if service is WALK_IN_SERVICE or HOME_SERVICE
+  const isWalkInService = selectedServiceType === 'WALK_IN_SERVICE';
+  const isHomeService = selectedServiceType === 'HOME_SERVICE';
 
   // Format prices using the service's currency
   const formattedMinPrice = service ? format(service.minimumPrice) : '';
@@ -98,11 +127,6 @@ export default function ProductById() {
     const hasTime = time.trim().length > 0;
     const hasBuzzCode = buzzCode.trim().length > 0;
     const hasUpfront = upfront.trim().length > 0;
-
-    // For virtual services, address is not required
-    if (isVirtualService) {
-      return hasDate && hasTime && hasBuzzCode && hasUpfront;
-    }
 
     return hasAddress && hasDate && hasTime && hasBuzzCode && hasUpfront;
   };
@@ -156,33 +180,48 @@ export default function ProductById() {
             <Text className="text-gray-500 mb-1">XYZ Studios</Text>
             <Text className="text-gray-700 mb-1">{formattedMinPrice} - {formattedMaxPrice}</Text>
             <Text className="text-gray-600 mb-2">{service?.serviceDescription || 'No description provided.'}</Text>
-            {/* Service type display */}
+
+            {/* Service type tabs */}
             <View className="mb-3">
-              <View className="py-3 rounded-md bg-primary-300">
-                <Text className="text-center text-white font-semibold text-base">
-                  {service?.serviceDeliveryType === 'HOME_SERVICE' && 'Home service'}
-                  {service?.serviceDeliveryType === 'WALK_IN_SERVICE' && 'Visit service provider'}
-                  {service?.serviceDeliveryType === 'VIRTUAL_SERVICE' && 'Virtual service'}
-                </Text>
+              <View className="flex-row bg-gray-100 rounded-md p-1">
+                <TouchableOpacity
+                  className={`flex-1 py-3 rounded-md ${selectedServiceType === 'HOME_SERVICE' ? 'bg-primary-300' : 'bg-transparent'}`}
+                  onPress={() => setSelectedServiceType('HOME_SERVICE')}
+                >
+                  <Text className={`text-center font-semibold text-base ${selectedServiceType === 'HOME_SERVICE' ? 'text-white' : 'text-gray-600'}`}>
+                    Home service
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className={`flex-1 py-3 rounded-md ${selectedServiceType === 'WALK_IN_SERVICE' ? 'bg-primary-300' : 'bg-transparent'}`}
+                  onPress={() => setSelectedServiceType('WALK_IN_SERVICE')}
+                >
+                  <Text className={`text-center font-semibold text-base ${selectedServiceType === 'WALK_IN_SERVICE' ? 'text-white' : 'text-gray-600'}`}>
+                    Visit service provider
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
 
           {/* Address */}
-          {!isVirtualService && (
-            <>
-              <View className="mb-2 flex-row justify-between items-center">
-                <Text className="text-base font-semibold">Your address</Text>
-              </View>
-              <TextInput
-                value={address}
-                onChangeText={setAddress}
-                placeholder="Enter your address"
-                editable={!isWalkInService}
-                pointerEvents={isWalkInService ? 'none' : 'auto'}
-              />
-            </>
-          )}
+          <View className="mb-2 flex-row justify-between items-center">
+            <Text className="text-base font-semibold">Your address</Text>
+            {isHomeService && (
+              <TouchableOpacity onPress={() => setIsAddressEditable(!isAddressEditable)}>
+                <Text className="text-primary-300 font-semibold">
+                  {isAddressEditable ? 'Done' : 'Change address'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          <TextInput
+            value={address}
+            onChangeText={setAddress}
+            placeholder="Enter your address"
+            editable={isHomeService && isAddressEditable}
+            pointerEvents={isWalkInService ? 'none' : 'auto'}
+          />
 
           {/* Date and Time */}
           <View className="flex-row mb-2 gap-2">
@@ -224,7 +263,7 @@ export default function ProductById() {
           />
 
           {/* Pets checkbox */}
-          {!isVirtualService && (
+          {isHomeService && (
             <Checkbox label="Do you have pets?" checked={hasPets} onChange={setHasPets} />
           )}
 
