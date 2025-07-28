@@ -1,5 +1,5 @@
 import { DeleteAccountModalProps } from "@/constants/types"
-import { Ionicons } from "@expo/vector-icons"
+import { Ionicons } from '@expo/vector-icons'
 import type React from "react"
 import { Modal, Text, TouchableOpacity, View } from "react-native"
 import Button from "../common/button"
@@ -14,12 +14,12 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ visible, onClos
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
 
-          <View className="mt-5 mb-5 items-center">
+          {/* <View className="mt-5 mb-5 items-center">
             <View className="w-10 h-3 bg-red-500 rounded-t-lg" />
             <View className="w-[70px] h-20 bg-red-200 rounded-b-lg" />
-          </View>
+          </View> */}
 
-          <Text className="text-2xl font-semibold text-red-500 mb-5 text-center">Delete Account Confirmation</Text>
+          {/* <Text className="text-2xl font-semibold text-red-500 mb-5 text-center">Delete Account Confirmation</Text> */}
 
           <Text className="text-base text-gray-600 text-center mb-4 leading-6">
             This action is permanent and cannot be undone. Your profile, data, and ongoing projects will be lost.
@@ -41,4 +41,3 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ visible, onClos
 }
 
 export default DeleteAccountModal
-
