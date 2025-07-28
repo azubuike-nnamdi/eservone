@@ -4,6 +4,7 @@ import images from '@/constants/images'
 import { CREATE_SERVICE } from '@/constants/routes'
 import useGetAllServices from '@/hooks/query/useGetAllServices'
 import useGetProviderAppointments from '@/hooks/query/useGetProviderAppointments'
+import { useGetAllRatings } from '@/hooks/query/useGetRatings'
 import { useGetAllReviews } from '@/hooks/query/useGetReviews'
 import { getGreeting } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
@@ -37,6 +38,9 @@ export default function ServiceProviderHomepage() {
   const { data, isPending } = useGetAllServices()
   const { data: appointments, isPending: appointmentsPending, refetch: refetchAppointments } = useGetProviderAppointments();
   const { data: reviews, isPending: reviewsPending } = useGetAllReviews()
+  const { data: ratings, isPending: ratingsPending } = useGetAllRatings()
+
+  console.log('ratings', ratings)
 
   const reviewCount = reviews?.length ?? 0
 

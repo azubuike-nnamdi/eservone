@@ -5,7 +5,7 @@ import DeleteAccountModal from '@/components/profile/delete-profile'
 import GeneralSetting from '@/components/profile/general-setting'
 import ProfileImageModal from '@/components/profile/ProfileImageModal'
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
-import { CERTIFICATES, CREATE_BUSINESS, EARNINGS, MANAGE_SERVICES, SIGN_IN } from '@/constants/routes'
+import { CERTIFICATES, CREATE_BUSINESS, EARNINGS, MANAGE_SERVICES, SIGN_IN, WALLETS } from '@/constants/routes'
 import useDeleteMyProfile from '@/hooks/mutation/useDeleteMyProfile'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { getProfileImageUri } from '@/lib/helper'
@@ -128,7 +128,7 @@ export default function Profile() {
 
           {/* General Section */}
           <View className='mb-4'>
-            <Text className='text-lg font-rubikMedium mb-4'>General</Text>
+            <Text className='text-xl font-bold mb-4'>General</Text>
             {generalSettings.map((setting) => (
               <GeneralSetting
                 key={setting.id}
@@ -142,11 +142,17 @@ export default function Profile() {
               showArrow={false}
               href={EARNINGS}
             />
+            <GeneralSetting
+              title='Wallet'
+              showArrow={false}
+              href={WALLETS}
+            />
+
           </View>
 
           {/* Legal Section */}
           <View className='mb-4'>
-            <Text className='text-lg font-rubikMedium mb-4'>Legal</Text>
+            <Text className='text-xl font-bold mb-4'>Legal</Text>
             {legalSettings.map((setting) => (
               <GeneralSetting
                 key={setting.id}
@@ -159,7 +165,7 @@ export default function Profile() {
 
           {/* Support Section */}
           <View className='mb-4'>
-            <Text className='text-lg font-rubikMedium mb-4'>Support</Text>
+            <Text className='text-xl font-bold mb-4'>Support</Text>
             {supportSettings.map((setting) => (
               <GeneralSetting
                 key={setting.id}
@@ -175,13 +181,11 @@ export default function Profile() {
             onPress={() => setDeleteModalVisible(true)}
           >
             <View>
-              <View className="flex-row items-center  justify-between ">
+              <View className="flex-row items-center gap-5  justify-between ">
                 <Text className="text-lg font-semibold text-red-500">Delete account</Text>
-                <Ionicons name="trash-outline" size={24} color="#EE3137" />
+                <Ionicons name="trash-outline" size={15} color="#EE3137" />
               </View>
-              <Text className="text-base text-[#EE313780]/50 mt-1 pr-4">
-                Permanently remove your account and all associated data. This action cannot be undone.
-              </Text>
+
             </View>
           </TouchableOpacity>
         </View>

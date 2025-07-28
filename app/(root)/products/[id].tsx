@@ -177,7 +177,7 @@ export default function ProductById() {
           </View>
           <View>
             <Text className="text-lg font-bold mb-1">{service?.serviceName || ''}</Text>
-            <Text className="text-gray-500 mb-1">XYZ Studios</Text>
+
             <Text className="text-gray-700 mb-1">{formattedMinPrice} - {formattedMaxPrice}</Text>
             <Text className="text-gray-600 mb-2">{service?.serviceDescription || 'No description provided.'}</Text>
 
@@ -206,7 +206,9 @@ export default function ProductById() {
 
           {/* Address */}
           <View className="mb-2 flex-row justify-between items-center">
-            <Text className="text-base font-semibold">Your address</Text>
+            <Text className="text-base font-semibold">
+              {isHomeService ? 'Your address' : 'Service provider address'}
+            </Text>
             {isHomeService && (
               <TouchableOpacity onPress={() => setIsAddressEditable(!isAddressEditable)}>
                 <Text className="text-primary-300 font-semibold">

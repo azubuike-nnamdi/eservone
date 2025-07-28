@@ -6,7 +6,7 @@ import { Modal, Text, TouchableOpacity, View } from "react-native";
 const ServiceProviderInfoModal = ({
   visible,
   onClose,
-  providerName,
+  // providerName,
   service,
   timesProvided,
   certificates,
@@ -28,7 +28,7 @@ const ServiceProviderInfoModal = ({
             <MaterialIcons name="close" size={22} color="#222" />
           </TouchableOpacity>
           <Text className="text-zinc-800 text-base mb-4">
-            <Text className="font-bold">{providerName}</Text> has provided this service ({service}) <Text className="font-bold">{timesProvided} times</Text>. They have uploaded <Text className="font-bold">{certificates} industrial certifications</Text> for their service and their address has been verified.
+            {/* <Text className="font-bold">{providerName}</Text> has provided this service ({service}) <Text className="font-bold">{timesProvided} times</Text>. They have uploaded <Text className="font-bold">{certificates} industrial certifications</Text> for their service and their address has been verified. */}
           </Text>
           <View className="space-y-2 mb-6">
             <View className="flex-row items-center space-x-2">
