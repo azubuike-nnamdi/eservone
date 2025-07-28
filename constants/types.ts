@@ -253,7 +253,7 @@ type InitiatePaymentPayload = {
 interface ServiceProviderInfoModalProps {
   visible: boolean;
   onClose: () => void;
-  providerName: string;
+  providerName?: string;
   service: string;
   timesProvided: number;
   certificates: number;
