@@ -5,7 +5,7 @@ import ServiceProviderInfoModal from "../service/ServiceProviderInfoModal";
 
 interface SeekerServiceCardProps {
   title: string;
-  studio: string;
+  // studio: string;
   priceRange: string;
   currency?: string;
   rating?: number;
@@ -18,7 +18,7 @@ interface SeekerServiceCardProps {
 
 const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   title,
-  studio,
+  // studio,
   priceRange,
   currency,
   // rating = 4.5,
@@ -43,7 +43,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
             <Text className="font-bold text-base text-gray-900 mb-1 bl">{title}</Text>
             <View className="flex-row items-center mb-1">
 
-              <Text className="text-sm text-gray-500">{studio}</Text>
+              {/* <Text className="text-sm text-gray-500">{studio}</Text> */}
               {isVerified && (
                 <MaterialCommunityIcons name="check-decagram" size={14} color="#4338CA" style={{ marginLeft: 4 }} />
               )}
@@ -70,7 +70,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
       <ServiceProviderInfoModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        providerName={studio}
+        // providerName={studio}
         service={title}
         timesProvided={419}
         certificates={5}

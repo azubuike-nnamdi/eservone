@@ -14,9 +14,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function ManageServicesDashboard() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { data: userProfileDetails } = useGetUserProfileDetails();
+  const { data: userProfileDetails, isPending: isProfileLoading } = useGetUserProfileDetails();
 
-  const isCompleteSignUp = userProfileDetails?.data?.completeSignUp
+  const isCompleteSignUp = userProfileDetails?.data?.completeSignUp === true
+
+  // Debug logging
+  // console.log('Profile loading:', isProfileLoading)
+  // console.log('User profile details:', userProfileDetails?.data)
+  // console.log('Complete signup value:', userProfileDetails?.data?.completeSignUp)
+  // console.log('Is complete signup:', isCompleteSignUp)
 
   const { data: servicesByUserId, isPending: isServicesByUserIdPending, isError, error } = useGetServicesByUserId();
 
@@ -38,7 +44,9 @@ export default function ManageServicesDashboard() {
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <View className="flex-1 relative">
-        {isCompleteSignUp ? (
+        {isProfileLoading ? (
+          <LoadingSkeleton count={3} />
+        ) : isCompleteSignUp ? (
           <>
             {isServicesByUserIdPending ? (
               <LoadingSkeleton count={3} />

@@ -22,12 +22,10 @@ export default function Search() {
 
   const { data: allServicesData, isPending: allPending, error: allError } = useGetAllServices();
   const { data: searchData, isPending: searchPending, error: searchError } = useSearchServices(
-    searchQuery.trim() ? debouncedSearchQuery : ''
+    debouncedSearchQuery
   );
 
-
-
-  const isSearching = !!searchQuery.trim();
+  const isSearching = !!debouncedSearchQuery.trim();
   const services: Service[] | undefined = isSearching
     ? searchData?.data
     : allServicesData?.data;
@@ -35,6 +33,16 @@ export default function Search() {
   const isPending = isSearching ? searchPending : allPending;
   const error = isSearching ? searchError : allError;
 
+  // // Debug logging
+  // console.log('🔍 Search Debug:', {
+  //   searchQuery,
+  //   debouncedSearchQuery,
+  //   isSearching,
+  //   searchDataLength: searchData?.data?.length,
+  //   allServicesLength: allServicesData?.data?.length,
+  //   servicesLength: services?.length,
+  //   searchError: searchError?.message
+  // });
 
 
   // Add to recent searches when a real search is performed
@@ -44,7 +52,7 @@ export default function Search() {
       debouncedSearchQuery !== 'all' &&
       debouncedSearchQuery.trim() !== ''
     ) {
-      addRecentSearch(searchQuery.trim());
+      addRecentSearch(debouncedSearchQuery.trim());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchQuery]);
@@ -72,7 +80,6 @@ export default function Search() {
                 {...item}
                 title={item.serviceName}
                 serviceDeliveryType={item.serviceDeliveryType}
-                studio={item.studioName || "XYZ Studios"}
                 priceRange={`${formattedMinPrice} - ${formattedMaxPrice}`}
                 currency={item.currency}
                 onPress={() => handleServicePress(item.id.toString())}
