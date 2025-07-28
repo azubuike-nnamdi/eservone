@@ -1,7 +1,8 @@
+import WalletCard from '@/components/common/wallet-card';
 import { useCurrency } from '@/context/currency-context';
 import { useGetAccountBalance } from '@/hooks/query/useGetAccountBalance';
 import { useGetTransactionHistory } from '@/hooks/query/useGetTransactionHistory';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
@@ -35,16 +36,11 @@ export default function EarningsDashboard() {
   return (
     <View className="flex-1 bg-white">
       {/* Wallet Card */}
-      <View className="bg-[#ECECF5] mx-3 rounded-lg mt-4">
-        <View className="bg-primary-50 rounded-xl p-4 shadow-sm relative">
-          <Text className="text-sm text-primary-900 mb-1"> Wallet Balance:</Text>
-          <View className="flex-row items-center justify-between">
-            <Text className="text-2xl font-bold text-primary-900">{currency} {balance}</Text>
-            <Ionicons name="chevron-forward" size={24} color="#7C6AED" />
-          </View>
-          {/* <Text className="text-xs text-primary-300 mt-2 ">Last payment received: <Text className="font-semibold text-primary-600">24th Aug, 2024</Text></Text> */}
-        </View>
-      </View>
+      <WalletCard
+        balance={balance}
+        currency={currency}
+        showChevron={true}
+      />
 
       {/* Earnings History */}
       <View className="px-4 mt-6 flex-1">
