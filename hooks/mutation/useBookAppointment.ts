@@ -17,7 +17,7 @@ const useBookAppointment = () => {
     mutationFn: (payload: BookAppointmentPayload) => api.post(`/eserve-one/create-service-appointment`, payload),
     onSuccess: async (data) => {
       if (data) {
-        console.log("data for appointment", data?.data)
+        // console.log("data for appointment", data?.data)
         showToast(data?.data?.description, "success")
 
         // Update ref with appointment data that contains the emails

@@ -13,6 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const MessageBubble = ({ message, currentUserEmail }: { message: Message, currentUserEmail: string }) => {
   const isUser = message.senderId === currentUserEmail;
 
+
+
   const formatTime = (timeString: string) => {
     const date = new Date(timeString);
     return date.toLocaleTimeString('en-US', {
@@ -99,7 +101,7 @@ export default function MessageRoom() {
   }
 
   const handleSendMessagePress = async () => {
-    if (!input.trim() || !id || !user || !userEmail) return;
+    if (!input.trim() || !id || !user || !userEmail || !receiverEmail) return;
 
     const messageText = input.trim();
     const currentTime = new Date().toISOString();
@@ -121,7 +123,7 @@ export default function MessageRoom() {
       content: messageText,
       contentType: "text",
       groupId: id as string,
-      recipientId: userEmail as string,
+      recipientId: receiverEmail as string,
       sender: user.email
     };
 
