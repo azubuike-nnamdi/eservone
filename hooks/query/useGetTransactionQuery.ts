@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 const useGetTransactionQuery = (reference: string) => {
   const getTransactionQuery = async () => {
-    const response = await api.get(`/eserve-one/verify-payment?reference=${reference}`);
+    const response = await api.get(`/eserve-one/verify-paystack-payment?transRef=${reference}`);
     return response.data;
   };
   const { data, isPending, error, refetch } = useQuery({
