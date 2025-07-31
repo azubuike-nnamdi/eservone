@@ -1,8 +1,9 @@
 import useInitiatePayment from "@/hooks/mutation/useInitiatePayment";
+import useGetTransactionQuery from "@/hooks/query/useGetTransactionQuery";
 import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
 import { useAuthStore } from "@/store/auth-store";
 import React, { useState } from "react";
-import { Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Modal, Text, TouchableOpacity, View } from 'react-native';
 import PaystackWebviewRobustModal from "./PaystackWebviewRobustModal";
 import ServiceProviderHomepage from "./service-provider-homepage";
 import ServiceSeekerHomepage from "./service-seeker-homepage";
@@ -19,7 +20,9 @@ export default function Homepage() {
    const { handleInitiatePayment, isPending } = useInitiatePayment();
    const [amount, setAmount] = useState('');
 
-   // const { data: transactionData, isPending: isVerifying, error: verifyError } = useGetTransactionQuery(transactionReference || '');
+
+   const { data: transactionData, isPending: isVerifying, error: verifyError } = useGetTransactionQuery(transactionReference || '');
+
 
    // This function is called when user presses "Top Up" in the modal
    const handleTopUp = async () => {
@@ -91,7 +94,7 @@ export default function Homepage() {
                }}
             />
          )}
-         {/* {showStatusModal && (
+         {showStatusModal && (
             <Modal
                visible={showStatusModal}
                transparent
@@ -115,11 +118,11 @@ export default function Homepage() {
                         </>
                      ) : (
                         <>
-                           <Text style={{ fontSize: 24, fontWeight: 'bold', color: transactionData?.status === 'success' ? 'green' : 'red', marginBottom: 12 }}>
-                              {transactionData?.status === 'success' ? 'Payment Successful!' : 'Payment Failed'}
+                           <Text style={{ fontSize: 24, fontWeight: 'bold', color: transactionData?.data?.status === 'success' ? 'green' : 'red', marginBottom: 12 }}>
+                              {transactionData?.data?.status === 'success' ? 'Payment Successful!' : 'Payment Failed'}
                            </Text>
                            <Text style={{ fontSize: 16, color: '#333', marginBottom: 24 }}>
-                              {transactionData?.status === 'success'
+                              {transactionData?.data?.status === 'success'
                                  ? 'Thank you for topping up your wallet.'
                                  : 'Your payment was not successful. Please try again.'}
                            </Text>
@@ -131,7 +134,7 @@ export default function Homepage() {
                   </View>
                </View>
             </Modal>
-         )} */}
+         )}
       </>
    );
 }

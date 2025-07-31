@@ -14,12 +14,13 @@ import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Profile() {
   const { clearAuth, user, isAuthenticated } = useAuthStore()
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [signOutModalVisible, setSignOutModalVisible] = useState(false)
 
 
   const { handleDeleteProfile, isPending } = useDeleteMyProfile()
@@ -33,6 +34,11 @@ export default function Profile() {
     clearAuth()
     await AsyncStorage.removeItem('requestId')
     router.replace(SIGN_IN)
+  }
+
+  const handleSignOutConfirm = () => {
+    setSignOutModalVisible(false)
+    handleSignOut()
   }
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -198,11 +204,56 @@ export default function Profile() {
           isPending={isPending}
         />
 
+        {/* Sign Out Confirmation Modal */}
+        <Modal
+          visible={signOutModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSignOutModalVisible(false)}
+        >
+          <View className="flex-1 justify-center items-center bg-black/50">
+            <View className="bg-white rounded-2xl p-6 mx-6 max-w-sm">
+              {/* Cry Face Icon */}
+              <View className="items-center ">
+                <Text className="text-6xl mb-2 mt-5">😢</Text>
+                <Text className="text-xl font-rubikMedium text-gray-900 mb-2">
+                  Are you sure?
+                </Text>
+              </View>
+
+              {/* Description */}
+              <Text className="text-gray-600 text-center mb-6 leading-5">
+                Signing out will take you out of the application and you'll need to sign in again to access your account.
+              </Text>
+
+              {/* Buttons */}
+              <View className="flex-row gap-3">
+                <TouchableOpacity
+                  className="flex-1 py-3 px-4 border border-gray-300 rounded-lg"
+                  onPress={() => setSignOutModalVisible(false)}
+                >
+                  <Text className="text-gray-700 text-center font-rubikMedium">
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="flex-1 py-3 px-4 bg-red-500 rounded-lg"
+                  onPress={handleSignOutConfirm}
+                >
+                  <Text className="text-white text-center font-rubikMedium">
+                    Sign Out
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
         {/* Sign Out Button */}
         <View className='mt-8'>
           <Text
             className='text-red-500 text-center font-rubikMedium'
-            onPress={handleSignOut}
+            onPress={() => setSignOutModalVisible(true)}
           >
             Sign Out
           </Text>

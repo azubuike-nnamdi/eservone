@@ -1,13 +1,31 @@
 import BottomSheetModal from '@/components/common/bottom-sheet-modal';
+import useInitiatePayment from '@/hooks/mutation/useInitiatePayment';
 import { useGetAccountBalance } from '@/hooks/query/useGetAccountBalance';
+import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import WalletCard from '../common/wallet-card';
+import PaystackWebviewRobustModal from '../dashboard/PaystackWebviewRobustModal';
+import TopUpModal from '../dashboard/TopUpModal';
+import AddBankAccountModal from './AddBankAccountModal';
 
 const WalletDashboard = () => {
   const { data: accountBalance, isPending } = useGetAccountBalance();
   const [withdrawalModalVisible, setWithdrawalModalVisible] = useState(false);
+  const [addAccountModalVisible, setAddAccountModalVisible] = useState(false);
+  const { handleInitiatePayment, isPending: isInitiatingPayment } = useInitiatePayment();
+  const [amount, setAmount] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [paystackUrl, setPaystackUrl] = useState<string | null>(null);
+  const { data: userProfile } = useGetUserProfileDetails();
+
+  // console.log('userProfile', userProfile)
+
+
+  // const { user } = useAuthStore()
+  // console.log('user', user)
+
 
   const balance = accountBalance?.data?.accountBalance ?? 0
   const currency = accountBalance?.data?.currency
@@ -16,9 +34,20 @@ const WalletDashboard = () => {
     return <ActivityIndicator className='flex-1 justify-center items-center' />
   }
 
-  const handleAddFunds = () => {
-    // TODO: Implement add funds functionality
-    console.log('Add funds pressed')
+  const handleAddFunds = async () => {
+    if (!amount || isNaN(Number(amount))) return;
+    const payload = {
+      amount: Number(amount),
+      beneficiaryName: userProfile?.data?.firstName + ' ' + userProfile?.data?.lastName,
+      narration: 'Wallet Top Up',
+      senderEmail: userProfile?.data?.emailAddress,
+    };
+    const response = await handleInitiatePayment(payload);
+    const url = response?.data?.data?.authorization_url;
+    if (url) {
+      setModalVisible(false); // Close the amount modal
+      setPaystackUrl(url);    // Open the Paystack modal
+    }
   }
 
   const handleWithdrawFunds = () => {
@@ -31,8 +60,7 @@ const WalletDashboard = () => {
   }
 
   const handleAddAccount = () => {
-    // TODO: Navigate to add payout account
-    console.log('Add account pressed')
+    setAddAccountModalVisible(true);
   }
 
   const handleRemoveAccount = (accountId: string) => {
@@ -52,7 +80,7 @@ const WalletDashboard = () => {
       <View className="flex-row px-4 mt-6 gap-3">
         <TouchableOpacity
           className="flex-1 bg-primary-300 rounded-lg py-4 flex-row items-center justify-center"
-          onPress={handleAddFunds}
+          onPress={() => setModalVisible(true)}
         >
           <Ionicons name="add-circle" size={20} color="white" />
           <Text className="text-white font-rubikMedium ml-2">Add funds</Text>
@@ -194,6 +222,38 @@ const WalletDashboard = () => {
           </View>
         </View>
       </BottomSheetModal>
+
+      <TopUpModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        amount={amount}
+        setAmount={setAmount}
+        onTopUp={handleAddFunds}
+        isPending={isInitiatingPayment}
+      />
+      {/* Add Bank Account Modal */}
+      <AddBankAccountModal
+        visible={addAccountModalVisible}
+        onClose={() => setAddAccountModalVisible(false)}
+      />
+
+      {paystackUrl && (
+        <PaystackWebviewRobustModal
+          visible={!!paystackUrl}
+          onClose={() => setPaystackUrl(null)}
+          paystackUrl={paystackUrl}
+          backendDomain="https://api.eservone.com"
+          paystackRedirectUrl="eservone://payment/thank-you"
+          onComplete={url => {
+            setPaystackUrl(null);
+            // Extract reference from URL
+            // const refMatch = url.match(/[?&]reference=([^&]+)/);
+            // const reference = refMatch ? refMatch[1] : null;
+            // setTransactionReference(reference || null);
+            // setShowStatusModal(true);
+          }}
+        />
+      )}
     </ScrollView>
   )
 }
