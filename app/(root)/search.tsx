@@ -25,6 +25,7 @@ export default function Search() {
     debouncedSearchQuery
   );
 
+
   const isSearching = !!debouncedSearchQuery.trim();
   const services: Service[] | undefined = isSearching
     ? searchData?.data
@@ -82,6 +83,8 @@ export default function Search() {
                 serviceDeliveryType={item.serviceDeliveryType}
                 priceRange={`${formattedMinPrice} - ${formattedMaxPrice}`}
                 currency={item.currency}
+                ratingCount={parseInt(item.ratingCount) || 0}
+                reviewCount={item.reviewCount || 0}
                 onPress={() => handleServicePress(item.id.toString())}
               />
             );
