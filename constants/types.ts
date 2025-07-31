@@ -164,6 +164,14 @@ type UpdateProfilePayload = {
   profilePicture: string
 }
 
+type WithdrawFundsPayload = {
+  accountName: string
+  accountNumber: string
+  amount: string
+  bankCode: string
+  description: string
+  senderWalletId: string
+}
 type UpdateUserBioPayload = {
   userBio: string
 }
@@ -228,6 +236,13 @@ type CreateRatingPayload = {
   ratings: number;
   serviceId: number;
 
+}
+
+type CreateBeneficiaryPayload = {
+  accountNumber: string
+  bankCode: string
+  emailAddress: string
+  nickName: string
 }
 
 type createReviewPayload = {
@@ -355,5 +370,19 @@ type Service = {
   studioName?: string;
 };
 
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload };
+
+type BankAccount = {
+  id: number;
+  accountNumber: string;
+  bankCode: string;
+  emailAddress: string;
+  nickName: string;
+  newNickname?: string | null;
+}
+
+type BankAccountCardProps = {
+  account: BankAccount;
+  onViewDetails: (account: BankAccount) => void;
+}
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
 
