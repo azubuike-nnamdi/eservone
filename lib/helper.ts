@@ -128,4 +128,12 @@ export function getProfileImageUri(base64String?: string): string | undefined {
     return `data:image/jpeg;base64,${clean}`;
   }
   return clean;
-} 
+}
+
+export const maskAccountNumber = (accountNumber: string) => {
+  if (accountNumber.length < 5) return accountNumber;
+  const firstTwo = accountNumber.slice(0, 2);
+  const lastThree = accountNumber.slice(-3);
+  const masked = '*'.repeat(accountNumber.length - 5);
+  return `${firstTwo}${masked}${lastThree}`;
+};

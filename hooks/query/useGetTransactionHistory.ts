@@ -8,7 +8,7 @@ export const useGetTransactionHistory = () => {
   }
 
   const { data, isPending, error } = useQuery({
-    queryKey: ['payment'],
+    queryKey: ['transaction-history'],
     queryFn: getTransactionHistory
   })
 
