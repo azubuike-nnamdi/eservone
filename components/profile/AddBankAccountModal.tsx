@@ -1,10 +1,14 @@
-import { ValidateAccountPayload } from '@/constants/types';
+import { CreateBeneficiaryPayload, ValidateAccountPayload } from '@/constants/types';
+import useCreateBeneficiary from '@/hooks/mutation/useCreateBeneficiary';
 import useValidateAccount from '@/hooks/mutation/useValidateAccount';
 import { useGetBanks } from '@/hooks/query/useGetBanks';
+import { useDebounce } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Button from '../common/button';
 
 interface AddBankAccountModalProps {
   visible: boolean;
@@ -25,10 +29,37 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
   const [showBankDropdown, setShowBankDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const debouncedAccountNumber = useDebounce(accountNumber, 1000);
+  const debouncedBankCode = useDebounce(selectedBank?.bankCode, 1000);
+
   const { data: banksData, isPending: isLoadingBanks } = useGetBanks();
-  const { handleValidateAccount, isPending: isSubmitting } = useValidateAccount();
+  const { handleValidateAccount, isPending: isValidating, isSuccess, validatedAccountName } = useValidateAccount();
+  const { handleCreateBeneficiary, isPending: isCreatingBeneficiary, isSuccess: isBeneficiaryCreated } = useCreateBeneficiary();
   const { user } = useAuthStore();
 
+
+  // Load account name from AsyncStorage when component mounts
+  useEffect(() => {
+    const loadAccountName = async () => {
+      try {
+        const storedAccountName = await AsyncStorage.getItem('accountName');
+        if (storedAccountName) {
+          setAccountName(storedAccountName);
+        }
+      } catch (error) {
+        console.error('Error loading account name:', error);
+      }
+    };
+
+    loadAccountName();
+  }, [isSuccess]); // Reload when validation is successful
+
+  // Update account name when validation is successful
+  useEffect(() => {
+    if (validatedAccountName) {
+      setAccountName(validatedAccountName);
+    }
+  }, [validatedAccountName]);
   const banks = banksData?.data || [];
 
   // Filter banks based on search query
@@ -58,23 +89,36 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
       return;
     }
 
-    const payload: ValidateAccountPayload = {
+    const payload: CreateBeneficiaryPayload = {
       accountNumber,
       bankCode: selectedBank.bankCode,
+      nickName: accountName,
       emailAddress: user.email,
     };
-
-    handleValidateAccount(payload);
+    handleCreateBeneficiary(payload);
   };
 
-  // Update account name when account number is entered (simulate validation)
+  // Debounced account validation to get account name
   useEffect(() => {
-    if (accountNumber.length >= 10 && selectedBank) {
-      setAccountName("Account validation in progress...");
+    if (debouncedAccountNumber.length >= 10 && debouncedBankCode && user?.email) {
+
+      const payload: ValidateAccountPayload = {
+        accountNumber: debouncedAccountNumber,
+        bankCode: debouncedBankCode,
+        emailAddress: user.email,
+      };
+
+      handleValidateAccount(payload);
     } else {
       setAccountName("");
     }
-  }, [accountNumber, selectedBank]);
+  }, [debouncedAccountNumber, debouncedBankCode, user?.email]);
+
+  useEffect(() => {
+    if (isBeneficiaryCreated) {
+      onClose();
+    }
+  }, [isBeneficiaryCreated]);
 
   const isFormValid = selectedBank && accountNumber.length >= 10;
 
@@ -161,32 +205,33 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
                 maxLength={10}
               />
             </View>
+            {isValidating && (
+              <ActivityIndicator size="small" color="#0000ff" />
+            )}
 
             {/* Account Name (Read-only) */}
-            <View className="mb-6">
-              <Text className="text-sm font-rubikMedium text-gray-700 mb-2">Account Name</Text>
-              <View className="border border-gray-300 rounded-lg p-4 bg-gray-50">
-                <Text className={`text-base ${accountName ? "text-gray-900" : "text-gray-500"}`}>
-                  {accountName || "Account name will appear here after validation"}
-                </Text>
-              </View>
-            </View>
+            {validatedAccountName && (
+              <View className="mb-6">
+                <Text className="text-sm font-rubikMedium text-gray-700 mb-2">Account Name</Text>
+                <View className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                  <Text className="text-base text-gray-900">
+                    {validatedAccountName}
+                  </Text>
+                </View>
+              </View>)}
 
             {/* Submit Button */}
-            <TouchableOpacity
-              className={`rounded-lg py-4 items-center ${isFormValid ? 'bg-primary-600' : 'bg-gray-300'
-                }`}
+            <Button
               onPress={handleSubmit}
-              disabled={!isFormValid || isSubmitting}
+              disabled={!isFormValid || isCreatingBeneficiary}
+              loading={isCreatingBeneficiary}
+              className="rounded-lg py-4 items-center"
+              loadingText='Adding Account...'
             >
-              {isSubmitting ? (
-                <ActivityIndicator size="small" color="white" />
-              ) : (
-                <Text className="text-white font-rubikMedium text-base">
-                  Add Account
-                </Text>
-              )}
-            </TouchableOpacity>
+              <Text className="text-white font-rubikMedium text-base">
+                Add Account
+              </Text>
+            </Button>
           </ScrollView>
         </View>
       </View>
