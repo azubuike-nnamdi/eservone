@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import RatingStars from "../common/RatingStars";
 import ServiceProviderInfoModal from "../service/ServiceProviderInfoModal";
 
 interface SeekerServiceCardProps {
@@ -8,7 +9,8 @@ interface SeekerServiceCardProps {
   // studio: string;
   priceRange: string;
   currency?: string;
-  rating?: number;
+  ratingCount?: number;
+  reviewCount?: number;
   isVerified?: boolean;
   lastActive?: string;
   distance?: string;
@@ -21,7 +23,8 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   // studio,
   priceRange,
   currency,
-  // rating = 4.5,
+  ratingCount,
+  reviewCount,
   isVerified = false,
   serviceDeliveryType,
   // lastActive = "Active 4 days ago",
@@ -42,18 +45,19 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
           <View className="">
             <Text className="font-bold text-base text-gray-900 mb-1 bl">{title}</Text>
             <View className="flex-row items-center mb-1">
-
               {/* <Text className="text-sm text-gray-500">{studio}</Text> */}
               {isVerified && (
                 <MaterialCommunityIcons name="check-decagram" size={14} color="#4338CA" style={{ marginLeft: 4 }} />
               )}
               <Text className="text-sm text-gray-500 ml-2">{priceRange}</Text>
             </View>
+            <View className="flex-row items-center mb-1">
+              <RatingStars ratingCount={ratingCount || 0} size={14} />
+              <Text className="text-xs text-gray-400 ml-2">({reviewCount || 0} reviews)</Text>
+            </View>
             <View className="flex-row items-center mt-1">
               <Text className="text-xs text-gray-400">Service delivery type: </Text>
               <Text className="text-xs text-gray-400">{serviceDeliveryType}</Text>
-
-
             </View>
           </View>
 

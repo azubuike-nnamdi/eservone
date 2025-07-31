@@ -7,7 +7,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native'
 const FALLBACK_IMAGE = 'https://images.pexels.com/photos/3998414/pexels-photo-3998414.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
 
 export default function ServiceCard({ item, onPress }: { item: ServiceItem; onPress: () => void }) {
-  console.log('item', item)
+  // console.log('item', item)
   // const { data } = useGetUserProfileDetails()
   const { format } = useCurrency()
   // console.log('user profile details', data)

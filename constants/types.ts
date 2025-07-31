@@ -310,6 +310,12 @@ type MakeBookingPaymentPayload = {
   senderWalletId: string | null;
 }
 
+type ValidateAccountPayload = {
+  accountNumber: string;
+  bankCode: string;
+  emailAddress: string;
+}
+
 type Country = {
   code: string;
   name: string;
@@ -339,6 +345,7 @@ type Service = {
   maximumPrice: number;
   minimumPrice: number;
   reviewCount: number;
+  ratingCount: string;
   serviceCategoryId: number | null;
   serviceDeliveryType: string;
   serviceDescription: string;
@@ -348,5 +355,5 @@ type Service = {
   studioName?: string;
 };
 
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateResetPasswordEmailPayload, VerificationPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateUserBioPayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload };
 
