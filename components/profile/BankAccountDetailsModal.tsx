@@ -23,7 +23,6 @@ const BankAccountDetailsModal: React.FC<BankAccountDetailsModalProps> = ({
   onClose,
   account
 }) => {
-  console.log('Modal received account:', account);
   if (!account) return null;
 
   return (
