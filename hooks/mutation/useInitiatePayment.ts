@@ -22,6 +22,8 @@ const useInitiatePayment = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["payment"] })
+      queryClient.invalidateQueries({ queryKey: ['account-balance'] });
+      queryClient.invalidateQueries({ queryKey: ['transaction-history'] });
     }
   })
 
