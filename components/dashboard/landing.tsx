@@ -1,6 +1,6 @@
 import Button from '@/components/common/button';
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails';
-import { getGreeting } from '@/lib/helper';
+import { formatNumberWithCommas, getGreeting } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
 import Entypo from '@expo/vector-icons/Entypo';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -11,7 +11,15 @@ interface StatItem {
   value: string;
 }
 
-const DashboardScreen = ({ appointments, refetchAppointments, reviewCount }: { appointments: any; refetchAppointments?: () => void, reviewCount: number }) => {
+type DashboardScreenProps = {
+  appointments: any;
+  refetchAppointments?: () => void;
+  reviewCount: number;
+  balance: number;
+  currency: string;
+}
+
+const DashboardScreen = ({ appointments, refetchAppointments, reviewCount, balance, currency }: DashboardScreenProps) => {
   const { user } = useAuthStore()
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
@@ -50,7 +58,7 @@ const DashboardScreen = ({ appointments, refetchAppointments, reviewCount }: { a
 
   const statsData: StatItem[] = [
     { id: '1', label: 'New job requests', value: appointmentStats.pending.toString() },
-    { id: '2', label: 'Total earnings', value: '₦0.00' },
+    { id: '2', label: 'Total Amount', value: `${currency} ${formatNumberWithCommas(balance)}` },
     { id: '3', label: 'Completed appointments', value: appointmentStats.completed.toString() },
     { id: '4', label: 'Cancelled appointments', value: appointmentStats.canceled.toString() }
   ];
