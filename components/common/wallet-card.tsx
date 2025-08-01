@@ -1,3 +1,4 @@
+import { formatNumberWithCommas } from '@/lib/helper'
 import { Ionicons } from '@expo/vector-icons'
 import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
@@ -23,8 +24,8 @@ export default function WalletCard({
         <Text className="text-sm text-primary-900 mb-1">EservOne Wallet Balance:</Text>
         <View className="flex-row items-center justify-between">
           <View>
-            <Text className="text-2xl font-bold text-primary-900">{currency} {balance}</Text>
-            <Text className="text-sm text-primary-900/50 mb-1">Last payment received: <Text className="font-semibold text-primary-600">24th Aug, 2024</Text></Text>
+            <Text className="text-2xl font-bold text-primary-900">{currency} {formatNumberWithCommas(balance)}</Text>
+            {/* <Text className="text-sm text-primary-900/50 mb-1">Last payment received: <Text className="font-semibold text-primary-600">24th Aug, 2024</Text></Text> */}
           </View>
           {showChevron && <Ionicons name="chevron-forward" size={24} color="#7C6AED" />}
         </View>

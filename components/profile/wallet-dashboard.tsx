@@ -24,6 +24,12 @@ const WalletDashboard = () => {
     setModalVisible,
     paystackUrl,
     setPaystackUrl,
+    withdrawModalVisible,
+    setWithdrawModalVisible,
+    withdrawAmount,
+    setWithdrawAmount,
+    withdrawError,
+
 
     // Data
     beneficiariesData,
@@ -34,10 +40,13 @@ const WalletDashboard = () => {
     isPending,
     isLoadingBeneficiaries,
     isInitiatingPayment,
+    isWithdrawing,
+    isWithdrawSuccess,
 
     // Handlers
     handleAddFunds,
-    handleWithdrawFunds,
+    openWithdrawModal,
+    handleWithdrawSubmit,
     handleSeeAllWithdrawals,
     handleAddAccount,
     handleViewAccountDetails,
@@ -58,7 +67,7 @@ const WalletDashboard = () => {
 
       <WalletActionButtons
         onAddFunds={() => setModalVisible(true)}
-        onWithdrawFunds={handleWithdrawFunds}
+        onWithdrawFunds={openWithdrawModal}
       />
 
       <WithdrawalActivity
@@ -88,6 +97,15 @@ const WalletDashboard = () => {
         setSelectedAccount={setSelectedAccount}
         withdrawalModalVisible={withdrawalModalVisible}
         setWithdrawalModalVisible={setWithdrawalModalVisible}
+        withdrawModalVisible={withdrawModalVisible}
+        setWithdrawModalVisible={setWithdrawModalVisible}
+        withdrawAmount={withdrawAmount}
+        setWithdrawAmount={setWithdrawAmount}
+        withdrawError={withdrawError}
+        balance={balance}
+        currency={currency}
+        onWithdrawSubmit={handleWithdrawSubmit}
+        isWithdrawPending={isWithdrawing}
         paystackUrl={paystackUrl}
         setPaystackUrl={setPaystackUrl}
       />

@@ -2,6 +2,7 @@ import Button from '@/components/common/button'
 import ProfileHeader from '@/components/common/profile-header'
 import images from '@/constants/images'
 import { CREATE_SERVICE } from '@/constants/routes'
+import { useGetAccountBalance } from '@/hooks/query/useGetAccountBalance'
 import useGetAllServices from '@/hooks/query/useGetAllServices'
 import useGetProviderAppointments from '@/hooks/query/useGetProviderAppointments'
 import { useGetAllRatings } from '@/hooks/query/useGetRatings'
@@ -38,16 +39,19 @@ export default function ServiceProviderHomepage() {
   const { data, isPending } = useGetAllServices()
   const { data: appointments, isPending: appointmentsPending, refetch: refetchAppointments } = useGetProviderAppointments();
   const { data: reviews, isPending: reviewsPending } = useGetAllReviews()
+  const { data: accountBalance, isPending: accountBalancePending } = useGetAccountBalance()
   const { data: ratings, isPending: ratingsPending } = useGetAllRatings()
 
+  const balance = accountBalance?.data?.accountBalance
+  const currency = accountBalance?.data?.currency
   console.log('ratings', ratings)
 
   const reviewCount = reviews?.length ?? 0
 
   const renderContent = () => {
-    if (isPending || appointmentsPending || reviewsPending) return <DashboardSkeleton />
+    if (isPending || appointmentsPending || reviewsPending || accountBalancePending || ratingsPending) return <DashboardSkeleton />
     if (!data) return <EmptyState firstName={user?.firstName} />
-    return <DashboardScreen appointments={appointments} refetchAppointments={refetchAppointments} reviewCount={reviewCount} />
+    return <DashboardScreen appointments={appointments} refetchAppointments={refetchAppointments} reviewCount={reviewCount} balance={balance} currency={currency} />
   }
 
   return (

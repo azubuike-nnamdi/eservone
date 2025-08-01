@@ -1,22 +1,24 @@
 import { WithdrawFundsPayload } from "@/constants/types"
+import { useToast } from "@/context/toast-context"
 import { api } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Alert } from "react-native"
 
 const useWithdrawFunds = () => {
-
+  const { showToast } = useToast()
   const queryClient = useQueryClient()
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: (payload: WithdrawFundsPayload) => {
       return api.post(`/eserve-one/withdraw-fund`, payload)
     },
     onSuccess: (data) => {
       if (data) {
         queryClient.invalidateQueries({ queryKey: ["payment"] })
+        queryClient.invalidateQueries({ queryKey: ['account-balance'] });
+        queryClient.invalidateQueries({ queryKey: ['transaction-history'] });
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      Alert.alert('Error', error.response.data.description)
+      showToast(error.response.data.description, 'error')
     }
   })
 
@@ -24,7 +26,7 @@ const useWithdrawFunds = () => {
     mutate(payload)
   }
 
-  return { handleWithdrawFunds, isPending }
+  return { handleWithdrawFunds, isPending, isSuccess }
 }
 
 export default useWithdrawFunds

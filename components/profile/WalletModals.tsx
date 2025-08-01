@@ -1,10 +1,10 @@
-import BottomSheetModal from '@/components/common/bottom-sheet-modal';
 import PaystackWebviewRobustModal from '@/components/dashboard/PaystackWebviewRobustModal';
 import TopUpModal from '@/components/dashboard/TopUpModal';
 import React from 'react';
-import { Text, View } from 'react-native';
 import AddBankAccountModal from './AddBankAccountModal';
 import BankAccountDetailsModal from './BankAccountDetailsModal';
+import WithdrawModal from './WithdrawModal';
+import WithdrawalHistoryModal from './WithdrawalHistoryModal';
 
 interface BankAccount {
   id: number;
@@ -34,9 +34,20 @@ interface WalletModalsProps {
   selectedAccount: BankAccount | null;
   setSelectedAccount: (account: BankAccount | null) => void;
 
-  // Withdrawal Modal
+  // Withdrawal History Modal
   withdrawalModalVisible: boolean;
   setWithdrawalModalVisible: (visible: boolean) => void;
+
+  // Withdraw Modal
+  withdrawModalVisible: boolean;
+  setWithdrawModalVisible: (visible: boolean) => void;
+  withdrawAmount: string;
+  setWithdrawAmount: (amount: string) => void;
+  withdrawError: string;
+  balance: number;
+  currency: string;
+  onWithdrawSubmit: () => void;
+  isWithdrawPending?: boolean;
 
   // Paystack Modal
   paystackUrl: string | null;
@@ -58,67 +69,26 @@ const WalletModals: React.FC<WalletModalsProps> = ({
   setSelectedAccount,
   withdrawalModalVisible,
   setWithdrawalModalVisible,
+  withdrawModalVisible,
+  setWithdrawModalVisible,
+  withdrawAmount,
+  setWithdrawAmount,
+  withdrawError,
+  balance,
+  currency,
+  onWithdrawSubmit,
+  isWithdrawPending,
   paystackUrl,
   setPaystackUrl
 }) => {
   return (
     <>
       {/* Withdrawal History Modal */}
-      <BottomSheetModal
+      <WithdrawalHistoryModal
         visible={withdrawalModalVisible}
         onClose={() => setWithdrawalModalVisible(false)}
-        title="Withdrawal History"
-      >
-        <View className="space-y-4 pb-4">
-          <Text className="text-center text-gray-600 mb-4">Recent withdrawal transactions</Text>
-
-          {/* Sample withdrawal items */}
-          <View className="bg-gray-50 rounded-lg p-4">
-            <View className="flex-row justify-between items-start mb-2">
-              <Text className="text-base font-rubikMedium text-green-600">₦23,000.00</Text>
-              <Text className="text-sm text-gray-600">24th Aug, 2024</Text>
-            </View>
-            <Text className="text-sm text-gray-600">Card : **** 2341</Text>
-            <Text className="text-xs text-green-600 mt-1 font-rubikMedium">Completed</Text>
-          </View>
-
-          <View className="bg-gray-50 rounded-lg p-4">
-            <View className="flex-row justify-between items-start mb-2">
-              <Text className="text-base font-rubikMedium text-green-600">₦15,500.00</Text>
-              <Text className="text-sm text-gray-600">20th Aug, 2024</Text>
-            </View>
-            <Text className="text-sm text-gray-600">Bank : **** 5678</Text>
-            <Text className="text-xs text-green-600 mt-1 font-rubikMedium">Completed</Text>
-          </View>
-
-          <View className="bg-gray-50 rounded-lg p-4">
-            <View className="flex-row justify-between items-start mb-2">
-              <Text className="text-base font-rubikMedium text-green-600">₦8,750.00</Text>
-              <Text className="text-sm text-gray-600">15th Aug, 2024</Text>
-            </View>
-            <Text className="text-sm text-gray-600">Card : **** 9012</Text>
-            <Text className="text-xs text-green-600 mt-1 font-rubikMedium">Completed</Text>
-          </View>
-
-          <View className="bg-gray-50 rounded-lg p-4">
-            <View className="flex-row justify-between items-start mb-2">
-              <Text className="text-base font-rubikMedium text-green-600">₦12,300.00</Text>
-              <Text className="text-sm text-gray-600">10th Aug, 2024</Text>
-            </View>
-            <Text className="text-sm text-gray-600">Bank : **** 3456</Text>
-            <Text className="text-xs text-green-600 mt-1 font-rubikMedium">Completed</Text>
-          </View>
-
-          <View className="bg-gray-50 rounded-lg p-4">
-            <View className="flex-row justify-between items-start mb-2">
-              <Text className="text-base font-rubikMedium text-green-600">₦5,200.00</Text>
-              <Text className="text-sm text-gray-600">5th Aug, 2024</Text>
-            </View>
-            <Text className="text-sm text-gray-600">Card : **** 7890</Text>
-            <Text className="text-xs text-green-600 mt-1 font-rubikMedium">Completed</Text>
-          </View>
-        </View>
-      </BottomSheetModal>
+        currency={currency}
+      />
 
       <TopUpModal
         visible={modalVisible}
@@ -141,6 +111,19 @@ const WalletModals: React.FC<WalletModalsProps> = ({
           setSelectedAccount(null);
         }}
         account={selectedAccount}
+      />
+
+      <WithdrawModal
+        visible={withdrawModalVisible}
+        onClose={() => setWithdrawModalVisible(false)}
+        amount={withdrawAmount}
+        setAmount={setWithdrawAmount}
+        error={withdrawError}
+        balance={balance}
+        currency={currency}
+        selectedAccount={selectedAccount}
+        onSubmit={onWithdrawSubmit}
+        isPending={isWithdrawPending}
       />
 
       {paystackUrl && (

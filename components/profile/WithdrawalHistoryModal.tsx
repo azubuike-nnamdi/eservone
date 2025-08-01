@@ -1,19 +1,13 @@
 import { useGetTransactionHistory } from '@/hooks/query/useGetTransactionHistory';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
+import BottomSheetModal from '../common/bottom-sheet-modal';
 
-interface WithdrawalActivityProps {
+interface WithdrawalHistoryModalProps {
+  visible: boolean;
+  onClose: () => void;
   currency: string;
-  balance: number;
-  onSeeAllWithdrawals: () => void;
-}
-
-interface Transaction {
-  amount: number;
-  type: string;
-  service: string;
-  date: string;
 }
 
 function formatDate(date: string) {
@@ -21,10 +15,10 @@ function formatDate(date: string) {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-const WithdrawalActivity: React.FC<WithdrawalActivityProps> = ({
-  currency,
-  balance,
-  onSeeAllWithdrawals
+const WithdrawalHistoryModal: React.FC<WithdrawalHistoryModalProps> = ({
+  visible,
+  onClose,
+  currency
 }) => {
   const { data: transactionHistory } = useGetTransactionHistory();
 
@@ -40,30 +34,21 @@ const WithdrawalActivity: React.FC<WithdrawalActivityProps> = ({
       }))
     : [];
 
-  // Get first 4 transactions for display
-  const recentTransactions = mappedTransactions.slice(0, 4);
-  const hasMoreTransactions = mappedTransactions.length > 4;
-
   return (
-    <View className="px-4 mt-8">
-      <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-lg font-rubikMedium">Withdrawal activity:</Text>
-        {hasMoreTransactions && (
-          <TouchableOpacity onPress={onSeeAllWithdrawals}>
-            <Text className="text-primary-600 font-rubikMedium">See all</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+    <BottomSheetModal
+      visible={visible}
+      onClose={onClose}
+      title="Withdrawal History"
+    >
+      <View className="space-y-4 pb-4">
+        <Text className="text-center text-gray-600 mb-4">All withdrawal transactions</Text>
 
-      {recentTransactions.length === 0 ? (
-        <View className="bg-gray-50 rounded-lg p-4">
-          <Text className="text-sm text-gray-600 mb-2">No withdrawal history</Text>
-          <Text className="text-base font-rubikMedium mb-1">No withdrawals yet</Text>
-          <Text className="text-sm text-gray-600">Start withdrawing to see your history</Text>
-        </View>
-      ) : (
-        <View className="space-y-3">
-          {recentTransactions.map((transaction: Transaction, index: number) => (
+        {mappedTransactions.length === 0 ? (
+          <View className="bg-gray-50 rounded-lg p-6">
+            <Text className="text-center text-gray-500">No withdrawal history found</Text>
+          </View>
+        ) : (
+          mappedTransactions.map((transaction: any, index: number) => (
             <View key={index} className="bg-gray-50 rounded-lg p-4">
               <View className="flex-row justify-between items-start mb-2">
                 <Text className="text-base font-rubikMedium text-red-600">
@@ -77,11 +62,11 @@ const WithdrawalActivity: React.FC<WithdrawalActivityProps> = ({
               </View>
               <Text className="text-xs text-green-600 mt-1 font-rubikMedium">Completed</Text>
             </View>
-          ))}
-        </View>
-      )}
-    </View>
+          ))
+        )}
+      </View>
+    </BottomSheetModal>
   );
 };
 
-export default WithdrawalActivity; 
+export default WithdrawalHistoryModal; 
