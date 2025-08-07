@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
 import images from "@/constants/images";
-import { Image, Text, View, TouchableOpacity, Dimensions, FlatList } from "react-native";
-import Animated, { FadeInDown } from 'react-native-reanimated';
-import { SafeAreaView } from "react-native-safe-area-context";
-import { SlideItem } from "@/constants/types";
+import React, { useEffect, useRef, useState } from "react";
+import { Dimensions, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+
 import { slides } from "@/constants/data";
-import { router } from "expo-router";
 import { SIGN_IN, SIGN_UP } from "@/constants/routes";
+import { SlideItem } from "@/constants/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
@@ -111,7 +111,7 @@ export default function OnboardingFlatList() {
         </View>
 
         {/* Bottom Buttons */}
-        <Animated.View entering={FadeInDown.delay(200).springify()} className={"w-full"}>
+        <View className={"w-full"}>
           <View className="w-full px-2 mb-8">
             <TouchableOpacity className="bg-primary-300 py-4 rounded-md w-full" onPress={handleGetStarted}>
               <Text className="text-white text-center font-semibold text-lg">Get started</Text>
@@ -124,7 +124,7 @@ export default function OnboardingFlatList() {
               </TouchableOpacity>
             </View>
           </View>
-        </Animated.View>
+        </View>
       </View>
     </SafeAreaView>
   );

@@ -133,7 +133,7 @@ const DashboardScreen = ({ appointments, refetchAppointments, reviewCount, balan
 
         {/* Loading Overlay during refresh */}
         {refreshing && (
-          <View className="absolute inset-0 bg-black/20 justify-center items-center z-50">
+          <View className="absolute inset-0  justify-center items-center z-50">
             <View className="bg-white rounded-lg p-6 shadow-lg">
               <ActivityIndicator size="large" color="#7C6AED" />
               <Text className="text-gray-600 mt-3 font-medium">Refreshing...</Text>
