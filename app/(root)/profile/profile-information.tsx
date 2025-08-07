@@ -28,10 +28,10 @@ export default function ProfileInformation() {
     setBio(userProfileDetails?.data?.userBio || "");
   }, [userProfileDetails?.data?.userBio]);
 
-  const handleBioSubmit = (newBio: string) => {
+  const handleBioSubmit = (newBio: string, newAddress: string) => {
     setBio(newBio);
     setShowBioModal(false);
-    handleUpdateUserBio({ userBio: newBio })
+    handleUpdateUserBio({ userBio: newBio, address: newAddress })
   };
 
   return (
@@ -71,7 +71,7 @@ export default function ProfileInformation() {
           <View className='mt-8'>
             <View className='flex-row justify-between items-center mb-2'>
               <Text className='text-xl font-semibold'>Home address</Text>
-              {/* <Feather name="edit-2" size={15} color="#6B7280" /> */}
+              <Feather name="edit-2" size={15} color="#6B7280" onPress={() => setShowBioModal(true)} />
             </View>
             <Text className='text-gray-600'>{userProfileDetails?.data?.address}</Text>
           </View>
@@ -83,6 +83,7 @@ export default function ProfileInformation() {
         onClose={() => setShowBioModal(false)}
         onSubmit={handleBioSubmit}
         initialBio={bio}
+        initialAddress={userProfileDetails?.data?.address || ""}
         isLoading={isPending}
       />
 

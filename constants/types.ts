@@ -174,6 +174,7 @@ type WithdrawFundsPayload = {
 }
 type UpdateUserBioPayload = {
   userBio: string
+  address: string
 }
 
 type SelectOption = {

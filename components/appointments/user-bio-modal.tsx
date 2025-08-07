@@ -5,8 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 interface UserBioModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (bio: string) => void;
+  onSubmit: (bio: string, address: string) => void;
   initialBio?: string;
+  initialAddress?: string;
   isLoading?: boolean;
 }
 
@@ -15,16 +16,19 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
   onClose,
   onSubmit,
   initialBio = "",
+  initialAddress = "",
   isLoading
 }) => {
   const [bio, setBio] = useState(initialBio);
+  const [address, setAddress] = useState(initialAddress);
 
   useEffect(() => {
     setBio(initialBio);
-  }, [initialBio, visible]);
+    setAddress(initialAddress);
+  }, [initialBio, initialAddress, visible]);
 
   const handleSubmit = () => {
-    onSubmit(bio);
+    onSubmit(bio, address);
   };
 
   return (
@@ -35,17 +39,36 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
       onRequestClose={onClose}
     >
       <View className="flex-1 justify-end bg-black/40">
-        <SafeAreaView className="bg-white rounded-t-2xl p-6 max-h-[60%] mb-4">
-          <Text className="text-lg font-bold mb-4 text-center">Edit Bio</Text>
-          <TextInput
-            className="border border-gray-300 rounded-lg p-3 text-base mb-8 min-h-[80px]"
-            placeholder="Enter your bio..."
-            value={bio}
-            onChangeText={setBio}
-            multiline
-            numberOfLines={4}
-            editable={!isLoading}
-          />
+        <SafeAreaView className="bg-white rounded-t-2xl p-6 max-h-[70%] mb-4">
+          <Text className="text-lg font-bold mb-4 text-center">Edit Profile</Text>
+
+          {/* Bio Input */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-gray-700 mb-2">Bio</Text>
+            <TextInput
+              className="border border-gray-300 rounded-lg p-3 text-base min-h-[80px]"
+              placeholder="Enter your bio..."
+              value={bio}
+              onChangeText={setBio}
+              multiline
+              numberOfLines={4}
+              editable={!isLoading}
+            />
+          </View>
+
+          {/* Address Input */}
+          <View className="mb-6">
+            <Text className="text-sm font-medium text-gray-700 mb-2">Home Address</Text>
+            <TextInput
+              className="border border-gray-300 rounded-lg p-3 text-base"
+              placeholder="Enter your home address..."
+              value={address}
+              onChangeText={setAddress}
+              multiline
+              numberOfLines={3}
+              editable={!isLoading}
+            />
+          </View>
           <View className="flex-row gap-4">
             <TouchableOpacity
               className="flex-1 py-3 rounded-lg border border-gray-200 bg-gray-100"
