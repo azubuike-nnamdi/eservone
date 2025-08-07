@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, Slot, SplashScreen } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StatusBar, View } from "react-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import './global.css';
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -51,8 +52,10 @@ export default function RootLayout() {
 
   return (
     <TanstackProvider>
-      <StatusBar barStyle={'dark-content'} />
-      <Slot />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar barStyle={'dark-content'} />
+        <Slot />
+      </GestureHandlerRootView>
     </TanstackProvider>
   );
 }
