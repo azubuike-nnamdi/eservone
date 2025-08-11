@@ -27,7 +27,7 @@ export default function EditServiceModal({ visible, onClose, service, onSave }: 
 
   const handleSave = () => {
     onSave({
-      serviceName: editName,
+      serviceName: service.serviceName, // Keep original service name
       serviceDescription: editDescription,
       minimumPrice: editMinFee,
       maximumPrice: editMaxFee,
@@ -61,9 +61,9 @@ export default function EditServiceModal({ visible, onClose, service, onSave }: 
               {/* Editable Fields */}
               <Text className="text-gray-700 mb-1">Service name</Text>
               <TextInput
-                className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-3"
+                className="border border-gray-300 rounded-lg p-3 text-base text-gray-500 bg-gray-100 mb-3"
                 value={editName}
-                onChangeText={setEditName}
+                editable={false}
                 placeholder="Service name"
               />
               <Text className="text-gray-700 mb-1">Service description</Text>

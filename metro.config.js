@@ -5,8 +5,7 @@ const config = getDefaultConfig(__dirname);
 
 // Add Reanimated plugin
 config.resolver.plugins = [
-  ...(config.resolver.plugins || []),
-  require.resolve('react-native-reanimated/plugin'),
+  ...(config.resolver.plugins || [])
 ];
 
 module.exports = withNativeWind(config, { input: "./app/global.css" });

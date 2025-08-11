@@ -3,6 +3,7 @@ import { api } from "@/lib/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
+import { Alert } from "react-native";
 
 const InitializeEmail = () => {
   const queryClient = useQueryClient();
@@ -13,7 +14,6 @@ const InitializeEmail = () => {
       });
     },
     onSuccess: ({ data }) => {
-      console.log('Initialize email success:', data);
       if (data) {
         // Navigate immediately
         router.push(VERIFY_EMAIL);
@@ -25,8 +25,7 @@ const InitializeEmail = () => {
     },
     onError: (error: { response: { data: { description: string } } }) => {
       const errorMsg = error.response?.data?.description || 'An error occurred while onboarding the user';
-      console.log('Initialize email error:', errorMsg);
-      throw new Error(errorMsg); // Propagate error to the component
+      Alert.alert('Error', errorMsg);
     },
   });
 

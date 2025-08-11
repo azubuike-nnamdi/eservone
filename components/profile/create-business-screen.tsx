@@ -1,12 +1,17 @@
 import Button from '@/components/common/button'
 import icons from '@/constants/icons'
+import useUpdateToBusiness from '@/hooks/mutation/useUpdateToBusiness'
 import useCheckBusinessName from '@/hooks/query/useCheckBusinessName'
+import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import React, { useEffect, useState } from 'react'
 import { Image, ScrollView, Text, TextInput, View } from 'react-native'
 
 export default function CreateBusinessScreen() {
   const [businessName, setBusinessName] = useState('')
   const [debouncedBusinessName, setDebouncedBusinessName] = useState('')
+
+  const { data: user } = useGetUserProfileDetails()
+
 
   // Debounce businessName input
   useEffect(() => {
@@ -18,6 +23,14 @@ export default function CreateBusinessScreen() {
 
   // Always call the hook, let the hook's enabled option control the API call
   const { data, isPending, isSuccess, error, isError } = useCheckBusinessName(debouncedBusinessName)
+
+  const { handleUpdateToBusiness, isPending: isUpdatingToBusiness } = useUpdateToBusiness()
+
+  const handleUpgradeToBusiness = () => {
+    handleUpdateToBusiness({
+      emailAddress: user?.data?.emailAddress ?? ''
+    })
+  }
 
   return (
     <View className='flex-1 bg-white'>
@@ -89,7 +102,9 @@ export default function CreateBusinessScreen() {
 
       {/* Payment Button - Fixed at bottom */}
       <View className='pb-6 pt-4 bg-white border-t border-gray-100'>
-        <Button variant='primary' onPress={() => { }} disabled={!(isSuccess && !isError && data?.statusCode === 200 && data?.data === null)}>
+        <Button variant='primary' onPress={handleUpgradeToBusiness} disabled={!(isSuccess && !isError && data?.statusCode === 200) || isUpdatingToBusiness}
+          loading={isUpdatingToBusiness}
+          loadingText='Updating to business...'>
           Make payment
         </Button>
       </View>
