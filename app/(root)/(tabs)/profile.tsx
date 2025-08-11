@@ -26,7 +26,7 @@ export default function Profile() {
   const { handleDeleteProfile, isPending } = useDeleteMyProfile()
   const { data: userProfileDetails } = useGetUserProfileDetails();
 
-  const isBusinessProfile = userProfileDetails?.data?.businessAccountVerified
+  const isBusinessProfile = userProfileDetails?.data?.business
 
 
   const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
