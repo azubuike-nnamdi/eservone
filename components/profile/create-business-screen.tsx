@@ -102,7 +102,7 @@ export default function CreateBusinessScreen() {
 
       {/* Payment Button - Fixed at bottom */}
       <View className='pb-6 pt-4 bg-white border-t border-gray-100'>
-        <Button variant='primary' onPress={handleUpgradeToBusiness} disabled={!(isSuccess && !isError && data?.statusCode === 200) || isUpdatingToBusiness}
+        <Button variant='primary' onPress={handleUpgradeToBusiness} disabled={!(isSuccess && !isError && data?.statusCode === 200 && data?.data === null) || isUpdatingToBusiness}
           loading={isUpdatingToBusiness}
           loadingText='Updating to business...'>
           Make payment
