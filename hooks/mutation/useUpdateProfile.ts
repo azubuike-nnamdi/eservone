@@ -8,7 +8,7 @@ import { Alert } from "react-native"
 const useUpdateProfile = () => {
 
   const queryClient = useQueryClient()
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: (payload: UpdateProfilePayload) => {
       return api.post(`/eserve-one/update-profile`, payload)
     },
@@ -28,7 +28,7 @@ const useUpdateProfile = () => {
     mutate(payload)
   }
 
-  return { handleUpdateProfile, isPending }
+  return { handleUpdateProfile, isPending, isSuccess }
 }
 
 export default useUpdateProfile
