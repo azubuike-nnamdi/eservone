@@ -26,6 +26,8 @@ export default function ManageServicesDashboard() {
 
   const { data: servicesByUserId, isPending: isServicesByUserIdPending, isError, error } = useGetServicesByUserId();
 
+  console.log('servicesByUserId', servicesByUserId)
+
   const errData = (error as AxiosError)?.response?.data as any;
 
   const userServices = servicesByUserId?.data ?? []
