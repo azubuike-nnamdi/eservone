@@ -1,35 +1,45 @@
-import Button from '@/components/common/button'
 import ProfileHeader from '@/components/common/profile-header'
 import VersionDisplay from '@/components/common/version-display'
+import BusinessProfileSection from '@/components/profile/BusinessProfileSection'
+import BusinessProfileUpgrade from '@/components/profile/BusinessProfileUpgrade'
 import DeleteAccountModal from '@/components/profile/delete-profile'
-import GeneralSetting from '@/components/profile/general-setting'
+import DeleteAccountSection from '@/components/profile/DeleteAccountSection'
 import ProfileImageModal from '@/components/profile/ProfileImageModal'
-import { generalSettings, legalSettings, supportSettings } from '@/constants/data'
-import { CERTIFICATES, CREATE_BUSINESS, EARNINGS, MANAGE_SERVICES, SIGN_IN, WALLETS } from '@/constants/routes'
+import ProfileSettings from '@/components/profile/SettingsSection'
+import SignOutSection from '@/components/profile/SignOutSection'
+import UserProfileSection from '@/components/profile/UserProfileSection'
+import { SIGN_IN } from '@/constants/routes'
 import useDeleteMyProfile from '@/hooks/mutation/useDeleteMyProfile'
+import useUpdateProfile from '@/hooks/mutation/useUpdateProfile'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { getProfileImageUri } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
-import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
-import React, { useState } from 'react'
-import { ActivityIndicator, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Profile() {
   const { clearAuth, user, isAuthenticated } = useAuthStore()
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [signOutModalVisible, setSignOutModalVisible] = useState(false)
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [imageUploadModalVisible, setImageUploadModalVisible] = useState(false);
 
   const { handleDeleteProfile, isPending } = useDeleteMyProfile()
   const { data: userProfileDetails } = useGetUserProfileDetails();
+  const { handleUpdateProfile, isPending: isUpdatePending, isSuccess: isUpdateSuccess } = useUpdateProfile()
 
   const isBusinessProfile = userProfileDetails?.data?.business
 
+  // Close image upload modal on successful update
+  useEffect(() => {
+    if (isUpdateSuccess) {
+      setImageUploadModalVisible(false);
+    }
+  }, [isUpdateSuccess]);
 
-  const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`
   const handleSignOut = async () => {
     clearAuth()
     await AsyncStorage.removeItem('requestId')
@@ -41,11 +51,38 @@ export default function Profile() {
     handleSignOut()
   }
 
-  const [modalVisible, setModalVisible] = useState(false);
-
   const handleDeleteConfirm = () => {
     handleDeleteProfile({ email: user?.email || "" })
+  }
 
+  const handleImageUpload = async (uri: string) => {
+    try {
+      // Convert image to base64
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const reader = new FileReader();
+
+      reader.onload = async () => {
+        const base64 = reader.result as string;
+        const base64Data = base64.split(',')[1]; // Remove data:image/...;base64, prefix
+
+        // Get current user data for required fields
+        const currentAddress = userProfileDetails?.data?.address || '';
+        const currentPhone = userProfileDetails?.data?.phoneNumber || '';
+
+        // Call the update profile hook with all required fields
+        await handleUpdateProfile({
+          address: currentAddress,
+          meansOfIdentification: '', // Empty since we're only updating profile picture
+          phoneNumber: currentPhone,
+          profilePicture: base64Data
+        });
+      };
+
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error('Error processing image:', error);
+    }
   }
 
   if (!isAuthenticated) {
@@ -57,143 +94,35 @@ export default function Profile() {
     )
   }
 
-
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32 '>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName='pb-32'>
         <ProfileHeader title='My profile' showNotification={false} showCurrency={true} showBackArrow={true} />
 
         <View className='px-7'>
           {/* User Profile Section */}
-          <View className='flex-row items-center mt-6 mb-8'>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Image
-                source={{ uri: getProfileImageUri(userProfileDetails?.data?.profilePicture) }}
-                className='size-16 rounded-full bg-gray-100'
-              />
-            </TouchableOpacity>
-            <View className='ml-4 flex-1'>
-              <Text className='text-lg font-rubikMedium'>{fullName}</Text>
-              <Text className='text-gray-400'>{userProfileDetails?.data?.emailAddress}</Text>
-            </View>
-          </View>
+          <UserProfileSection
+            userProfileDetails={userProfileDetails}
+            onImageUpload={handleImageUpload}
+            isUpdatePending={isUpdatePending}
+            imageUploadModalVisible={imageUploadModalVisible}
+            setImageUploadModalVisible={setImageUploadModalVisible}
+          />
 
           {/* Business Profile Upgrade Section */}
-          {user?.userRole === 'SERVICE_PROVIDER' && isBusinessProfile === false && (
-            <View className='mb-6 p-4 bg-primary-300/10 rounded-lg border border-primary-200'>
-              <View className='flex-row items-center justify-between'>
-                <View className='flex-1'>
-                  <Text className='text-lg font-rubikMedium text-primary-300 mb-1'>
-                    Upgrade to Business Profile
-                  </Text>
-                  <Text className='text-sm text-primary-300 mb-3'>
-                    Unlock premium features and grow your business
-                  </Text>
-                </View>
-              </View>
-              <Button className='bg-primary-300 rounded-lg py-3 px-4' onPress={() => {
-                router.push(CREATE_BUSINESS)
-              }}>
-                <Text
-                  className='text-white text-center font-rubikMedium'
-
-                >
-                  Upgrade Now
-                </Text>
-              </Button>
-            </View>
-          )}
+          <BusinessProfileUpgrade
+            userRole={user?.userRole}
+            isBusinessProfile={isBusinessProfile}
+          />
 
           {/* Business Profile Section */}
-          {user?.userRole === 'SERVICE_PROVIDER' && (
-            <>
-              {/* <View className='mb-4'>
-                <GeneralSetting
-                  title='Business profile - [ XYZ Studios ]'
-                  showArrow={false}
-                  href={BUSINESS_PROFILE}
-                />
-              </View> */}
+          <BusinessProfileSection userRole={user?.userRole} />
 
-              {/* Services Section */}
-              <View className='mb-4'>
-                <GeneralSetting
-                  title='Manage services'
-                  showArrow={false}
-                  href={MANAGE_SERVICES}
-                />
-                {/* Earnings moved to General section */}
-                <GeneralSetting
-                  title='Industrial certificates'
-                  showArrow={false}
-                  href={CERTIFICATES}
-                />
-              </View>
-            </>
-          )}
+          {/* Settings Sections */}
+          <ProfileSettings />
 
-          {/* General Section */}
-          <View className='mb-4'>
-            <Text className='text-xl font-bold mb-4'>General</Text>
-            {generalSettings.map((setting) => (
-              <GeneralSetting
-                key={setting.id}
-                title={setting.title}
-                showArrow={false}
-                href={setting.href}
-              />
-            ))}
-            <GeneralSetting
-              title='Earnings'
-              showArrow={false}
-              href={EARNINGS}
-            />
-            <GeneralSetting
-              title='Wallet'
-              showArrow={false}
-              href={WALLETS}
-            />
-
-          </View>
-
-          {/* Legal Section */}
-          <View className='mb-4'>
-            <Text className='text-xl font-bold mb-4'>Legal</Text>
-            {legalSettings.map((setting) => (
-              <GeneralSetting
-                key={setting.id}
-                title={setting.title}
-                showArrow={false}
-                href={setting.href}
-              />
-            ))}
-          </View>
-
-          {/* Support Section */}
-          <View className='mb-4'>
-            <Text className='text-xl font-bold mb-4'>Support</Text>
-            {supportSettings.map((setting) => (
-              <GeneralSetting
-                key={setting.id}
-                title={setting.title}
-                showArrow={false}
-                href={setting.href}
-              />
-            ))}
-          </View>
-
-          <TouchableOpacity
-            className="flex-row justify-between items-center py-4 mt-4"
-            onPress={() => setDeleteModalVisible(true)}
-          >
-            <View>
-              <View className="flex-row items-center gap-5  justify-between ">
-                <Text className="text-lg font-semibold text-red-500">Delete account</Text>
-                <Ionicons name="trash-outline" size={15} color="#EE3137" />
-              </View>
-
-            </View>
-          </TouchableOpacity>
+          {/* Delete Account Section */}
+          <DeleteAccountSection onDeletePress={() => setDeleteModalVisible(true)} />
         </View>
 
         {/* Delete Account Modal */}
@@ -204,66 +133,17 @@ export default function Profile() {
           isPending={isPending}
         />
 
-        {/* Sign Out Confirmation Modal */}
-        <Modal
-          visible={signOutModalVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setSignOutModalVisible(false)}
-        >
-          <View className="flex-1 justify-center items-center bg-black/50">
-            <View className="bg-white rounded-2xl p-6 mx-6 max-w-sm">
-              {/* Cry Face Icon */}
-              <View className="items-center ">
-                <Text className="text-6xl mb-2 mt-5">😢</Text>
-                <Text className="text-xl font-rubikMedium text-gray-900 mb-2">
-                  Are you sure?
-                </Text>
-              </View>
-
-              {/* Description */}
-              <Text className="text-gray-600 text-center mb-6 leading-5">
-                Signing out will take you out of the application and you'll need to sign in again to access your account.
-              </Text>
-
-              {/* Buttons */}
-              <View className="flex-row gap-3">
-                <TouchableOpacity
-                  className="flex-1 py-3 px-4 border border-gray-300 rounded-lg"
-                  onPress={() => setSignOutModalVisible(false)}
-                >
-                  <Text className="text-gray-700 text-center font-rubikMedium">
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  className="flex-1 py-3 px-4 bg-red-500 rounded-lg"
-                  onPress={handleSignOutConfirm}
-                >
-                  <Text className="text-white text-center font-rubikMedium">
-                    Sign Out
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-
-        {/* Sign Out Button */}
-        <View className='mt-8'>
-          <Text
-            className='text-red-500 text-center font-rubikMedium'
-            onPress={() => setSignOutModalVisible(true)}
-          >
-            Sign Out
-          </Text>
-        </View>
+        {/* Sign Out Section */}
+        <SignOutSection
+          signOutModalVisible={signOutModalVisible}
+          setSignOutModalVisible={setSignOutModalVisible}
+          onSignOutConfirm={handleSignOutConfirm}
+        />
 
         {/* Version Display */}
         <View className='mt-4 mb-8'>
           <VersionDisplay />
         </View>
-
       </ScrollView>
 
       {/* Fullscreen Profile Image Modal */}
