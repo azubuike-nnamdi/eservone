@@ -1,4 +1,5 @@
 import { Message, SendMessageOptions, SendMessagePayload } from "@/constants/types";
+import { useToast } from "@/context/toast-context";
 import { chatApi } from "@/lib/api";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,6 +8,7 @@ import { useState } from "react";
 const useSendMessage = () => {
   const queryClient = useQueryClient();
   const [messages, setMessages] = useState<Message[]>([]);
+  const { showToast } = useToast();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: SendMessagePayload) => chatApi.post(`/chat/message/send`, payload),
@@ -16,7 +18,8 @@ const useSendMessage = () => {
       queryClient.invalidateQueries({ queryKey: ["room-messages"] });
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      console.error("Error sending message:", error);
+      showToast(error.response.data.description, "error");
+      // console.error("Error sending message:", error);
     }
   });
 

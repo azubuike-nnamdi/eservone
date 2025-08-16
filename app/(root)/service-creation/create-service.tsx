@@ -31,6 +31,18 @@ export default function CreateService() {
   };
 
   const handleNext = () => {
+    if (store.currentStep === 1) {
+      // Validate Step 1 before proceeding
+      const validation = store.validateStep1();
+      if (!validation.isValid) {
+        // Show errors in the UI instead of alert
+        store.setShowStep1Errors(true);
+        return;
+      }
+      // Clear errors when validation passes
+      store.setShowStep1Errors(false);
+    }
+
     if (store.currentStep < TOTAL_STEPS) {
       store.setStep(store.currentStep + 1);
     } else {
@@ -170,7 +182,11 @@ export default function CreateService() {
             onPress={handleNext}
             variant='primary'
             loading={store.currentStep === TOTAL_STEPS && isPending}
-            disabled={isPending || (store.currentStep === TOTAL_STEPS && store.images.length === 0)}
+            disabled={
+              isPending ||
+              (store.currentStep === TOTAL_STEPS && store.images.length === 0) ||
+              (store.currentStep === 1 && !store.validateStep1().isValid)
+            }
             loadingText="Publishing..."
           >
             {store.currentStep === TOTAL_STEPS ? "Publish Service" : "Continue"}

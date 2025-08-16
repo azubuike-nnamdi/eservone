@@ -14,14 +14,17 @@ interface ServiceCreationState {
   minFee: number | null
   maxFee: number | null
   images: string[] // Array of base64 image strings
+  showStep1Errors: boolean
 
   // Actions
   setStep: (step: number) => void
-  setField: (field: keyof Omit<ServiceCreationState, 'currentStep' | 'actions'>, value: any) => void
+  setField: (field: keyof Omit<ServiceCreationState, 'currentStep' | 'actions' | 'showStep1Errors'>, value: any) => void
   setDeliveryType: (type: keyof ServiceCreationState['deliveryType'], value: boolean) => void
   addImage: (base64: string) => void // Accept only base64
   removeImage: (base64: string) => void
   reset: () => void
+  validateStep1: () => { isValid: boolean; errors: string[] }
+  setShowStep1Errors: (show: boolean) => void
 }
 
 const initialState = {
@@ -38,6 +41,7 @@ const initialState = {
   minFee: null,
   maxFee: null,
   images: [],
+  showStep1Errors: false,
 }
 
 export const useServiceCreationStore = create<ServiceCreationState>((set, get) => ({
@@ -66,6 +70,38 @@ export const useServiceCreationStore = create<ServiceCreationState>((set, get) =
   removeImage: (base64) => set((state) => ({
     images: state.images.filter((img) => img !== base64),
   })),
+
+  validateStep1: () => {
+    const state = get();
+    const errors: string[] = [];
+
+    if (!state.serviceName.trim()) {
+      errors.push("Service name is required");
+    }
+
+    if (!state.serviceCategory) {
+      errors.push("Service category is required");
+    }
+
+    if (!state.serviceDescription.trim()) {
+      errors.push("Service description is required");
+    }
+
+    if (!state.serviceAddress.trim()) {
+      errors.push("Service address is required");
+    }
+
+    if (!state.deliveryType.walkIn && !state.deliveryType.homeService) {
+      errors.push("At least one delivery type must be selected");
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  },
+
+  setShowStep1Errors: (show) => set({ showStep1Errors: show }),
 
   reset: () => set(initialState),
 })) 
