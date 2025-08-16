@@ -1,12 +1,14 @@
 "use client"
 
 import Button from "@/components/common/button"
+import icons from "@/constants/icons"
 import images from "@/constants/images"
 import type { ValidateResetPasswordEmailPayload, VerificationPayload } from "@/constants/types"
 import useValidateResetPasswordEmail from "@/hooks/mutation/useValidateResetPasswordEmail"
 import ValidateEmail from "@/hooks/mutation/verify-email"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Clipboard from 'expo-clipboard'
+import { router } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import {
   Image,
@@ -163,6 +165,14 @@ export default function VerifyEmail() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
+        {/* Back Arrow */}
+        <TouchableOpacity
+          className="absolute top-16 left-6 z-10 p-2"
+          onPress={() => router.back()}
+        >
+          <Image source={icons.backArrow} className="w-8 h-8" />
+        </TouchableOpacity>
+
         <View className="flex-1 items-center justify-center px-6">
           {/* Paste OTP Prompt */}
           {showPastePrompt && (
