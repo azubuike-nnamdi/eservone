@@ -57,22 +57,32 @@ export default function VerifyEmail() {
   // Check clipboard for 6-digit OTP when screen is focused
   useEffect(() => {
     const checkClipboardForOtp = async () => {
-      const clipboardContent = await Clipboard.getStringAsync();
-      // Find the most recent 6-digit code in the clipboard (last occurrence)
-      const matches = clipboardContent.match(/\d{6}(?!.*\d{6})/);
-      if (matches && matches[0]) {
-        const code = matches[0];
-        if (code !== otp.join("")) {
-          setClipboardOtp(code);
-          setShowPastePrompt(true);
+      try {
+        const clipboardContent = await Clipboard.getStringAsync();
+        // Find the most recent 6-digit code in the clipboard (last occurrence)
+        const matches = clipboardContent.match(/\d{6}(?!.*\d{6})/);
+        if (matches && matches[0]) {
+          const code = matches[0];
+          if (code !== otp.join("")) {
+            setClipboardOtp(code);
+            setShowPastePrompt(true);
+          }
+        } else {
+          setShowPastePrompt(false);
         }
-      } else {
-        setShowPastePrompt(false);
+      } catch (error) {
+        console.log("Clipboard access not available");
       }
     };
+
+    // Check immediately on mount
     checkClipboardForOtp();
-    // Optionally, you can add AppState listener for more robust focus detection
-  }, []); // Only on mount, or add navigation focus if using React Navigation
+
+    // Set up interval to check clipboard periodically (every 2 seconds)
+    const interval = setInterval(checkClipboardForOtp, 2000);
+
+    return () => clearInterval(interval);
+  }, [otp.join("")]); // Re-run when OTP changes
 
   // Countdown timer effect
   useEffect(() => {
@@ -200,7 +210,9 @@ export default function VerifyEmail() {
               return (
                 <TextInput
                   key={index}
-                  ref={(ref) => (inputRefs.current[index] = ref)}
+                  ref={(ref) => {
+                    inputRefs.current[index] = ref;
+                  }}
                   className={`w-12 h-12 border-2 rounded-lg text-center text-xl ${isValidOtp ? 'border-gray-200' : 'border-danger text-center px-4 py-1'
                     }`}
                   maxLength={1}
