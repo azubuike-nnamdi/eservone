@@ -28,6 +28,8 @@ const WithdrawalActivity: React.FC<WithdrawalActivityProps> = ({
 }) => {
   const { data: transactionHistory } = useGetTransactionHistory();
 
+
+
   // Map API transaction data to UI format and filter for withdrawals (Debit transactions)
   const mappedTransactions = Array.isArray(transactionHistory?.data)
     ? transactionHistory.data
