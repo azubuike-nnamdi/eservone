@@ -6,6 +6,7 @@ import { useGetBeneficiaries } from '@/hooks/query/useGetBeneficiaries';
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails';
 import { useAuthStore } from '@/store/auth-store';
 import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 
 interface BankAccount {
   id: number;
@@ -77,9 +78,11 @@ export const useWalletState = () => {
   };
 
   const openWithdrawModal = () => {
+    // console.log('beneficiariesData', beneficiariesData)
     // Check if user has bank accounts
     if (beneficiariesData.length === 0) {
-      showToast('Please add a bank account first', 'error');
+      Alert.alert('Error', 'Please add a bank account first');
+      // showToast('Please add a bank account first', 'error');
       return;
     }
 
