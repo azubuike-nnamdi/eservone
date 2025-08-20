@@ -1,9 +1,9 @@
 import { BookAppointmentPayload } from "@/constants/types"
-import { useToast } from "@/context/toast-context"
 import { api } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "expo-router"
 import { useRef } from "react"
+import { Alert } from "react-native"
 
 const useBookAppointment = () => {
 
@@ -11,14 +11,13 @@ const useBookAppointment = () => {
   const serviceDataRef = useRef<any>(null)
 
   const router = useRouter()
-  const { showToast } = useToast()
 
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: BookAppointmentPayload) => api.post(`/eserve-one/create-service-appointment`, payload),
     onSuccess: async (data) => {
       if (data) {
         // console.log("data for appointment", data?.data)
-        showToast(data?.data?.description, "success")
+        Alert.alert(data?.data?.description)
 
         // Update ref with appointment data that contains the emails
         serviceDataRef.current = data?.data
@@ -35,7 +34,7 @@ const useBookAppointment = () => {
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      showToast(error?.response?.data?.description ?? "Failed to book appointment", "error")
+      Alert.alert(error?.response?.data?.description ?? "Failed to book appointment")
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] })

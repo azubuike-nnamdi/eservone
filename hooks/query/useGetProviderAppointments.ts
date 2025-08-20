@@ -14,7 +14,7 @@ const useGetProviderAppointments = () => {
   };
 
   const { data, isPending, error, isError, refetch } = useQuery({
-    queryKey: ["appointments"],
+    queryKey: ["provider-appointments"],
     queryFn: getProviderAppointments,
   });
 

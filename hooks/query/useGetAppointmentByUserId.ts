@@ -9,7 +9,7 @@ const useGetAppointmentByUserId = () => {
   };
 
   const { data, isPending, error, isError, refetch } = useQuery({
-    queryKey: ["appointments"],
+    queryKey: ["seeker-appointments"],
     queryFn: getAppointmentByUserId,
   });
 

@@ -1,4 +1,4 @@
-import { IDENTIFICATION_CONFIRMATION } from "@/constants/routes"
+import { PROFILE } from "@/constants/routes"
 import { UpdateProfilePayload } from "@/constants/types"
 import { api } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -16,7 +16,8 @@ const useUpdateProfile = () => {
       if (data) {
         queryClient.invalidateQueries({ queryKey: ["user"] })
         queryClient.setQueryData(["user"], data)
-        router.push(IDENTIFICATION_CONFIRMATION)
+        Alert.alert('Profile document submitted for verification', 'You will be notified once your document is verified')
+        router.push(PROFILE as any)
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {

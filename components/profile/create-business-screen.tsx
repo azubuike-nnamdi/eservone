@@ -3,12 +3,17 @@ import icons from '@/constants/icons'
 import useUpdateToBusiness from '@/hooks/mutation/useUpdateToBusiness'
 import useCheckBusinessName from '@/hooks/query/useCheckBusinessName'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
+import { useAuthStore } from '@/store/auth-store'
 import React, { useEffect, useState } from 'react'
 import { Image, ScrollView, Text, TextInput, View } from 'react-native'
 
 export default function CreateBusinessScreen() {
   const [businessName, setBusinessName] = useState('')
   const [debouncedBusinessName, setDebouncedBusinessName] = useState('')
+  const { user: userData } = useAuthStore()
+
+  // console.log("userData", userData?.country)
+  const isNigeria = userData?.country === 'Nigeria'
 
   const { data: user } = useGetUserProfileDetails()
 
@@ -40,7 +45,7 @@ export default function CreateBusinessScreen() {
             <Image source={icons.businessIcon} className='w-5 h-5' />
           </View>
           <Text className='text-lg font-rubikMedium text-start mb-1'>Start providing services with a business profile!</Text>
-          <Text className='text-gray-500 mb-4 text-md leading-6'>Business profiles require a monthly subscription fee of <Text className='text-black font-rubikMedium'>$9.99</Text></Text>
+          <Text className='text-gray-500 mb-4 text-md leading-6'>Business profiles require a monthly subscription fee of <Text className='text-black font-rubikMedium'>{isNigeria ? '₦10,000' : '$9.99'}</Text></Text>
         </View>
 
         {/* Features/Badges */}

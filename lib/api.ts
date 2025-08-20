@@ -30,6 +30,8 @@ const chatApi = axios.create({
 const requestInterceptor = (config: any) => {
   const signupToken = useSignupStore.getState().jwtToken;
   const authToken = useAuthStore.getState().accessToken;
+  //const refreshToken = useAuthStore.getState().refreshToken;
+
   const token = signupToken || authToken;
   if (token) {
     config.headers.Authorization = `${token}`;
@@ -60,7 +62,7 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 const handleRefreshToken = async (): Promise<string> => {
-  const currentRefreshToken = useAuthStore.getState().accessToken;
+  const currentRefreshToken = useAuthStore.getState().refreshToken;
   if (!currentRefreshToken) {
     console.log('No refresh token available, logging out.');
     useAuthStore.getState().clearAuth();
@@ -70,17 +72,22 @@ const handleRefreshToken = async (): Promise<string> => {
     console.log('Attempting to refresh token...');
     const refreshResponse = await axios.post(
       `${baseURL}/eserve-one/refreshToken`,
+      {},
       {
         headers: {
-          'Authorization': `${currentRefreshToken}`,
+          'accessKey': `${currentRefreshToken}`,
           'Content-Type': 'application/json'
         }
       }
     );
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = refreshResponse.data;
+
+    // console.log('refreshResponse', refreshResponse)
+
+    const { jwtToken: newAccessToken, refreshToken: newRefreshToken } = refreshResponse.data.data;
     if (!newAccessToken) {
       throw new Error('New access token not received from refresh endpoint');
     }
+
     console.log('Token refreshed successfully.');
     const currentUser = useAuthStore.getState().user;
     useAuthStore.getState().setAuth(newAccessToken, newRefreshToken || currentRefreshToken, currentUser!);
@@ -97,24 +104,26 @@ const responseErrorInterceptor = async (error: any) => {
   if (error.response?.status !== 401 || originalRequest._retry) {
     return Promise.reject(error);
   }
+
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
       failedQueue.push({ resolve, reject });
     }).then(token => {
-      originalRequest.headers['Authorization'] = ` ${token}`;
+      originalRequest.headers['Authorization'] = `${token}`;
       return api(originalRequest);
     });
   }
+
   originalRequest._retry = true;
   isRefreshing = true;
+
   try {
     const newAccessToken = await handleRefreshToken();
-    originalRequest.headers['Authorization'] = ` ${newAccessToken}`;
+    originalRequest.headers['Authorization'] = `${newAccessToken}`;
     processQueue(null, newAccessToken);
     return api(originalRequest);
   } catch (refreshError) {
     processQueue(refreshError, null);
-    originalRequest._retry = true;
     return Promise.reject(refreshError);
   } finally {
     isRefreshing = false;
