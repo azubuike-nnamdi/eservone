@@ -58,7 +58,7 @@ const DashboardScreen = ({ appointments, refetchAppointments, reviewCount, balan
 
   const statsData: StatItem[] = [
     { id: '1', label: 'New job requests', value: appointmentStats.pending.toString() },
-    { id: '2', label: 'Total Amount', value: `${currency} ${formatNumberWithCommas(balance)}` },
+    { id: '2', label: 'Total Amount', value: `${currency} ${formatNumberWithCommas(balance ?? 0)}` },
     { id: '3', label: 'Completed appointments', value: appointmentStats.completed.toString() },
     { id: '4', label: 'Cancelled appointments', value: appointmentStats.canceled.toString() }
   ];
