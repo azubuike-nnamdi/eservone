@@ -1,5 +1,4 @@
 import Button from '@/components/common/button';
-import { getProfileImageUri } from '@/lib/helper';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
@@ -31,6 +30,7 @@ export default function ProfileImageUpload({
   const [internalIsUploading, setInternalIsUploading] = useState(false);
   const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
 
   // Use external loading state if provided, otherwise use internal state
   const isUploading = externalIsUploading !== undefined ? externalIsUploading : internalIsUploading;
@@ -137,22 +137,34 @@ export default function ProfileImageUpload({
     setShowPreviewModal(false);
   };
 
+  const handleImagePress = () => {
+    if (currentImageUri) {
+      setShowViewModal(true);
+    } else {
+      showImageOptions();
+    }
+  };
+
   return (
     <>
       <View className={`relative ${className}`}>
         <TouchableOpacity
-          onPress={showImageOptions}
+          onPress={handleImagePress}
           disabled={isUploading}
           className="relative"
         >
-          <Image
-            source={{
-              uri: currentImageUri ? getProfileImageUri(currentImageUri) : undefined
-            }}
-            className="rounded-full bg-gray-100"
-            style={{ width: size, height: size }}
-            resizeMode="cover"
-          />
+          {currentImageUri ? (
+            <Image
+              source={{ uri: currentImageUri }}
+              className="rounded-full bg-gray-100"
+              style={{ width: size, height: size }}
+              resizeMode="cover"
+            />
+          ) : (
+            <View className="rounded-full bg-gray-200 items-center justify-center" style={{ width: size, height: size }}>
+              <Ionicons name="person" size={size * 0.4} color="gray" />
+            </View>
+          )}
 
           {/* Edit Icon Overlay */}
           <View className="absolute bottom-0 right-0 bg-primary-300 rounded-full p-1.5 border-2 border-white">
@@ -169,6 +181,56 @@ export default function ProfileImageUpload({
           )}
         </TouchableOpacity>
       </View>
+
+      {/* View Current Image Modal */}
+      <Modal
+        visible={showViewModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowViewModal(false)}
+      >
+        <View className="flex-1 bg-black/80 justify-center items-center">
+          <View className="bg-white rounded-3xl p-6 max-w-sm w-80">
+            {/* Header */}
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-lg font-semibold">Profile Picture</Text>
+              <TouchableOpacity onPress={() => setShowViewModal(false)}>
+                <Ionicons name="close" size={24} color="gray" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Current Image Display */}
+            <View className="items-center mb-6">
+              <Image
+                source={{ uri: currentImageUri }}
+                className="w-32 h-32 rounded-full bg-gray-100"
+                resizeMode="cover"
+              />
+            </View>
+
+            {/* Action Buttons */}
+            <View className="space-y-3">
+              <Button
+                onPress={() => {
+                  setShowViewModal(false);
+                  showImageOptions();
+                }}
+                className="w-full"
+              >
+                <Ionicons name="camera" size={20} color="white" className="mr-2" />
+                Change Picture
+              </Button>
+              <Button
+                onPress={() => setShowViewModal(false)}
+                variant="secondary"
+                className="w-full"
+              >
+                Close
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Preview Modal */}
       <Modal
@@ -190,7 +252,7 @@ export default function ProfileImageUpload({
             {/* Image Preview */}
             <View className="items-center mb-6">
               <Image
-                source={{ uri: selectedImageUri || '' }}
+                source={{ uri: selectedImageUri || undefined }}
                 className="w-32 h-32 rounded-full bg-gray-100"
                 resizeMode="cover"
               />
