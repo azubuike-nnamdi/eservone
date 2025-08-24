@@ -1,0 +1,141 @@
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import Checkbox from "../common/check-box";
+import Select from "../common/select";
+import TextInput from "../common/text-input";
+
+interface BookingFormProps {
+  address: string;
+  isAddressEditable: boolean;
+  isHomeService: boolean;
+  isWalkInService: boolean;
+  onAddressChange: (address: string) => void;
+  onAddressEditabilityChange: (editable: boolean) => void;
+  date: Date;
+  time: string;
+  buzzCode: string;
+  upfront: string;
+  details: string;
+  hasPets: boolean;
+  onDatePress: () => void;
+  onTimeChange: (time: string) => void;
+  onBuzzCodeChange: (code: string) => void;
+  onUpfrontChange: (upfront: string) => void;
+  onDetailsChange: (details: string) => void;
+  onHasPetsChange: (hasPets: boolean) => void;
+  timeOptions: { label: string; value: string }[];
+  upfrontOptions: { label: string; value: string }[];
+}
+
+const BookingForm: React.FC<BookingFormProps> = ({
+  address,
+  isAddressEditable,
+  isHomeService,
+  isWalkInService,
+  onAddressChange,
+  onAddressEditabilityChange,
+  date,
+  time,
+  buzzCode,
+  upfront,
+  details,
+  hasPets,
+  onDatePress,
+  onTimeChange,
+  onBuzzCodeChange,
+  onUpfrontChange,
+  onDetailsChange,
+  onHasPetsChange,
+  timeOptions,
+  upfrontOptions,
+}) => {
+  return (
+    <>
+      {/* Address */}
+      <View className="mb-2 flex-row justify-between items-center">
+        <Text className="text-base font-semibold">
+          {isHomeService ? 'Your address' : 'Service provider address'}
+        </Text>
+        {isHomeService && (
+          <TouchableOpacity onPress={() => onAddressEditabilityChange(!isAddressEditable)}>
+            <Text className="text-primary-300 font-semibold">
+              {isAddressEditable ? 'Done' : 'Change address'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      <TextInput
+        value={address}
+        onChangeText={onAddressChange}
+        placeholder="Enter your address"
+        editable={isHomeService && isAddressEditable}
+        pointerEvents={isWalkInService ? 'none' : 'auto'}
+      />
+
+      {/* Date and Time */}
+      <View className="flex-row mb-2 gap-2">
+        <View className="flex-1">
+          <TouchableOpacity onPress={onDatePress}>
+            <TextInput
+              label="Select date"
+              value={date ? date.toISOString().split('T')[0] : ''}
+              placeholder="YYYY-MM-DD"
+              editable={false}
+              pointerEvents="none"
+            />
+          </TouchableOpacity>
+        </View>
+        <View className="flex-1">
+          <Select
+            label="Select time"
+            value={time}
+            options={timeOptions}
+            onSelect={v => onTimeChange(v.toString())}
+          />
+        </View>
+      </View>
+
+      {/* Buzz code and Upfront payment */}
+      <View className="flex-row mb-2 gap-2">
+        <View className="flex-1">
+          <TextInput
+            label="Buzz code (optional)"
+            value={buzzCode}
+            onChangeText={onBuzzCodeChange}
+            placeholder="Enter buzz code (optional)"
+          />
+        </View>
+        <View className="flex-1">
+          <Select
+            label="Upfront payment (%)"
+            value={upfront}
+            options={upfrontOptions}
+            onSelect={v => onUpfrontChange(v.toString())}
+          />
+        </View>
+      </View>
+
+      {/* Additional details */}
+      <TextInput
+        label="Additional details"
+        value={details}
+        onChangeText={onDetailsChange}
+        placeholder="Start typing ..."
+        multiline
+        numberOfLines={4}
+        inputClassName="h-24"
+      />
+
+      {/* Pets checkbox */}
+      {isHomeService && (
+        <Checkbox
+          label="Do you have pets?"
+          checked={hasPets}
+          onChange={onHasPetsChange}
+        />
+      )}
+    </>
+  );
+};
+
+export default BookingForm;

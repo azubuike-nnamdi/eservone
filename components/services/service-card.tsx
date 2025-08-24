@@ -13,6 +13,7 @@ export default function ServiceCard({ item, onPress }: { item: ServiceItem; onPr
   // console.log('user profile details', data)
   const formattedMinPrice = format(item.minimumPrice);
   const formattedMaxPrice = format(item.maximumPrice);
+  console.log('item', item)
   const imageUrl = (item as any).image || FALLBACK_IMAGE;
 
   return (

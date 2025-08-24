@@ -9,13 +9,20 @@ interface AppointmentStatusIndicatorProps {
 const AppointmentStatusIndicator: React.FC<AppointmentStatusIndicatorProps> = ({ appointment }) => {
   // Check both statuses to determine the correct message and styling
   const isAppointmentPending = appointment.serviceAppointmentStatus === 'PENDING';
-  const isServicePending = appointment.serviceStatus === 'PENDING';
-  const isCompleted = appointment.serviceStatus === 'COMPLETED';
-  const isCanceled = appointment.serviceStatus === 'CANCELED';
+  const isAppointmentAccepted = appointment.serviceAppointmentStatus === 'ACCEPT';
+  const isAppointmentDeclined = appointment.serviceAppointmentStatus === 'DECLINED';
+
+  // Service completion status (only when both parties complete)
+  const isServiceCompleted = appointment.seekerServiceStatus === 'COMPLETED' && appointment.providerServiceStatus === 'COMPLETED';
+  const isServiceCanceled = appointment.serviceAppointmentStatus === 'CANCELED';
+
+  // Individual completion status
+  const hasSeekerCompleted = appointment.seekerServiceStatus === 'COMPLETED';
+  const hasProviderCompleted = appointment.providerServiceStatus === 'COMPLETED';
 
   // Determine status message and styling based on both statuses
   const getStatusInfo = () => {
-    if (isCanceled) {
+    if (isServiceCanceled) {
       return {
         message: 'Service Canceled',
         color: 'red',
@@ -24,7 +31,7 @@ const AppointmentStatusIndicator: React.FC<AppointmentStatusIndicatorProps> = ({
       };
     }
 
-    if (isCompleted) {
+    if (isServiceCompleted) {
       return {
         message: 'Service Completed',
         color: 'green',
@@ -43,19 +50,45 @@ const AppointmentStatusIndicator: React.FC<AppointmentStatusIndicatorProps> = ({
       };
     }
 
-    // If serviceAppointmentStatus is not PENDING but serviceStatus is PENDING
-    if (isServicePending) {
+    // If appointment is declined
+    if (isAppointmentDeclined) {
       return {
-        message: 'Booking is accepted and in progress...',
-        color: 'blue',
-        bgColor: 'bg-blue-500',
-        textColor: 'text-blue-700'
+        message: 'Booking was declined',
+        color: 'red',
+        bgColor: 'bg-red-500',
+        textColor: 'text-red-700'
       };
+    }
+
+    // If appointment is accepted but service is in progress
+    if (isAppointmentAccepted) {
+      if (hasSeekerCompleted && hasProviderCompleted) {
+        return {
+          message: 'Service Completed',
+          color: 'green',
+          bgColor: 'bg-green-500',
+          textColor: 'text-green-700'
+        };
+      } else if (hasSeekerCompleted || hasProviderCompleted) {
+        return {
+          message: 'Service in progress - waiting for completion',
+          color: 'blue',
+          bgColor: 'bg-blue-500',
+          textColor: 'text-blue-700'
+        };
+      } else {
+        return {
+          message: 'Booking accepted - service ready to begin',
+          color: 'blue',
+          bgColor: 'bg-blue-500',
+          textColor: 'text-blue-700'
+        };
+      }
     }
 
     // Fallback
     return {
-      message: appointment.serviceStatus || 'Unknown Status',
+      message: 'Unknown Status',
       color: 'gray',
       bgColor: 'bg-gray-500',
       textColor: 'text-gray-700'

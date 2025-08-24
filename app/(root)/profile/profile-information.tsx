@@ -3,7 +3,7 @@ import ProfileHeader from '@/components/common/profile-header'
 import ProfileImageModal from '@/components/profile/ProfileImageModal'
 import useUpdateUserBio from '@/hooks/mutation/useUpdateUserBio'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
-import { formatDate, getProfileImageUri } from '@/lib/helper'
+import { formatDate } from '@/lib/helper'
 import { Feather } from '@expo/vector-icons'
 import React, { useState } from 'react'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
@@ -44,7 +44,7 @@ export default function ProfileInformation() {
           <View className='items-left mt-6'>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Image
-                source={{ uri: getProfileImageUri(userProfileDetails?.data?.profilePicture) }}
+                source={{ uri: userProfileDetails?.data?.profilePicture }}
                 className='size-16 rounded-full bg-gray-100'
               />
             </TouchableOpacity>
@@ -90,7 +90,7 @@ export default function ProfileInformation() {
       <ProfileImageModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        imageUri={getProfileImageUri(userProfileDetails?.data?.profilePicture) || ""}
+        imageUri={userProfileDetails?.data?.profilePicture || ""}
       />
     </SafeAreaView>
   )

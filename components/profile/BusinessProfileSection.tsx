@@ -1,4 +1,4 @@
-import { CERTIFICATES, MANAGE_SERVICES, SUBSCRIPTION_DETAILS } from '@/constants/routes';
+import { CERTIFICATES, MANAGE_SERVICES } from '@/constants/routes';
 import React from 'react';
 import { View } from 'react-native';
 import GeneralSetting from './general-setting';
@@ -26,11 +26,11 @@ export default function BusinessProfileSection({ userRole }: BusinessProfileSect
           showArrow={false}
           href={CERTIFICATES}
         />
-        <GeneralSetting
+        {/* <GeneralSetting
           title='Subscription Details'
           showArrow={false}
           href={SUBSCRIPTION_DETAILS}
-        />
+        /> */}
       </View>
     </>
   );

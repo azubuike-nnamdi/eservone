@@ -15,10 +15,14 @@ function sectionAppointments(appointments: Appointment[] = []) {
   const upcoming: Appointment[] = [];
   const history: Appointment[] = [];
   appointments?.forEach((appointment) => {
-    if (appointment?.serviceStatus === 'PENDING') {
-      upcoming.push(appointment);
-    } else if (["COMPLETED", "CANCELED"].includes(appointment.serviceStatus)) {
+    // Service is only completed when BOTH seeker and provider complete
+    const isServiceCompleted = appointment?.seekerServiceStatus === 'COMPLETED' && appointment?.providerServiceStatus === 'COMPLETED';
+    const isServiceCanceled = appointment?.serviceAppointmentStatus === 'CANCELED';
+
+    if (isServiceCompleted || isServiceCanceled) {
       history.push(appointment);
+    } else {
+      upcoming.push(appointment);
     }
   });
   return { upcoming, history };
@@ -29,14 +33,17 @@ export default function Appointments() {
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
   const { data: appointments, isPending, error } = hookResult();
   const router = useRouter();
-
+  console.log('appointments', appointments?.data)
   const handleAppointmentPress = useCallback(
     (appointment: Appointment) => router.push(`/appointments/${appointment.id}`),
     [router]
   );
 
   const { upcoming, history } = useMemo(
-    () => sectionAppointments(appointments?.data),
+    () => {
+      const result = sectionAppointments(appointments?.data);
+      return result;
+    },
     [appointments?.data]
   );
 

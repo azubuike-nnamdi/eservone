@@ -101,13 +101,15 @@ type Appointment = {
   price: number | null
   userId: string
   serviceStatus: 'PENDING' | 'COMPLETED' | 'CANCELED'
-  serviceAppointmentStatus: 'PENDING' | 'ACCEPT' | 'DECLINED'
+  serviceAppointmentStatus: 'PENDING' | 'ACCEPT' | 'DECLINED' | 'CANCELED' | 'COMPLETED'
+  seekerServiceStatus: 'PENDING' | 'COMPLETED'
+  providerServiceStatus: 'PENDING' | 'COMPLETED'
   chatRoomId: string | null
   userEmail: string | null
   latitude: string | null
   longitude: string | null
   serviceProviderEmail: string | null
-  paymentStatus?: 'SUCCESSFUL' | 'FAILED' | 'PENDING'
+  paymentStatus?: 'SUCCESSFUL' | 'FAILED' | 'PENDING' | 'FINALIZED'
 }
 
 type AppointmentType = 'upcoming' | 'history'
@@ -175,6 +177,7 @@ type WithdrawFundsPayload = {
 type UpdateUserBioPayload = {
   userBio: string
   address: string
+  userProfilePicture?: string
 }
 
 type UpdateToBusinessPayload = {
@@ -268,19 +271,6 @@ type InitiatePaymentPayload = {
   beneficiaryName: string
   narration: string
   senderEmail: string
-}
-
-interface ServiceProviderInfoModalProps {
-  visible: boolean;
-  onClose: () => void;
-  providerName?: string;
-  service: string;
-  timesProvided: number;
-  certificates: number;
-  isVerified: boolean;
-  isTopProvider: boolean;
-  onBook: () => void;
-  onViewProfile: () => void;
 }
 
 
@@ -389,5 +379,5 @@ type BankAccountCardProps = {
   account: BankAccount;
   onViewDetails: (account: BankAccount) => void;
 }
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceProviderInfoModalProps, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
 

@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import useAcceptBooking from "./mutation/useAcceptBooking";
 import useCancelAppointment from "./mutation/useCancelAppointment";
-import useCompleteAppointment from "./mutation/useCompleteAppointment";
 import useCreateRating from "./mutation/useCreateRating";
 import useMakeBookingPayment from "./mutation/useMakeBookingPayment";
+import useProviderCompleteAppointment from "./mutation/useProviderCompleteAppointment";
+import useSeekerCompleteAppointment from "./mutation/useSeekerCompleteAppointment";
 import useSubmitReview from "./mutation/useSubmitReview";
 import useGetAppointmentByUserId from "./query/useGetAppointmentByUserId";
 import useGetProviderAppointments from "./query/useGetProviderAppointments";
@@ -29,7 +30,8 @@ export const useAppointmentDetails = () => {
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
   const { data: appointments, isPending, error } = hookResult();
   const { handleCancelAppointment, isPending: isCancelling } = useCancelAppointment();
-  const { handleCompleteAppointment, isPending: isCompleting } = useCompleteAppointment();
+  const { handleSeekerCompleteAppointment, isPending: isCompletingSeeker } = useSeekerCompleteAppointment();
+  const { handleProviderCompleteAppointment, isPending: isCompletingProvider } = useProviderCompleteAppointment();
   const { handleCreateRating, isPending: isCreatingRating } = useCreateRating();
   const { handleCreateRating: handleCreateReview, isPending: isCreatingReview } = useSubmitReview();
   const { handleAcceptBooking: acceptBooking, isPending: isAcceptingBooking } = useAcceptBooking();
@@ -46,9 +48,26 @@ export const useAppointmentDetails = () => {
   // Computed values
   const isSeeker = user?.userRole === 'SERVICE_SEEKER';
   const isProvider = user?.userRole === 'SERVICE_PROVIDER';
-  const isCanceled = appointment?.serviceStatus === 'CANCELED';
-  const isCompleted = appointment?.serviceStatus === 'COMPLETED';
-  const isAppointmentPending = appointment?.serviceStatus === 'PENDING';
+
+  // Appointment approval status
+  const isAppointmentAccepted = appointment?.serviceAppointmentStatus === 'ACCEPT';
+  const isAppointmentPending = appointment?.serviceAppointmentStatus === 'PENDING';
+  const isAppointmentDeclined = appointment?.serviceAppointmentStatus === 'DECLINED';
+
+  // Service completion status (only when both parties complete)
+  const isServiceCompleted = appointment?.seekerServiceStatus === 'COMPLETED' && appointment?.providerServiceStatus === 'COMPLETED';
+  const isServiceCanceled = appointment?.serviceAppointmentStatus === 'CANCELED';
+
+  // Individual completion status
+  const hasUserCompleted = isSeeker
+    ? appointment?.seekerServiceStatus === 'COMPLETED'
+    : appointment?.providerServiceStatus === 'COMPLETED';
+
+  const hasOtherPartyCompleted = isSeeker
+    ? appointment?.providerServiceStatus === 'COMPLETED'
+    : appointment?.seekerServiceStatus === 'COMPLETED';
+
+  const needsBothCompletion = appointment?.seekerServiceStatus === 'PENDING' && appointment?.providerServiceStatus === 'PENDING';
 
   // Action handlers
   const handleReschedule = () => {
@@ -123,7 +142,11 @@ export const useAppointmentDetails = () => {
 
   const handleConfirmComplete = () => {
     if (appointment) {
-      handleCompleteAppointment({ serviceAppointmentId: appointment.id });
+      if (isSeeker) {
+        handleSeekerCompleteAppointment({ serviceAppointmentId: appointment.id });
+      } else if (isProvider) {
+        handleProviderCompleteAppointment({ serviceAppointmentId: appointment.id });
+      }
       setShowCompleteModal(false);
     }
   };
@@ -153,9 +176,12 @@ export const useAppointmentDetails = () => {
     // Computed values
     isSeeker,
     isProvider,
-    isCanceled,
-    isCompleted,
-    isAppointmentPending,
+    isCanceled: isServiceCanceled,
+    isCompleted: isServiceCompleted,
+    isAppointmentPending: isAppointmentPending,
+    hasUserCompleted,
+    needsBothCompletion,
+    hasOtherPartyCompleted,
 
     // Modal states
     showCancelModal,
@@ -170,7 +196,9 @@ export const useAppointmentDetails = () => {
 
     // Loading states
     isCancelling,
-    isCompleting,
+    isCompleting: isCompletingSeeker || isCompletingProvider,
+    isCompletingSeeker,
+    isCompletingProvider,
     isCreatingRating,
     isCreatingReview,
     isAcceptingBooking,
@@ -190,5 +218,6 @@ export const useAppointmentDetails = () => {
     handleConfirmComplete,
     handleAcceptBooking,
     handleSubmitReport,
+
   };
 }; 
