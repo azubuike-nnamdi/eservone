@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Button from "../common/button";
 import AcceptBookingModal from "./accept-booking-modal";
+import CompletionActions from "./completion-actions";
+import CompletionStatus from "./completion-status";
 
 interface AppointmentActionsSectionProps {
   appointment: Appointment;
@@ -23,6 +25,7 @@ interface AppointmentActionsSectionProps {
   isMakingPayment: boolean;
   onAcceptBooking?: () => void;
   isAcceptingBooking?: boolean;
+  needsBothCompletion: boolean;
 }
 
 const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
@@ -42,10 +45,12 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
   isCompleting,
   isMakingPayment,
   onAcceptBooking,
-  isAcceptingBooking
+  isAcceptingBooking,
+  needsBothCompletion
 }) => {
   const [showAcceptModal, setShowAcceptModal] = useState(false);
-  console.log(appointment);
+
+
   return (
 
     <>
@@ -76,24 +81,24 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
           />
         </>
       )}
-      {/* Mark as completed for providers when status is PENDING and appointment is ACCEPTED */}
-      {isProvider && appointment.serviceStatus === 'PENDING' && appointment.serviceAppointmentStatus === 'ACCEPT' && (
-        <View className="bg-white mb-6">
-          <TouchableOpacity
-            className="flex-row items-center gap-4 py-4 border-b border-gray-200"
-            onPress={onMarkCompleted}
-            disabled={isCompleting}
-          >
-            <Image source={icons.markCompletedIcon} className="w-5 h-5" />
-            <Text className="text-base text-black">
-              {isCompleting ? 'Marking as completed...' : 'Mark service as completed'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
+
+      {/* Completion Actions */}
+      <CompletionActions
+        appointment={appointment}
+        isSeeker={isSeeker}
+        isProvider={isProvider}
+        isCompleting={isCompleting}
+        onMarkCompleted={onMarkCompleted}
+      />
+
+      {/* Show completion status and allow completion until BOTH parties complete */}
+      {appointment.serviceAppointmentStatus === 'ACCEPT' &&
+        (appointment.seekerServiceStatus === 'PENDING' || appointment.providerServiceStatus === 'PENDING') && (
+          <CompletionStatus appointment={appointment} />
+        )}
 
       {/* Actions - Only show for pending appointments */}
-      {isAppointmentPending && (
+      {needsBothCompletion && (
         <View className="bg-white mb-6">
           {/* {isSeeker && (
             <TouchableOpacity className="flex-row items-center gap-4 py-4 border-b border-gray-200" onPress={onReschedule}>
@@ -109,23 +114,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
             </Text>
           </TouchableOpacity>
 
-          {/* {isProvider && (
-            <TouchableOpacity
-              className="flex-row items-center gap-4 py-4 border-b border-gray-200"
-              onPress={onMarkCompleted}
-              disabled={isCompleting}
-            >
-              <Image source={icons.markCompletedIcon} className="w-5 h-5" />
-              <Text className="text-base text-black">
-                {isCompleting ? 'Marking as completed...' : 'Mark service as completed'}
-              </Text>
-            </TouchableOpacity>
-          )} */}
 
-          <TouchableOpacity className="flex-row items-center gap-4 py-4 border-b border-gray-200" onPress={onShare}>
-            <Image source={icons.shareIcon} className="w-5 h-5" />
-            <Text className="text-base text-black">Share order details</Text>
-          </TouchableOpacity>
 
           {isSeeker && (
             <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onReport}>
@@ -143,13 +132,6 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
             <Image source={icons.shareIcon} className="w-5 h-5" />
             <Text className="text-base text-black">Share order details</Text>
           </TouchableOpacity>
-
-          {isSeeker && (
-            <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onReport}>
-              <Image source={icons.reportIcon} className="w-5 h-5" />
-              <Text className="text-base text-black">Report a safety issue</Text>
-            </TouchableOpacity>
-          )}
         </View>
       )}
 
@@ -171,7 +153,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
 
       {/* Payment Section - Only for accepted appointments (not completed) and seekers */}
       {appointment.serviceAppointmentStatus === 'ACCEPT' &&
-        appointment.serviceStatus !== 'COMPLETED' &&
+        !(appointment.seekerServiceStatus === 'COMPLETED' && appointment.providerServiceStatus === 'COMPLETED') &&
         isSeeker &&
         appointment.paymentStatus !== 'SUCCESSFUL' && (
           <View className="bg-white mb-6">
@@ -192,6 +174,9 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
             </Text>
           </View>
         )}
+
+      {/* Completion Confirmation Modal */}
+      {/* Removed - using CompleteAppointmentModal from parent component */}
     </>
   );
 };
