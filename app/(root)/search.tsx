@@ -85,6 +85,7 @@ export default function Search() {
                 currency={item.currency}
                 ratingCount={parseInt(item.ratingCount) || 0}
                 reviewCount={item.reviewCount || 0}
+                address={item.address || undefined}
                 onPress={() => handleServicePress(item.id.toString())}
               />
             );

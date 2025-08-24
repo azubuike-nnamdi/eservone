@@ -49,6 +49,7 @@ export default function AppointmentDetails() {
     handleConfirmComplete,
     handleAcceptBooking,
     isAcceptingBooking,
+    needsBothCompletion,
   } = useAppointmentDetails();
 
   if (isPending) {
@@ -62,6 +63,7 @@ export default function AppointmentDetails() {
     );
   }
 
+  console.log('appointment in id', appointment);
   if (error || !appointment) {
     return (
       <SafeAreaView className="flex-1 bg-white">
@@ -101,6 +103,7 @@ export default function AppointmentDetails() {
           isMakingPayment={isMakingPayment}
           onAcceptBooking={handleAcceptBooking}
           isAcceptingBooking={isAcceptingBooking}
+          needsBothCompletion={needsBothCompletion}
         />
       </ScrollView>
 

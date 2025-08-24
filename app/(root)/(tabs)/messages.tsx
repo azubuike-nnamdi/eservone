@@ -19,7 +19,9 @@ export default function Messages() {
   const notificationMessage = user?.userRole === 'SERVICE_SEEKER' ? 'After booking a service, all your messages with the provider will appear here.' : 'Once a client books your service, their messages will appear here.';
   // Filter to show only pending appointments
   const pendingAppointments = appointments?.data?.filter(
-    (appointment: Appointment) => appointment.serviceStatus === 'PENDING'
+    (appointment: Appointment) =>
+      appointment.seekerServiceStatus === 'PENDING' ||
+      appointment.providerServiceStatus === 'PENDING'
   ) || [];
 
 

@@ -10,7 +10,7 @@ import SignOutSection from '@/components/profile/SignOutSection'
 import UserProfileSection from '@/components/profile/UserProfileSection'
 import { SIGN_IN } from '@/constants/routes'
 import useDeleteMyProfile from '@/hooks/mutation/useDeleteMyProfile'
-import useUpdateProfile from '@/hooks/mutation/useUpdateProfile'
+import useUpdateUserBio from '@/hooks/mutation/useUpdateUserBio'
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { getProfileImageUri } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
@@ -29,7 +29,7 @@ export default function Profile() {
 
   const { handleDeleteProfile, isPending } = useDeleteMyProfile()
   const { data: userProfileDetails } = useGetUserProfileDetails();
-  const { handleUpdateProfile, isPending: isUpdatePending, isSuccess: isUpdateSuccess } = useUpdateProfile()
+  const { handleUpdateUserBio, isPending: isUpdatePending, isSuccess: isUpdateSuccess } = useUpdateUserBio()
 
   const isBusinessProfile = userProfileDetails?.data?.business
 
@@ -68,14 +68,12 @@ export default function Profile() {
 
         // Get current user data for required fields
         const currentAddress = userProfileDetails?.data?.address || '';
-        const currentPhone = userProfileDetails?.data?.phoneNumber || '';
 
         // Call the update profile hook with all required fields
-        await handleUpdateProfile({
+        await handleUpdateUserBio({
           address: currentAddress,
-          meansOfIdentification: '', // Empty since we're only updating profile picture
-          phoneNumber: currentPhone,
-          profilePicture: base64Data
+          userBio: userProfileDetails?.data?.userBio || '',
+          userProfilePicture: base64Data
         });
       };
 
