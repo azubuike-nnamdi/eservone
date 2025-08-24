@@ -9,7 +9,7 @@ const useUpdateUserBio = () => {
   const { showToast } = useToast()
 
   const queryClient = useQueryClient()
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: (payload: UpdateUserBioPayload) => {
       return api.post(`/eserve-one/update-user-profile`, payload)
     },
@@ -29,7 +29,7 @@ const useUpdateUserBio = () => {
     mutate(payload)
   }
 
-  return { handleUpdateUserBio, isPending }
+  return { handleUpdateUserBio, isPending, isSuccess }
 }
 
 export default useUpdateUserBio
