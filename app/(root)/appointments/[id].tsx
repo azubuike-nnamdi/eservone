@@ -63,7 +63,7 @@ export default function AppointmentDetails() {
     );
   }
 
-  console.log('appointment in id', appointment);
+  // console.log('appointment in id', appointment);
   if (error || !appointment) {
     return (
       <SafeAreaView className="flex-1 bg-white">
