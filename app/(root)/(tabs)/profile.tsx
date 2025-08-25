@@ -70,8 +70,8 @@ export default function Profile() {
         const currentAddress = userProfileDetails?.data?.address || '';
 
         // Call the update profile hook with all required fields
-        await handleUpdateUserBio({
-          address: currentAddress,
+        handleUpdateUserBio({
+          userAddress: currentAddress,
           userBio: userProfileDetails?.data?.userBio || '',
           userProfilePicture: base64Data
         });
