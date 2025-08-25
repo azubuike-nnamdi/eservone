@@ -176,7 +176,7 @@ type WithdrawFundsPayload = {
 }
 type UpdateUserBioPayload = {
   userBio: string
-  address: string
+  userAddress: string
   userProfilePicture?: string
 }
 
@@ -219,6 +219,16 @@ type ServiceItem = {
   serviceDeliveryType: string;
   active: boolean;
   userId: number;
+  uploadImage?: { image: string; imageTitle: string; serviceName: string }[];
+  address?: string;
+  country?: string;
+  currency?: string;
+  chatRoomId?: string;
+  providerBusinessStatus?: boolean;
+  providerVerificationStatus?: boolean;
+  ratingCount?: string | null;
+  reviewCount?: string | null;
+  serviceCategoryId?: number | null;
 }
 
 type BookAppointmentPayload = {
@@ -260,6 +270,12 @@ type createReviewPayload = {
 
 type AcceptBookingPayload = {
   serviceAppointmentId: number
+}
+
+type UploadIndustrialCertificatePayload = {
+  fileName: string
+  serviceId: string
+  industryCertificate: string
 }
 
 type DeleteProfilePayload = {
@@ -379,5 +395,5 @@ type BankAccountCardProps = {
   account: BankAccount;
   onViewDetails: (account: BankAccount) => void;
 }
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, UploadIndustrialCertificatePayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
 
