@@ -19,7 +19,7 @@ export default function Select({
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
 
-  const selectedOption = options.find(option => option.value === value)
+  const selectedOption = options.find(option => String(option.value) === String(value))
 
   return (
     <View className={cn('mb-4', containerClassName)}>
@@ -73,7 +73,7 @@ export default function Select({
                       setIsOpen(false)
                     }}
                   >
-                    <Text className={value === item.value ? 'text-primary-600 font-rubikMedium' : 'text-gray-800 font-rubikRegular'}>
+                    <Text className={String(value) === String(item.value) ? 'text-primary-600 font-rubikMedium' : 'text-gray-800 font-rubikRegular'}>
                       {item.label}
                     </Text>
                   </TouchableOpacity>
