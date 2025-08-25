@@ -31,7 +31,7 @@ export default function BusinessProfileSection({ userRole }: BusinessProfileSect
           showArrow={false}
           href={SUBSCRIPTION_DETAILS}
         />
-      </View>
+      </View >
     </>
   );
 }
