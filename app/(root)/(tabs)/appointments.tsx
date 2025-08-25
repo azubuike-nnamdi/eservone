@@ -33,7 +33,7 @@ export default function Appointments() {
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
   const { data: appointments, isPending, error } = hookResult();
   const router = useRouter();
-  console.log('appointments', appointments?.data)
+  // console.log('appointments', appointments?.data)
   const handleAppointmentPress = useCallback(
     (appointment: Appointment) => router.push(`/appointments/${appointment.id}`),
     [router]
