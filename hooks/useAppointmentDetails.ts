@@ -4,10 +4,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import useAcceptBooking from "./mutation/useAcceptBooking";
-import useCancelAppointment from "./mutation/useCancelAppointment";
 import useCreateRating from "./mutation/useCreateRating";
 import useMakeBookingPayment from "./mutation/useMakeBookingPayment";
+import useProviderCancelAppointment from "./mutation/useProviderCancelAppointment";
 import useProviderCompleteAppointment from "./mutation/useProviderCompleteAppointment";
+import useSeekerCancelAppointment from "./mutation/useSeekerCancelAppointment";
 import useSeekerCompleteAppointment from "./mutation/useSeekerCompleteAppointment";
 import useSubmitReview from "./mutation/useSubmitReview";
 import useGetAppointmentByUserId from "./query/useGetAppointmentByUserId";
@@ -29,7 +30,8 @@ export const useAppointmentDetails = () => {
   // Hooks
   const hookResult = user?.userRole === 'SERVICE_SEEKER' ? useGetAppointmentByUserId : useGetProviderAppointments;
   const { data: appointments, isPending, error } = hookResult();
-  const { handleCancelAppointment, isPending: isCancelling } = useCancelAppointment();
+  const { handleSeekerCancelAppointment, isPending: isSeekerCancelling } = useSeekerCancelAppointment();
+  const { handleProviderCancelAppointment, isPending: isProviderCancelling } = useProviderCancelAppointment();
   const { handleSeekerCompleteAppointment, isPending: isCompletingSeeker } = useSeekerCompleteAppointment();
   const { handleProviderCompleteAppointment, isPending: isCompletingProvider } = useProviderCompleteAppointment();
   const { handleCreateRating, isPending: isCreatingRating } = useCreateRating();
@@ -49,10 +51,10 @@ export const useAppointmentDetails = () => {
   const isSeeker = user?.userRole === 'SERVICE_SEEKER';
   const isProvider = user?.userRole === 'SERVICE_PROVIDER';
 
+
+
   // Appointment approval status
-  const isAppointmentAccepted = appointment?.serviceAppointmentStatus === 'ACCEPT';
   const isAppointmentPending = appointment?.serviceAppointmentStatus === 'PENDING';
-  const isAppointmentDeclined = appointment?.serviceAppointmentStatus === 'DECLINED';
 
   // Service completion status (only when both parties complete)
   const isServiceCompleted = appointment?.seekerServiceStatus === 'COMPLETED' && appointment?.providerServiceStatus === 'COMPLETED';
@@ -75,7 +77,7 @@ export const useAppointmentDetails = () => {
   };
 
   const handleChat = () => {
-    // TODO: Use correct provider email if available in appointment object
+
     if (appointment && appointment.chatRoomId && appointment.userEmail) {
       router.push(`/message-room/${appointment.chatRoomId}?receiverEmail=${appointment.serviceProviderEmail}&userEmail=${appointment.userEmail}`);
     } else {
@@ -136,7 +138,11 @@ export const useAppointmentDetails = () => {
 
   const handleConfirmCancel = () => {
     if (appointment) {
-      handleCancelAppointment({ serviceAppointmentId: appointment.id });
+      if (isSeeker) {
+        handleSeekerCancelAppointment({ serviceAppointmentId: appointment.id });
+      } else if (isProvider) {
+        handleProviderCancelAppointment({ serviceAppointmentId: appointment.id });
+      }
     }
   };
 
@@ -178,7 +184,7 @@ export const useAppointmentDetails = () => {
     isProvider,
     isCanceled: isServiceCanceled,
     isCompleted: isServiceCompleted,
-    isAppointmentPending: isAppointmentPending,
+    isAppointmentPending,
     hasUserCompleted,
     needsBothCompletion,
     hasOtherPartyCompleted,
@@ -195,7 +201,7 @@ export const useAppointmentDetails = () => {
     isReporting,
 
     // Loading states
-    isCancelling,
+    isCancelling: isSeekerCancelling || isProviderCancelling,
     isCompleting: isCompletingSeeker || isCompletingProvider,
     isCompletingSeeker,
     isCompletingProvider,

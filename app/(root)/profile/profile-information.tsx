@@ -31,7 +31,7 @@ export default function ProfileInformation() {
   const handleBioSubmit = (newBio: string, newAddress: string) => {
     setBio(newBio);
     setShowBioModal(false);
-    handleUpdateUserBio({ userBio: newBio, address: newAddress })
+    handleUpdateUserBio({ userBio: newBio, userAddress: newAddress })
   };
 
   return (

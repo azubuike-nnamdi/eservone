@@ -1,4 +1,5 @@
-import { SERVICES } from '@/constants/data';
+import useUploadIndustrialCertificate from '@/hooks/mutation/useUploadIndustrialCertificate';
+import useGetServiceCategory from '@/hooks/query/useGetServiceCategory';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -10,7 +11,7 @@ import Select from '../common/select';
 // Types and Interfaces
 
 interface FormData {
-  service: string;
+  service: string | number;
   customService: string;
   document: DocumentPicker.DocumentPickerResult | null;
 }
@@ -58,19 +59,37 @@ const ServiceSelection: React.FC<{
   customService: string;
   onServiceChange: (service: string | number | null) => void;
   onCustomServiceChange: (service: string) => void;
-}> = ({ selectedService, customService, onServiceChange, onCustomServiceChange }) => {
+  serviceCategories: any[];
+  isLoading?: boolean;
+}> = ({ selectedService, customService, onServiceChange, onCustomServiceChange, serviceCategories, isLoading }) => {
 
-  // Map SERVICES to the format needed by your Select component
-  const serviceOptions: SelectOption[] = SERVICES.map(service => ({
-    label: service.value,
-    value: service.key,
-  }));
+  // Map service categories from API to the format needed by Select component
+  const serviceOptions: SelectOption[] = serviceCategories?.map(service => ({
+    label: service.serviceType,
+    value: service.id,
+  })) || [];
+
+  if (isLoading) {
+    return (
+      <View className="mb-4">
+        <Text className="text-gray-500 text-center py-4">Loading service categories...</Text>
+      </View>
+    );
+  }
+
+  if (!serviceCategories || serviceCategories.length === 0) {
+    return (
+      <View className="mb-4">
+        <Text className="text-red-500 text-center py-4">No service categories available</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="mb-4">
       <Select
         label="Select service"
-        placeholder="Select service"
+        placeholder={isLoading ? "Loading services..." : "Select service"}
         options={serviceOptions}
         value={selectedService}
         onSelect={onServiceChange}
@@ -97,8 +116,12 @@ export default function AddCertificateForm() {
     customService: '',
     document: null,
   });
+
+  const { data: serviceCategory, isPending: isLoadingCategories } = useGetServiceCategory()
+
+  const { handleUploadIndustrialCertificate, isPending } = useUploadIndustrialCertificate()
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   /**
    * Checks if the form is valid for submission
@@ -181,48 +204,37 @@ export default function AddCertificateForm() {
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    try {
-      setIsSubmitting(true);
-      setErrorMessage('');
+    const documentData = await prepareDocumentData();
 
-      const documentData = await prepareDocumentData();
-      const serviceType = formData.service === 'other'
-        ? formData.customService.trim()
-        : formData.service;
+    // Use the service ID from API, or custom service name if "other" is selected
+    const serviceId = formData.service === 'other'
+      ? formData.customService.trim()
+      : String(formData.service);
 
-      // TODO: Send to API
-      console.log('Ready to send to API:', {
-        service: serviceType,
-        document: {
-          ...documentData,
-          base64: `${documentData.base64.substring(0, 20)}...` // Log truncated base64
-        }
-      });
-
-      // Reset form after successful submission
-      setFormData({
-        service: '',
-        customService: '',
-        document: null,
-      });
-
-    } catch (error) {
-      setErrorMessage('Error preparing file for upload');
-      console.error('Upload error:', error);
-    } finally {
-      setIsSubmitting(false);
+    const payload = {
+      fileName: documentData.name,
+      serviceId: serviceId,
+      industryCertificate: documentData.base64
     }
+
+    handleUploadIndustrialCertificate(payload)
   };
 
   return (
     <View className="flex-1 bg-white">
       <View className="p-6">
         <ServiceSelection
-          selectedService={formData.service}
+          selectedService={String(formData.service)}
           customService={formData.customService}
-          onServiceChange={(service) => setFormData(prev => ({ ...prev, service: String(service ?? '') }))}
+          onServiceChange={(service) => {
+            setFormData(prev => ({ ...prev, service: service !== null && service !== undefined ? service : '' }));
+          }}
           onCustomServiceChange={(service) => setFormData(prev => ({ ...prev, customService: service }))}
+          serviceCategories={serviceCategory?.data || []}
+          isLoading={isLoadingCategories}
         />
+
+
 
         <DocumentPickerComponent
           document={formData.document}
@@ -243,8 +255,8 @@ export default function AddCertificateForm() {
 
         <Button
           type='submit'
-          disabled={!isFormValid() || isSubmitting}
-          loading={isSubmitting}
+          disabled={!isFormValid() || isPending}
+          loading={isPending}
           loadingText='Submitting...'
           onPress={handleSubmit}
         >

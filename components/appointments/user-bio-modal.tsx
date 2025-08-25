@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 interface UserBioModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (bio: string, address: string) => void;
+  onSubmit: (bio: string, userAddress: string) => void;
   initialBio?: string;
   initialAddress?: string;
   isLoading?: boolean;
@@ -20,15 +20,15 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
   isLoading
 }) => {
   const [bio, setBio] = useState(initialBio);
-  const [address, setAddress] = useState(initialAddress);
+  const [userAddress, setUserAddress] = useState(initialAddress);
 
   useEffect(() => {
     setBio(initialBio);
-    setAddress(initialAddress);
+    setUserAddress(initialAddress);
   }, [initialBio, initialAddress, visible]);
 
   const handleSubmit = () => {
-    onSubmit(bio, address);
+    onSubmit(bio, userAddress);
   };
 
   return (
@@ -61,9 +61,9 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
             <Text className="text-sm font-medium text-gray-700 mb-2">Home Address</Text>
             <TextInput
               className="border border-gray-300 rounded-lg p-3 text-base"
-              placeholder="Enter your home address..."
-              value={address}
-              onChangeText={setAddress}
+              placeholder="Enter your home userAddress..."
+              value={userAddress}
+              onChangeText={setUserAddress}
               multiline
               numberOfLines={3}
               editable={!isLoading}

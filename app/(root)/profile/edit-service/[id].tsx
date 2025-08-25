@@ -55,26 +55,50 @@ export default function EditService() {
           <Text className="text-black text-base font-semibold mb-2">{serviceItem?.serviceName}</Text>
           <Text className="text-gray-500 text-sm mb-1">Service description</Text>
           <Text className="text-black text-base mb-2" style={{ lineHeight: 22 }}>{serviceItem?.serviceDescription}</Text>
+
+          {/* Service details */}
+          <View className="flex-row items-center justify-between mt-3">
+            <View className="flex-row items-center">
+              <Ionicons name="location-outline" size={16} color="#6B7280" />
+              <Text className="text-gray-600 text-sm ml-1">
+                {serviceItem?.address || 'No address'}
+              </Text>
+            </View>
+            <View className="flex-row items-center">
+              <Ionicons name="car-outline" size={16} color="#6B7280" />
+              <Text className="text-gray-600 text-sm ml-1">
+                {serviceItem?.serviceDeliveryType === 'HOME_SERVICE' ? 'Home Service' : 'Walk-in'}
+              </Text>
+            </View>
+          </View>
         </View>
 
-        {/* Service images (unchanged) */}
+        {/* Service images */}
         <View className="px-4 mt-2">
           <Text className="text-gray-500 text-sm mb-2">Service images</Text>
-          <View className="flex-row flex-wrap -mx-1">
-            {serviceItem?.image ? (
-              <View className="w-1/2 p-1">
-                <View className="aspect-square bg-gray-100 rounded-lg items-center justify-center overflow-hidden relative">
-                  <Image source={{ uri: serviceItem.image }} className="w-full h-full" resizeMode="cover" />
+          {serviceItem?.uploadImage && serviceItem.uploadImage.length > 0 ? (
+            <View className="flex-row flex-wrap -mx-1">
+              {serviceItem.uploadImage.map((img: { image: string; imageTitle: string; serviceName: string }, index: number) => (
+                <View key={index} className="w-1/2 p-1">
+                  <View className="aspect-square bg-gray-100 rounded-lg items-center justify-center overflow-hidden relative">
+                    <Image
+                      source={{ uri: img.image }}
+                      className="w-full h-full"
+                      resizeMode="cover"
+                    />
+                  </View>
                 </View>
-              </View>
-            ) : (
+              ))}
+            </View>
+          ) : (
+            <View className="flex-row flex-wrap -mx-1">
               <View className="w-1/2 p-1">
                 <View className="aspect-square bg-gray-100 rounded-lg items-center justify-center overflow-hidden relative">
                   <Ionicons name="image-outline" size={32} color="#A3A3A3" />
                 </View>
               </View>
-            )}
-          </View>
+            </View>
+          )}
         </View>
 
         {/* Min/Max fee and estimated */}
