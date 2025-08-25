@@ -24,7 +24,7 @@ const useForgotPassword = () => {
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      console.log('error', error.response.data.description)
+      // console.log('error', error.response.data.description)
       Alert.alert('Error', error.response.data.description)
     }
   })
