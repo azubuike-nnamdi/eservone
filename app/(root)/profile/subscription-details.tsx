@@ -1,12 +1,14 @@
 import ProfileHeader from "@/components/common/profile-header";
+import { CREATE_BUSINESS } from "@/constants/routes";
 import { useGetSubscriptionDetails } from "@/hooks/query/useGetSubscriptionDetails";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function SubscriptionDetails() {
   const { data, isPending, error } = useGetSubscriptionDetails()
 
-  console.log('subscription details', data)
+  // console.log('subscription details', data)
 
   if (isPending) {
     return (
@@ -36,7 +38,7 @@ export default function SubscriptionDetails() {
   }
 
   const subscription = data.data;
-  const isActive = subscription.lastSubscriptionDate !== null;
+  const isActive = subscription.isBusiness || subscription.lastSubscriptionDate !== null;
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -55,10 +57,10 @@ export default function SubscriptionDetails() {
               {/* Subscription Info */}
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 23, fontWeight: 'bold', color: 'white', marginBottom: 8 }}>
-                  {subscription.isBusiness ? 'Business Plan' : 'Standard Plan'}
+                  {subscription.isBusiness ? 'Business Plan' : 'Basic Plan'}
                 </Text>
                 <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', fontWeight: '500' }}>
-                  {subscription.duration} • Premium Features
+                  {subscription.isBusiness ? `${subscription.duration} • Premium Features` : 'You\'re currently not verified user, to upgrade to a business plan and enjoy premium services.'}
                 </Text>
               </View>
 
@@ -156,7 +158,10 @@ export default function SubscriptionDetails() {
                 </View>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity style={{ backgroundColor: '#7C6AED', paddingVertical: 20, borderRadius: 16, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, elevation: 4 }}>
+              <TouchableOpacity
+                style={{ backgroundColor: '#7C6AED', paddingVertical: 20, borderRadius: 16, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, elevation: 4 }}
+                onPress={() => router.push(CREATE_BUSINESS)}
+              >
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                   <Ionicons name="add-circle" size={24} color="white" style={{ marginRight: 8 }} />
                   <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>
