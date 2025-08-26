@@ -1,7 +1,7 @@
 import icons from "@/constants/icons";
 import { Appointment } from "@/constants/types";
 import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Share, Text, TouchableOpacity, View } from "react-native";
 import Button from "../common/button";
 import AcceptBookingModal from "./accept-booking-modal";
 import CompletionActions from "./completion-actions";
@@ -50,6 +50,16 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
 }) => {
   const [showAcceptModal, setShowAcceptModal] = useState(false);
 
+  // // Debug logging - remove this when done testing
+  // console.log('AppointmentActionsSection Debug:', {
+  //   isSeeker,
+  //   isProvider,
+  //   isAppointmentPending,
+  //   serviceAppointmentStatus: appointment.serviceAppointmentStatus,
+  //   seekerServiceStatus: appointment.seekerServiceStatus,
+  //   providerServiceStatus: appointment.providerServiceStatus,
+  //   paymentStatus: appointment.paymentStatus
+  // });
 
   return (
 
@@ -128,19 +138,30 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
       {/* Show share and report options for all statuses */}
       {!isAppointmentPending && (
         <View className="bg-white mb-6">
-          <TouchableOpacity className="flex-row items-center gap-4 py-4 border-b border-gray-200" onPress={onShare}>
+          <TouchableOpacity
+            className="flex-row items-center gap-4 py-4 border-b border-gray-200"
+            onPress={() => {
+              const shareContent = {
+                title: 'Appointment Details',
+                message: `Service: ${appointment.serviceName}\nDate: ${new Date(appointment.appointmentDate).toLocaleDateString()}\nAddress: ${appointment.address || 'Not specified'}\nCost: ₦${appointment.costOfService}\nBuzz Code: ${appointment.buzzCode}`,
+              };
+              Share.share(shareContent);
+            }}
+          >
             <Image source={icons.shareIcon} className="w-5 h-5" />
             <Text className="text-base text-black">Share order details</Text>
           </TouchableOpacity>
         </View>
       )}
 
-      {/* Cancel appointment - Only for pending appointments */}
-      {isAppointmentPending && appointment.serviceAppointmentStatus === 'ACCEPT' && isProvider && (
-        <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onCancel}>
-          <Image source={icons.cancelIcon} className="w-6 h-6" />
-          <Text className="text-base font-semibold text-red-600">Cancel appointment</Text>
-        </TouchableOpacity>
+      {/* Cancel appointment - Show for both seekers and providers when status is ACCEPT and payment not successful */}
+      {appointment.serviceAppointmentStatus === 'ACCEPT' && appointment.paymentStatus === 'PENDING' && (
+        <View className="bg-white mb-6">
+          <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onCancel}>
+            <Image source={icons.cancelIcon} className="w-6 h-6" />
+            <Text className="text-base font-semibold text-red-600">Cancel appointment</Text>
+          </TouchableOpacity>
+        </View>
       )}
 
       {/* Review Section - Only for completed appointments and seekers */}
