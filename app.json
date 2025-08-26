@@ -20,9 +20,7 @@
             "foregroundImage": "./assets/icons/eservone-logo-square.png",
             "backgroundColor": "#ffffff"
          },
-         "package": "com.nnamdi.azubuike.eservone",
-         "targetSdkVersion": 35,
-         "compileSdkVersion": 35
+         "package": "com.nnamdi.azubuike.eservone"
       },
       "web": {
          "bundler": "metro",
