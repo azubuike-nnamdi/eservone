@@ -379,6 +379,9 @@ type Service = {
   userEmail: string;
   userId: number;
   studioName?: string;
+  providerEmailAddress?: string;
+  providerBusinessStatus?: boolean;
+  providerVerificationStatus?: boolean;
 };
 
 

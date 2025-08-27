@@ -16,7 +16,7 @@ interface SeekerServiceCardProps {
   uploadImage?: { image: string; imageTitle: string; serviceName: string }[];
   serviceDescription?: string;
   address?: string;
-  emailAddress?: string;
+  providerEmailAddress?: string;
   onPress?: () => void;
 }
 
@@ -30,7 +30,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   uploadImage = [],
   serviceDescription,
   address,
-  emailAddress,
+  providerEmailAddress,
   onPress,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,7 +38,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
 
   console.log('🔍 SeekerServiceCard state:', {
     modalVisible,
-    emailAddress
+    providerEmailAddress
   });
 
   return (
@@ -114,7 +114,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
         certificates={5}
         isVerified={isVerified}
         isTopProvider={true}
-        emailAddress={emailAddress}
+        emailAddress={providerEmailAddress}
         onBook={() => {
           setModalVisible(false);
           onPress && onPress();

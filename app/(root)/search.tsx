@@ -26,6 +26,8 @@ export default function Search() {
   );
 
   // console.log('allServicesData', allServicesData)
+
+  // console.log('allServicesData', allServicesData)
   const isSearching = !!debouncedSearchQuery.trim();
   const services: Service[] | undefined = isSearching
     ? searchData?.data
@@ -86,7 +88,7 @@ export default function Search() {
                 ratingCount={parseInt(item.ratingCount) || 0}
                 reviewCount={item.reviewCount || 0}
                 address={item.address || undefined}
-                emailAddress="xuo3h0z5zz@daouse.com" // TODO: Replace with actual provider email from API
+                providerEmailAddress={item.providerEmailAddress}
                 onPress={() => handleServicePress(item.id.toString())}
               />
             );
