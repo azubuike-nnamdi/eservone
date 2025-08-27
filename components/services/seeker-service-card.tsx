@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import RatingStars from "../common/RatingStars";
@@ -15,13 +16,13 @@ interface SeekerServiceCardProps {
   uploadImage?: { image: string; imageTitle: string; serviceName: string }[];
   serviceDescription?: string;
   address?: string;
+  emailAddress?: string;
   onPress?: () => void;
 }
 
 const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   title,
   priceRange,
-  currency,
   ratingCount,
   reviewCount,
   isVerified = false,
@@ -29,9 +30,16 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   uploadImage = [],
   serviceDescription,
   address,
+  emailAddress,
   onPress,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
+
+  console.log('🔍 SeekerServiceCard state:', {
+    modalVisible,
+    emailAddress
+  });
 
   return (
     <>
@@ -106,11 +114,17 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
         certificates={5}
         isVerified={isVerified}
         isTopProvider={true}
+        emailAddress={emailAddress}
         onBook={() => {
           setModalVisible(false);
           onPress && onPress();
         }}
-        onViewProfile={() => { }}
+        onViewProfile={(email) => {
+          console.log('🔍 View profile clicked for email:', email);
+          setModalVisible(false);
+          // Navigate to the provider profile page
+          router.push(`/view-provider-profile?emailAddress=${email}`);
+        }}
       />
     </>
   );

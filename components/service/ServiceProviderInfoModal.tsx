@@ -1,4 +1,4 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import React from "react";
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 
@@ -14,8 +14,9 @@ interface ServiceProviderInfoModalProps {
   certificates: number;
   isVerified: boolean;
   isTopProvider: boolean;
+  emailAddress?: string;
   onBook: () => void;
-  onViewProfile: () => void;
+  onViewProfile: (emailAddress?: string) => void;
 }
 
 const ServiceProviderInfoModal = ({
@@ -30,6 +31,7 @@ const ServiceProviderInfoModal = ({
   certificates,
   isVerified,
   isTopProvider,
+  emailAddress,
   onBook,
   onViewProfile,
 }: ServiceProviderInfoModalProps) => {
@@ -40,8 +42,11 @@ const ServiceProviderInfoModal = ({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View className="flex-1 justify-center items-center bg-black/40">
-        <View className="bg-white rounded-2xl w-11/12 max-h-[90%] p-6">
+      <View className="flex-1 justify-end bg-black/40">
+        <View className="bg-white rounded-t-3xl w-full max-h-[85%] p-6">
+          {/* Grab Handle */}
+          <View className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+
           <TouchableOpacity className="absolute right-4 top-4 z-10" onPress={onClose}>
             <MaterialIcons name="close" size={22} color="#222" />
           </TouchableOpacity>
@@ -83,30 +88,41 @@ const ServiceProviderInfoModal = ({
             )}
           </View>
 
-          {/* <View className="space-y-2 mb-6">
+          {/* Service Provider Summary */}
+          <View className="mb-6">
+            <Text className="text-zinc-700 mb-2 text-md">
+              {`${emailAddress} is the provider of this service`}
+            </Text>
+            {/* <Text className="text-zinc-700 mb-4">
+              They have uploaded **{certificates} industrial certifications** for their service and their address has been verified.
+            </Text> */}
+          </View>
+
+          {/* Verification Status */}
+          <View className="space-y-3 mb-6">
             <View className="flex-row items-center space-x-2">
               <MaterialIcons name="verified-user" size={18} color="#3E3F93" />
-              <Text className="text-zinc-700">Identity Verified</Text>
+              <Text className="text-zinc-700 ml-2">Identity Verified</Text>
             </View>
-            <View className="flex-row items-center space-x-2">
+            <View className="flex-row items-center space-x-2 my-3">
               <MaterialCommunityIcons name="certificate" size={18} color="#22C55E" />
-              <Text className="text-zinc-700">Industrial certificates [ {certificates} ]</Text>
+              <Text className="text-zinc-700 ml-2">Industrial certificates </Text>
             </View>
             {isTopProvider && (
               <View className="flex-row items-center space-x-2">
                 <MaterialCommunityIcons name="fire" size={18} color="#EF4444" />
-                <Text className="text-zinc-700">Top service provider</Text>
+                <Text className="text-zinc-700 ml-2 ">Top service provider</Text>
               </View>
             )}
-          </View> */}
+          </View>
 
-          <View className="flex-row space-x-3 mt-2 gap-4">
+          <View className="flex-row space-x-3 mt-2 gap-4 mb-8">
             <TouchableOpacity className="flex-1 bg-primary-300 py-3 rounded-lg" onPress={onBook}>
               <Text className="text-white text-center font-bold">Book service</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity className="flex-1 bg-violet-100 py-3 rounded-lg" onPress={onViewProfile}>
+            <TouchableOpacity className="flex-1 bg-violet-100 py-3 rounded-lg" onPress={() => onViewProfile(emailAddress)}>
               <Text className="text-primary-300 text-center font-bold">View full profile</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
         </View>
       </View>
