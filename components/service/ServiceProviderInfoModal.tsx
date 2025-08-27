@@ -10,11 +10,9 @@ interface ServiceProviderInfoModalProps {
   uploadImage?: { image: string; imageTitle: string; serviceName: string }[];
   address?: string;
   serviceDeliveryType?: string;
-  timesProvided: number;
-  certificates: number;
-  isVerified: boolean;
-  isTopProvider: boolean;
   emailAddress?: string;
+  providerBusinessStatus?: boolean;
+  providerVerificationStatus?: boolean;
   onBook: () => void;
   onViewProfile: (emailAddress?: string) => void;
 }
@@ -27,12 +25,10 @@ const ServiceProviderInfoModal = ({
   uploadImage = [],
   address,
   serviceDeliveryType,
-  timesProvided,
-  certificates,
-  isVerified,
-  isTopProvider,
   emailAddress,
   onBook,
+  providerBusinessStatus,
+  providerVerificationStatus,
   onViewProfile,
 }: ServiceProviderInfoModalProps) => {
   return (
@@ -102,13 +98,13 @@ const ServiceProviderInfoModal = ({
           <View className="space-y-3 mb-6">
             <View className="flex-row items-center space-x-2">
               <MaterialIcons name="verified-user" size={18} color="#3E3F93" />
-              <Text className="text-zinc-700 ml-2">Identity Verified</Text>
+              <Text className="text-zinc-700 ml-2">{providerVerificationStatus ? 'Identity Verified' : 'Identity Not Verified'}</Text>
             </View>
             <View className="flex-row items-center space-x-2 my-3">
               <MaterialCommunityIcons name="certificate" size={18} color="#22C55E" />
-              <Text className="text-zinc-700 ml-2">Industrial certificates </Text>
+              <Text className="text-zinc-700 ml-2">{providerBusinessStatus ? 'Industrial certificates' : 'Not industrially certified'}</Text>
             </View>
-            {isTopProvider && (
+            {providerBusinessStatus && providerVerificationStatus && (
               <View className="flex-row items-center space-x-2">
                 <MaterialCommunityIcons name="fire" size={18} color="#EF4444" />
                 <Text className="text-zinc-700 ml-2 ">Top service provider</Text>

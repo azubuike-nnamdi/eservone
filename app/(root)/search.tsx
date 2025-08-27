@@ -10,14 +10,18 @@ import { useDebounce } from "@/lib/helper";
 import { useRecentSearchesStore } from "@/store/recent-searches-store";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, Text, View } from "react-native";
+import { FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery.toLowerCase(), 500);
   const router = useRouter();
   const addRecentSearch = useRecentSearchesStore((s) => s.addSearch);
+  const recentSearches = useRecentSearchesStore((s) => s.recent);
+  const clearRecent = useRecentSearchesStore((s) => s.clear);
   const { format } = useCurrency();
+
+
 
 
   const { data: allServicesData, isPending: allPending, error: allError } = useGetAllServices();
@@ -64,9 +68,9 @@ export default function Search() {
     router.push(`/products/${id}`);
   };
 
-  // const handleRecentPress = (term: string) => {
-  //   setSearchQuery(term);
-  // };
+  const handleRecentPress = (term: string) => {
+    setSearchQuery(term);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -89,6 +93,8 @@ export default function Search() {
                 reviewCount={item.reviewCount || 0}
                 address={item.address || undefined}
                 providerEmailAddress={item.providerEmailAddress}
+                providerBusinessStatus={item.providerBusinessStatus}
+                providerVerificationStatus={item.providerVerificationStatus}
                 onPress={() => handleServicePress(item.id.toString())}
               />
             );
@@ -106,7 +112,7 @@ export default function Search() {
                   onChangeText={(text: string) => setSearchQuery(text)}
                 />
                 {/* Recent Searches */}
-                {/* {recentSearches.length > 0 && (
+                {recentSearches.length > 0 && (
                   <View className="mt-4">
                     <View className="flex-row justify-between items-center mb-2">
                       <Text className="text-base font-bold">Recent searches:</Text>
@@ -121,7 +127,7 @@ export default function Search() {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                       {recentSearches.map((item, idx) => (
                         <TouchableOpacity
-                          key={idx}
+                          key={item}
                           onPress={() => handleRecentPress(item)}
                           className="bg-gray-100 px-4 py-2 rounded-lg mr-2"
                           style={{ minWidth: 80, alignItems: "center" }}
@@ -131,7 +137,7 @@ export default function Search() {
                       ))}
                     </ScrollView>
                   </View>
-                )} */}
+                )}
               </View>
 
               {(isPending) && (

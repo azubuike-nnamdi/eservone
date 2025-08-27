@@ -17,6 +17,8 @@ interface SeekerServiceCardProps {
   serviceDescription?: string;
   address?: string;
   providerEmailAddress?: string;
+  providerBusinessStatus?: boolean;
+  providerVerificationStatus?: boolean;
   onPress?: () => void;
 }
 
@@ -31,6 +33,8 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   serviceDescription,
   address,
   providerEmailAddress,
+  providerBusinessStatus,
+  providerVerificationStatus,
   onPress,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -73,7 +77,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
           <View className="flex-1">
             <Text className="font-bold text-base text-gray-900 mb-1">{title}</Text>
             <View className="flex-row items-center mb-1">
-              {isVerified && (
+              {providerVerificationStatus && (
                 <MaterialCommunityIcons name="check-decagram" size={14} color="#4338CA" style={{ marginLeft: 4 }} />
               )}
               <Text className="text-sm text-gray-500 ml-2">{priceRange}</Text>
@@ -110,11 +114,9 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
         uploadImage={uploadImage}
         address={address}
         serviceDeliveryType={serviceDeliveryType}
-        timesProvided={419}
-        certificates={5}
-        isVerified={isVerified}
-        isTopProvider={true}
         emailAddress={providerEmailAddress}
+        providerBusinessStatus={providerBusinessStatus}
+        providerVerificationStatus={providerVerificationStatus}
         onBook={() => {
           setModalVisible(false);
           onPress && onPress();
