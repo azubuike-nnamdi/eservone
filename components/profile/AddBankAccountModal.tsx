@@ -38,6 +38,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
   const { user } = useAuthStore();
 
 
+
   // Load account name from AsyncStorage when component mounts
   useEffect(() => {
     const loadAccountName = async () => {
@@ -130,7 +131,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
       onRequestClose={onClose}
     >
       <View className="flex-1 bg-black/50 justify-end">
-        <View className="bg-white rounded-t-3xl p-6 max-h-[80%] overflow-hidden mb-8">
+        <View className="bg-white rounded-t-3xl p-6 min:h-[70%] overflow-hidden mb-2">
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Header */}
             <View className="flex-row items-center justify-between mb-6">
@@ -180,7 +181,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
                     ) : (
                       filteredBanks.map((bank: Bank, index: number) => (
                         <TouchableOpacity
-                          key={bank.bankCode}
+                          key={`${bank.bankCode}-${bank.bankName}-${index}`}
                           className="p-2 border-b border-gray-100"
                           onPress={() => handleBankSelect(bank)}
                         >
@@ -225,7 +226,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
               onPress={handleSubmit}
               disabled={!isFormValid || isCreatingBeneficiary}
               loading={isCreatingBeneficiary}
-              className="rounded-lg py-4 items-center"
+              className="rounded-lg py-4 items-center mb-12"
               loadingText='Adding Account...'
             >
               <Text className="text-white font-rubikMedium text-base">
