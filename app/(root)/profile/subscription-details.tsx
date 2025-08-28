@@ -60,7 +60,7 @@ export default function SubscriptionDetails() {
                   {subscription.isBusiness ? 'Business Plan' : 'Basic Plan'}
                 </Text>
                 <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', fontWeight: '500' }}>
-                  {subscription.isBusiness ? `${subscription.duration} • Premium Features` : 'You\'re currently not verified user, to upgrade to a business plan and enjoy premium services.'}
+                  {subscription.isBusiness ? `${subscription.duration} • Premium Features` : 'Upgrade to Business Plan for Premium services'}
                 </Text>
               </View>
 
