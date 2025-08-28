@@ -62,10 +62,10 @@ export default function ServiceCard({ item, onPress }: { item: ServiceItem; onPr
         </View>
 
         {/* Manage Service Link */}
-        <TouchableOpacity onPress={onPress} className="flex-row items-center mt-2">
+        {/* <TouchableOpacity onPress={onPress} className="flex-row items-center mt-2">
           <Ionicons name="create-outline" size={18} color="#6366F1" />
           <Text className="text-primary-600 ml-2 font-medium">Manage service</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   )

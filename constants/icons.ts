@@ -19,6 +19,7 @@ import dumbell from "@/assets/icons/dumbell.png";
 import edit from "@/assets/icons/edit.png";
 import filter from "@/assets/icons/filter.png";
 import google from "@/assets/icons/google.png";
+import greenBadgeWithoutBg from "@/assets/icons/green-badge-without-bg.png";
 import greenBadge from "@/assets/icons/green-badge.png";
 import heart from "@/assets/icons/heart.png";
 import home from "@/assets/icons/home.png";
@@ -91,5 +92,6 @@ export default {
   cancelIcon,
   businessIcon,
   blueBadge,
-  greenBadge
+  greenBadge,
+  greenBadgeWithoutBg
 };

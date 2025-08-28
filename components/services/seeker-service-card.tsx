@@ -1,4 +1,5 @@
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import icons from "@/constants/icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -11,7 +12,6 @@ interface SeekerServiceCardProps {
   currency?: string;
   ratingCount?: number;
   reviewCount?: number;
-  isVerified?: boolean;
   serviceDeliveryType: string;
   uploadImage?: { image: string; imageTitle: string; serviceName: string }[];
   serviceDescription?: string;
@@ -27,7 +27,6 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   priceRange,
   ratingCount,
   reviewCount,
-  isVerified = false,
   serviceDeliveryType,
   uploadImage = [],
   serviceDescription,
@@ -39,6 +38,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
+
 
   console.log('🔍 SeekerServiceCard state:', {
     modalVisible,
@@ -75,11 +75,20 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
 
         <View className="flex-row justify-between items-center">
           <View className="flex-1">
-            <Text className="font-bold text-base text-gray-900 mb-1">{title}</Text>
-            <View className="flex-row items-center mb-1">
-              {providerVerificationStatus && (
-                <MaterialCommunityIcons name="check-decagram" size={14} color="#4338CA" style={{ marginLeft: 4 }} />
+            <View className="flex-row items-center mb-1 gap-2">
+              <Text className="font-bold text-base text-gray-900 ">{title}</Text>
+              {(providerVerificationStatus === true || providerBusinessStatus === true) && (
+                <>
+                  {providerVerificationStatus === true && providerBusinessStatus === true ? (
+                    <Image source={icons.greenBadgeWithoutBg} className="w-4 h-4" />
+                  ) : (
+                    <Image source={icons.blueBadge} className="w-4 h-4" />
+                  )}
+                </>
               )}
+            </View>
+            <View className="flex-row items-center mb-1">
+
               <Text className="text-sm text-gray-500 ml-2">{priceRange}</Text>
             </View>
             <View className="flex-row items-center mb-1">
