@@ -12,14 +12,13 @@ interface StatItem {
 }
 
 type DashboardScreenProps = {
-  appointments: any;
-  refetchAppointments?: () => void;
+  appointmentCount: any;
   reviewCount: number;
   balance: number;
   currency: string;
 }
 
-const DashboardScreen = ({ appointments, refetchAppointments, reviewCount, balance, currency }: DashboardScreenProps) => {
+const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: DashboardScreenProps) => {
   const { user } = useAuthStore()
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
@@ -28,17 +27,16 @@ const DashboardScreen = ({ appointments, refetchAppointments, reviewCount, balan
     setRefreshing(true);
     try {
       await Promise.all([
-        refetchAppointments?.(),
         refetchUserProfile(),
       ]);
     } finally {
       setRefreshing(false);
     }
-  }, [refetchAppointments, refetchUserProfile]);
+  }, [refetchUserProfile]);
 
   // Calculate appointment statistics
   const appointmentStats = useMemo(() => {
-    if (!appointments?.data) {
+    if (!appointmentCount?.data) {
       return {
         completed: 0,
         canceled: 0,
@@ -47,14 +45,15 @@ const DashboardScreen = ({ appointments, refetchAppointments, reviewCount, balan
       };
     }
 
+    // Extract counts from appointmentCount data
+    const pending = appointmentCount.data.find((item: any) => item.statusCount === 'PENDING')?.serviceStatus || 0;
+    const completed = appointmentCount.data.find((item: any) => item.statusCount === 'COMPLETED')?.serviceStatus || 0;
+    const canceled = appointmentCount.data.find((item: any) => item.statusCount === 'CANCELED')?.serviceStatus || 0;
 
-    const completed = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'COMPLETED').length;
-    const canceled = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'CANCELED').length;
-    const pending = appointments.data.filter((appointment: any) => appointment.serviceStatus === 'PENDING').length;
-    const total = appointments.data.length;
+    const total = Number(pending) + Number(completed) + Number(canceled);
 
     return { completed, canceled, pending, total };
-  }, [appointments?.data]);
+  }, [appointmentCount?.data]);
 
   const statsData: StatItem[] = [
     { id: '1', label: 'New job requests', value: appointmentStats.pending.toString() },
