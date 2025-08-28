@@ -4,8 +4,7 @@ import images from '@/constants/images'
 import { CREATE_SERVICE } from '@/constants/routes'
 import { useGetAccountBalance } from '@/hooks/query/useGetAccountBalance'
 import useGetAllServices from '@/hooks/query/useGetAllServices'
-import useGetProviderAppointments from '@/hooks/query/useGetProviderAppointments'
-import { useGetAllRatings } from '@/hooks/query/useGetRatings'
+import useGetAppointmentCount from '@/hooks/query/useGetAppointmentCount'
 import { useGetAllReviews } from '@/hooks/query/useGetReviews'
 import { getGreeting } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
@@ -37,21 +36,22 @@ const EmptyState = ({ firstName }: { firstName?: string }) => (
 export default function ServiceProviderHomepage() {
   const { user } = useAuthStore()
   const { data, isPending } = useGetAllServices()
-  const { data: appointments, isPending: appointmentsPending, refetch: refetchAppointments } = useGetProviderAppointments();
+  const { data: appointmentCount, isPending: appointmentCountPending } = useGetAppointmentCount()
   const { data: reviews, isPending: reviewsPending } = useGetAllReviews()
   const { data: accountBalance, isPending: accountBalancePending } = useGetAccountBalance()
-  const { data: ratings, isPending: ratingsPending } = useGetAllRatings()
+  // const { data: ratings, isPending: ratingsPending } = useGetAllRatings()
 
+  // console.log('appointmentCount', appointmentCount)
   const balance = accountBalance?.data?.accountBalance
   const currency = accountBalance?.data?.currency
-  console.log('ratings', ratings)
+  // console.log('ratings', ratings)
 
   const reviewCount = reviews?.length ?? 0
 
   const renderContent = () => {
-    if (isPending || appointmentsPending || reviewsPending || accountBalancePending || ratingsPending) return <DashboardSkeleton />
+    if (isPending || appointmentCountPending || reviewsPending || accountBalancePending) return <DashboardSkeleton />
     if (!data) return <EmptyState firstName={user?.firstName} />
-    return <DashboardScreen appointments={appointments} refetchAppointments={refetchAppointments} reviewCount={reviewCount} balance={balance} currency={currency} />
+    return <DashboardScreen appointmentCount={appointmentCount} reviewCount={reviewCount} balance={balance} currency={currency} />
   }
 
   return (
