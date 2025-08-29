@@ -1,5 +1,6 @@
 import { generalSettings, legalSettings, supportSettings } from '@/constants/data';
 import { EARNINGS, WALLETS } from '@/constants/routes';
+import { useAuthStore } from '@/store/auth-store';
 import React from 'react';
 import { Text, View } from 'react-native';
 import GeneralSetting from './general-setting';
@@ -27,6 +28,10 @@ function SettingsSection({ title, settings, showArrow = true }: SettingsSectionP
 }
 
 export default function ProfileSettings() {
+  const { user } = useAuthStore();
+
+
+  const isProvider = user?.userRole === 'SERVICE_PROVIDER';
   return (
     <>
       {/* General Section */}
@@ -35,7 +40,7 @@ export default function ProfileSettings() {
       {/* Additional General Settings */}
       <View className='mb-4'>
         <GeneralSetting
-          title='Earnings'
+          title={isProvider ? 'Earnings' : 'Payments'}
           showArrow={false}
           href={EARNINGS}
         />

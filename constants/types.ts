@@ -360,30 +360,71 @@ type CurrencyStore = {
   formatCurrency: (amount: number, currency?: string) => string;
 }
 
-type Service = {
-  active: boolean;
-  address: string | null;
-  chatRoomId: string;
-  country: string;
-  currency: string;
-  id: number;
-  latitude: string | null;
-  longitude: string | null;
-  maximumPrice: number;
-  minimumPrice: number;
-  reviewCount: number;
-  ratingCount: string;
-  serviceCategoryId: number | null;
-  serviceDeliveryType: string;
-  serviceDescription: string;
+// Provider Profile Types
+export interface UploadImage {
+  imageTitle: string;
+  image: string;
   serviceName: string;
-  userEmail: string;
-  userId: number;
-  studioName?: string;
-  providerEmailAddress?: string;
-  providerBusinessStatus?: boolean;
-  providerVerificationStatus?: boolean;
-};
+}
+
+export interface ProviderService {
+  serviceName: string;
+  serviceCategoryId: number | null;
+  emailAddress: string | null;
+  userBio: string | null;
+  completedAppointment: number | null;
+  canceledAppointment: number | null;
+  serviceDescription: string;
+  minimumPrice: number;
+  maximumPrice: number;
+  uploadImage: UploadImage[];
+  serviceDeliveryType: string;
+  address: string;
+  chatRoomId: string;
+  currency: string;
+  country: string;
+  ratingCount: number | null;
+  reviewCount: number | null;
+  providerBusinessStatus: boolean;
+  providerEmailAddress: string;
+  providerVerificationStatus: boolean;
+  id: number;
+}
+
+export interface Review {
+  content: string;
+  commentCreatedBy: number;
+  serviceAppointmentId: number | null;
+  serviceId: string;
+  rating: number | null;
+  serviceProviderEmail: string;
+}
+
+export interface AppointmentCount {
+  statusCount: string;
+  serviceStatus: string;
+}
+
+export interface CurrentRatings {
+  reviewCount: number;
+  ratingCount: number;
+}
+
+export interface ProviderProfileData {
+  businessName: string | null;
+  bio: string | null;
+  providerName: string;
+  currentRatings: CurrentRatings;
+  appointmentCount: AppointmentCount[];
+  services: ProviderService[];
+  reviews: Review[];
+}
+
+export interface ProviderProfileResponse {
+  statusCode: number;
+  description: string;
+  data: ProviderProfileData;
+}
 
 
 type BankAccount = {
@@ -399,5 +440,5 @@ type BankAccountCardProps = {
   account: BankAccount;
   onViewDetails: (account: BankAccount) => void;
 }
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, UploadIndustrialCertificatePayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, UploadIndustrialCertificatePayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
 

@@ -5,6 +5,7 @@ import ProviderProfileStats from "@/components/profile/ProviderProfileStats";
 import ProviderProfileTabs from "@/components/profile/ProviderProfileTabs";
 import ProviderReviewsList from "@/components/profile/ProviderReviewsList";
 import ProviderServicesList from "@/components/profile/ProviderServicesList";
+import { AppointmentCount } from '@/constants/types';
 import useGetUserProfileByEmail from '@/hooks/query/useGetUserProfileByEmail';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -49,7 +50,7 @@ export default function ViewProviderProfile() {
   // Extract appointment counts from the data
   const getAppointmentCount = (status: string) => {
     const appointment = userProfile.data.appointmentCount?.find(
-      (appt: any) => appt.statusCount === status
+      (appt: AppointmentCount) => appt.statusCount === status
     );
     return appointment ? parseInt(appointment.serviceStatus) : 0;
   };
@@ -109,6 +110,7 @@ export default function ViewProviderProfile() {
         {activeTab === 'reviews' && (
           <ProviderReviewsList
             reviews={userProfile.data.reviews || []}
+            businessName={userProfile.data.businessName}
           />
         )}
       </View>

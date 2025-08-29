@@ -1,9 +1,10 @@
+import { ProviderService } from '@/constants/types';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface ProviderServiceItemProps {
-  service: any;
+  service: ProviderService;
   index: number;
   onBookService: (id: string) => void;
 }

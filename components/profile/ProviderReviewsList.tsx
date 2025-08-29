@@ -1,12 +1,14 @@
+import { Review } from '@/constants/types';
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import ProviderReviewItem from './ProviderReviewItem';
 
 interface ProviderReviewsListProps {
-  reviews: any[];
+  reviews: Review[];
+  businessName: string | null;
 }
 
-export default function ProviderReviewsList({ reviews }: ProviderReviewsListProps) {
+export default function ProviderReviewsList({ reviews, businessName }: ProviderReviewsListProps) {
   if (!reviews || reviews.length === 0) {
     return (
       <View className="items-center py-8">
@@ -16,10 +18,11 @@ export default function ProviderReviewsList({ reviews }: ProviderReviewsListProp
     );
   }
 
-  const renderReviewItem = ({ item, index }: { item: any; index: number }) => (
+  const renderReviewItem = ({ item, index }: { item: Review; index: number }) => (
     <ProviderReviewItem
       review={item}
       index={index}
+      businessName={businessName}
     />
   );
 

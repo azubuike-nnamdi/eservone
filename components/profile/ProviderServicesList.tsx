@@ -1,9 +1,10 @@
+import { ProviderService } from '@/constants/types';
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import ProviderServiceItem from './ProviderServiceItem';
 
 interface ProviderServicesListProps {
-  services: any[];
+  services: ProviderService[];
   onBookService: (id: string) => void;
 }
 
@@ -16,7 +17,7 @@ export default function ProviderServicesList({ services, onBookService }: Provid
     );
   }
 
-  const renderServiceItem = ({ item, index }: { item: any; index: number }) => (
+  const renderServiceItem = ({ item, index }: { item: ProviderService; index: number }) => (
     <ProviderServiceItem
       service={item}
       index={index}
