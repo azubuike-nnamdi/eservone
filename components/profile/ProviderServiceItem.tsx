@@ -27,7 +27,7 @@ export default function ProviderServiceItem({
       <View className="flex-1">
         <Text className="font-bold text-black text-base mb-1">{service.serviceName}</Text>
         <Text className="text-gray-600 text-sm leading-5 mb-2">
-          {service.serviceDescription}
+          {service.serviceDescription?.split(' ').slice(0, 5).join(' ') + (service.serviceDescription?.split(' ').length > 10 ? '...' : '')}
         </Text>
         <View className="flex-row items-center mb-2">
           <MaterialIcons name="location-on" size={16} color="#666" />
