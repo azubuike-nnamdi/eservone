@@ -10,7 +10,7 @@ export default function ProviderReviewsList({ reviews }: ProviderReviewsListProp
   if (!reviews || reviews.length === 0) {
     return (
       <View className="items-center py-8">
-        <Text className="text-gray-500 text-center">No reviews yet</Text>
+        <Text className="text-gray-500 text-center text-lg">No reviews yet</Text>
         <Text className="text-gray-400 text-sm text-center mt-2">Be the first to review this provider</Text>
       </View>
     );
@@ -27,10 +27,11 @@ export default function ProviderReviewsList({ reviews }: ProviderReviewsListProp
     <FlatList
       data={reviews}
       renderItem={renderReviewItem}
-      keyExtractor={(item, index) => index.toString()}
+      keyExtractor={(item, index) => `review-${item.commentCreatedBy}-${index}`}
       showsVerticalScrollIndicator={false}
       scrollEnabled={false}
       contentContainerStyle={{ paddingBottom: 20 }}
+      ItemSeparatorComponent={() => <View className="h-2" />}
     />
   );
 }
