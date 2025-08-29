@@ -182,6 +182,7 @@ type UpdateUserBioPayload = {
 
 type UpdateToBusinessPayload = {
   emailAddress: string
+  businessName: string
 }
 
 type SelectOption = {

@@ -29,11 +29,16 @@ export default function CreateBusinessScreen() {
   // Always call the hook, let the hook's enabled option control the API call
   const { data, isPending, isSuccess, error, isError } = useCheckBusinessName(debouncedBusinessName)
 
+  const errorMessage = error
+    ? ((error as any)?.response?.data?.description ?? (error as any)?.description ?? 'An error occurred while checking business name.')
+    : 'An error occurred while checking business name.'
+
   const { handleUpdateToBusiness, isPending: isUpdatingToBusiness } = useUpdateToBusiness()
 
   const handleUpgradeToBusiness = () => {
     handleUpdateToBusiness({
-      emailAddress: user?.data?.emailAddress ?? ''
+      emailAddress: user?.data?.emailAddress ?? '',
+      businessName: businessName
     })
   }
 
@@ -95,9 +100,7 @@ export default function CreateBusinessScreen() {
         {/* Do not show availability on error */}
         {isError && (
           <Text className='text-red-600 mb-4'>
-            {typeof error === 'object' && error !== null && 'response' in error && (error as any).response?.data?.message
-              ? (error as any).response.data.message
-              : 'An error occurred while checking business name.'}
+            {errorMessage}
           </Text>
         )}
 
