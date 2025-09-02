@@ -1,11 +1,16 @@
 import { Appointment } from '@/constants/types';
 import { useCurrency } from '@/context/currency-context';
+import { getDeliveryTypeDisplay } from '@/lib/helper';
+import { useAuthStore } from '@/store/auth-store';
 import React from 'react';
 import { Text, View } from 'react-native';
 
 export default function AppointmentInfoSection({ appointment }: { appointment: Appointment }) {
   const { format } = useCurrency();
+  const user = useAuthStore((state) => state.user);
   const formattedCost = format(parseFloat(appointment.costOfService));
+  const deliveryTypeDisplay = getDeliveryTypeDisplay(appointment.homeService, appointment.walkInService);
+  const isProvider = user?.userRole === 'SERVICE_PROVIDER';
 
   return (
     <View className="bg-white p-4 rounded-lg border border-gray-200 mb-4">
@@ -26,6 +31,20 @@ export default function AppointmentInfoSection({ appointment }: { appointment: A
           <Text className="text-gray-600">Cost:</Text>
           <Text className="text-black font-semibold">{formattedCost}</Text>
         </View>
+
+        {deliveryTypeDisplay && (
+          <View className="flex-row justify-between">
+            <Text className="text-gray-600">Service Type:</Text>
+            <Text className="text-black">{deliveryTypeDisplay}</Text>
+          </View>
+        )}
+
+        {isProvider && (
+          <View className="flex-row justify-between">
+            <Text className="text-gray-600">Has Pet:</Text>
+            <Text className="text-black">{appointment.hasPet ? 'Yes' : 'No'}</Text>
+          </View>
+        )}
 
         {appointment.address && (
           <View className="flex-row justify-between">

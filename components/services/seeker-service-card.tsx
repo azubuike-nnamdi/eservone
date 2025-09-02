@@ -1,4 +1,5 @@
 import icons from "@/constants/icons";
+import { getDeliveryTypeDisplay } from "@/lib/helper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -19,6 +20,8 @@ interface SeekerServiceCardProps {
   providerEmailAddress?: string;
   providerBusinessStatus?: boolean;
   providerVerificationStatus?: boolean;
+  homeService?: boolean;
+  walkInService?: boolean;
   onPress?: () => void;
 }
 
@@ -34,15 +37,22 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   providerEmailAddress,
   providerBusinessStatus,
   providerVerificationStatus,
+  homeService,
+  walkInService,
   onPress,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
 
+  // Function to determine delivery type display
+  const deliveryTypeDisplay = getDeliveryTypeDisplay(homeService, walkInService);
 
   console.log('🔍 SeekerServiceCard state:', {
     modalVisible,
-    providerEmailAddress
+    providerEmailAddress,
+    homeService,
+    walkInService,
+    deliveryTypeDisplay
   });
 
   return (
@@ -95,10 +105,12 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
               <RatingStars ratingCount={ratingCount || 0} size={14} />
               <Text className="text-xs text-gray-400 ml-2">({reviewCount || 0} reviews)</Text>
             </View>
-            <View className="flex-row items-center mb-1">
-              <Text className="text-xs text-gray-400">Service delivery type: </Text>
-              <Text className="text-xs text-gray-400">{serviceDeliveryType}</Text>
-            </View>
+            {deliveryTypeDisplay && (
+              <View className="flex-row items-center mb-1">
+                <Text className="text-xs text-gray-400">Service delivery type: </Text>
+                <Text className="text-xs text-gray-400">{deliveryTypeDisplay}</Text>
+              </View>
+            )}
             {address && (
               <View className="flex-row items-center mb-1">
                 <Text className="text-xs text-gray-400">Address: </Text>
