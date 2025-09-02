@@ -137,3 +137,20 @@ export const maskAccountNumber = (accountNumber: string) => {
   const masked = '*'.repeat(accountNumber.length - 5);
   return `${firstTwo}${masked}${lastThree}`;
 };
+
+/**
+ * Determines the delivery type display text based on homeService and walkInService values
+ * @param homeService - Whether home service is available
+ * @param walkInService - Whether walk-in service is available
+ * @returns The delivery type display string or null if both are false
+ */
+export const getDeliveryTypeDisplay = (homeService?: boolean, walkInService?: boolean): string | null => {
+  if (homeService && walkInService) {
+    return "Home Service/Walk In Service";
+  } else if (homeService) {
+    return "Home Service";
+  } else if (walkInService) {
+    return "Walk In Service";
+  }
+  return null; // Don't show anything if both are false
+};
