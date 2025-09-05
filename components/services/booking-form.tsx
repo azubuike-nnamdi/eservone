@@ -17,14 +17,19 @@ interface BookingFormProps {
   upfront: string;
   details: string;
   hasPets: boolean;
+  costOfService: string;
+  costError: string;
   onDatePress: () => void;
   onTimeChange: (time: string) => void;
   onBuzzCodeChange: (code: string) => void;
   onUpfrontChange: (upfront: string) => void;
   onDetailsChange: (details: string) => void;
   onHasPetsChange: (hasPets: boolean) => void;
+  onCostOfServiceChange: (cost: string) => void;
   timeOptions: { label: string; value: string }[];
   upfrontOptions: { label: string; value: string }[];
+  minPrice: string;
+  maxPrice: string;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
@@ -40,14 +45,19 @@ const BookingForm: React.FC<BookingFormProps> = ({
   upfront,
   details,
   hasPets,
+  costOfService,
+  costError,
   onDatePress,
   onTimeChange,
   onBuzzCodeChange,
   onUpfrontChange,
   onDetailsChange,
   onHasPetsChange,
+  onCostOfServiceChange,
   timeOptions,
   upfrontOptions,
+  minPrice,
+  maxPrice,
 }) => {
   return (
     <>
@@ -70,6 +80,16 @@ const BookingForm: React.FC<BookingFormProps> = ({
         placeholder="Enter your address"
         editable={isHomeService && isAddressEditable}
         pointerEvents={isWalkInService ? 'none' : 'auto'}
+      />
+
+      {/* Cost of Service */}
+      <TextInput
+        label={`Cost of service (${minPrice} - ${maxPrice})`}
+        value={costOfService}
+        onChangeText={onCostOfServiceChange}
+        placeholder="Enter amount"
+        keyboardType="numeric"
+        error={costError}
       />
 
       {/* Date and Time */}
