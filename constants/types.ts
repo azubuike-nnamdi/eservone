@@ -368,6 +368,7 @@ type CurrencyStore = {
   formatCurrency: (amount: number, currency?: string) => string;
 }
 
+
 // Provider Profile Types
 export interface UploadImage {
   imageTitle: string;

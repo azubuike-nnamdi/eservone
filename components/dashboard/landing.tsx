@@ -3,8 +3,11 @@ import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails';
 import { formatNumberWithCommas, getGreeting } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
 import Entypo from '@expo/vector-icons/Entypo';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, SafeAreaView, Text, View } from 'react-native';
+
+
 interface StatItem {
   id: string;
   label: string;
@@ -22,6 +25,32 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
   const { user } = useAuthStore()
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
+  const [showReviewsModal, setShowReviewsModal] = useState(false);
+  const router = useRouter();
+
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const numericRating = typeof rating === 'number' ? rating : 0;
+    const fullStars = Math.floor(numericRating);
+    const hasHalfStar = numericRating % 1 !== 0;
+
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(
+          <Entypo key={i} name="star" size={20} color="#3E3F93" />
+        );
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(
+          <Entypo key={i} name="star" size={20} color="#3E3F93" />
+        );
+      } else {
+        stars.push(
+          <Entypo key={i} name="star-outlined" size={20} color="#D1D5DB" />
+        );
+      }
+    }
+    return stars;
+  };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -73,6 +102,10 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
     </View>
   );
 
+  const handleViewReviews = () => {
+    router.push('/view-reviews');
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1  bg-white">
@@ -102,20 +135,21 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
           }
           ListFooterComponent={
             <View className='my-12 flex-col items-center justify-between'>
-              <Text className='text-xl text-black-300 font-bold'>Average customer rating:</Text>
-              <Text className='text-5xl  font-bold my-4 text-primary-300'>{reviewCount ?? 0}</Text>
+              <Text className='text-xl text-black-300 font-bold'>Total customer rating:</Text>
+              <Text className='text-5xl  font-bold my-4 text-primary-300'>{0}</Text>
 
-              <View className='flex-row items-center justify-between gap-3'>
-                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <Entypo nam size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
-                <Entypo name="star" size={20} color='#3E3F93' className='bg-primary-300 text-primary-300' />
+              <View className='flex-row items-center justify-center gap-1'>
+                {renderStars(reviewCount)}
               </View>
 
               <Text className='text-lg text-black-300 font-medium mt-4'>{reviewCount ?? 0} reviews</Text>
 
-              <Button type='button' variant='outline' className='mt-4 w-6/12'>
+              <Button
+                type='button'
+                variant='outline'
+                className='mt-4 w-6/12'
+                onPress={handleViewReviews}
+              >
                 <Text className='font-bold text-primary-300 text-lg'>Read all reviews</Text>
               </Button>
 
@@ -139,6 +173,7 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
             </View>
           </View>
         )}
+
       </View>
     </SafeAreaView>
   );

@@ -5,6 +5,7 @@ import { CREATE_SERVICE } from '@/constants/routes'
 import { useGetAccountBalance } from '@/hooks/query/useGetAccountBalance'
 import useGetAllServices from '@/hooks/query/useGetAllServices'
 import useGetAppointmentCount from '@/hooks/query/useGetAppointmentCount'
+import { useGetRating } from '@/hooks/query/useGetRating'
 import { useGetAllReviews } from '@/hooks/query/useGetReviews'
 import { getGreeting } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
@@ -35,18 +36,22 @@ const EmptyState = ({ firstName }: { firstName?: string }) => (
 
 export default function ServiceProviderHomepage() {
   const { user } = useAuthStore()
+  console.log('user', user)
   const { data, isPending } = useGetAllServices()
   const { data: appointmentCount, isPending: appointmentCountPending } = useGetAppointmentCount()
-  const { data: reviews, isPending: reviewsPending } = useGetAllReviews()
+  const { data: reviews, isPending: reviewsPending } = useGetAllReviews({ providerEmail: user?.email ?? "" })
+  const { data: rating, isPending: ratingPending } = useGetRating({ providerEmail: user?.email ?? "" })
   const { data: accountBalance, isPending: accountBalancePending } = useGetAccountBalance()
   // const { data: ratings, isPending: ratingsPending } = useGetAllRatings()
 
   // console.log('appointmentCount', appointmentCount)
   const balance = accountBalance?.data?.accountBalance
   const currency = accountBalance?.data?.currency
-  // console.log('ratings', ratings)
+  console.log('ratings', rating)
 
-  const reviewCount = reviews?.length ?? 0
+
+  const reviewCount = reviews?.data?.length ?? 0
+  // const ratingCount = rating?.data?.ratingCount ?? 0
 
   const renderContent = () => {
     if (isPending || appointmentCountPending || reviewsPending || accountBalancePending) return <DashboardSkeleton />
