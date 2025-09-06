@@ -351,6 +351,14 @@ type ValidateAccountPayload = {
   emailAddress: string;
 }
 
+type RegisterPushTokenPayload = {
+  pushToken: string;
+  deviceId: string | null;
+  platform: 'ios' | 'android';
+  appVersion: string;
+  isActive: boolean;
+}
+
 type Country = {
   code: string;
   name: string;
@@ -449,5 +457,5 @@ type BankAccountCardProps = {
   account: BankAccount;
   onViewDetails: (account: BankAccount) => void;
 }
-export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, UploadIndustrialCertificatePayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
+export type { AcceptBookingPayload, Appointment, AppointmentCardProps, AppointmentSectionProps, AuthHeaderProps, BankAccountCardProps, BookAppointmentPayload, CancelAppointmentPayload, ChangePasswordPayload, CompleteAppointmentPayload, Country, CreateBeneficiaryPayload, CreateRatingPayload, createReviewPayload, CurrencyStore, DeleteAccountModalProps, DeleteProfilePayload, ForgotPasswordPayload, FormData, InitiatePaymentPayload, LoadingStateProps, MakeBookingPaymentPayload, Message, PaymentPayload, ProfileHeaderProps, RegisterPushTokenPayload, ResetPasswordPayload, SectionCardProps, SelectOption, SelectProps, SendMessageOptions, SendMessagePayload, Service, ServiceItem, ServiceType, SettingItem, SignInPayload, SignUpPayload, SlideItem, SubmitReviewPayload, UpdateProfilePayload, UpdateToBusinessPayload, UpdateUserBioPayload, UploadIndustrialCertificatePayload, User, UserContextType, ValidateAccountPayload, ValidateResetPasswordEmailPayload, VerificationPayload, WithdrawFundsPayload };
 

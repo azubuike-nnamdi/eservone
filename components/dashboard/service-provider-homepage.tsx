@@ -47,16 +47,18 @@ export default function ServiceProviderHomepage() {
   // console.log('appointmentCount', appointmentCount)
   const balance = accountBalance?.data?.accountBalance
   const currency = accountBalance?.data?.currency
-  console.log('ratings', rating)
+
 
 
   const reviewCount = reviews?.data?.length ?? 0
-  // const ratingCount = rating?.data?.ratingCount ?? 0
+  const ratingCount = rating?.data ?? 0
+
+  console.log('review data', reviews?.data)
 
   const renderContent = () => {
-    if (isPending || appointmentCountPending || reviewsPending || accountBalancePending) return <DashboardSkeleton />
+    if (isPending || appointmentCountPending || reviewsPending || ratingPending || accountBalancePending) return <DashboardSkeleton />
     if (!data) return <EmptyState firstName={user?.firstName} />
-    return <DashboardScreen appointmentCount={appointmentCount} reviewCount={reviewCount} balance={balance} currency={currency} />
+    return <DashboardScreen appointmentCount={appointmentCount} reviewCount={reviewCount} balance={balance} currency={currency} ratingCount={ratingCount} />
   }
 
   return (

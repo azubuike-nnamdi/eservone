@@ -1,14 +1,15 @@
-import Button from '@/components/common/button';
+import RatingSection from '@/components/dashboard/RatingSection';
+import StatItem from '@/components/dashboard/StatItem';
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails';
+import useAppointmentStats from '@/hooks/useAppointmentStats';
 import { formatNumberWithCommas, getGreeting } from '@/lib/helper';
 import { useAuthStore } from '@/store/auth-store';
-import Entypo from '@expo/vector-icons/Entypo';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, SafeAreaView, Text, View } from 'react-native';
 
 
-interface StatItem {
+interface StatItemData {
   id: string;
   label: string;
   value: string;
@@ -19,38 +20,17 @@ type DashboardScreenProps = {
   reviewCount: number;
   balance: number;
   currency: string;
+  ratingCount: number;
 }
 
-const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: DashboardScreenProps) => {
-  const { user } = useAuthStore()
+const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency, ratingCount }: DashboardScreenProps) => {
+  const { user } = useAuthStore();
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
-
   const router = useRouter();
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const numericRating = typeof rating === 'number' ? rating : 0;
-    const fullStars = Math.floor(numericRating);
-    const hasHalfStar = numericRating % 1 !== 0;
-
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push(
-          <Entypo key={i} name="star" size={20} color="#3E3F93" />
-        );
-      } else if (i === fullStars && hasHalfStar) {
-        stars.push(
-          <Entypo key={i} name="star" size={20} color="#3E3F93" />
-        );
-      } else {
-        stars.push(
-          <Entypo key={i} name="star-outlined" size={20} color="#D1D5DB" />
-        );
-      }
-    }
-    return stars;
-  };
+  // Use custom hook for appointment stats
+  const appointmentStats = useAppointmentStats(appointmentCount);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -63,48 +43,17 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
     }
   }, [refetchUserProfile]);
 
-  // Calculate appointment statistics
-  const appointmentStats = useMemo(() => {
-    if (!appointmentCount?.data) {
-      return {
-        completed: 0,
-        canceled: 0,
-        pending: 0,
-        total: 0
-      };
-    }
-
-    // Extract counts from appointmentCount data
-    const pending = appointmentCount.data.find((item: any) => item.statusCount === 'PENDING')?.serviceStatus || 0;
-    const completed = appointmentCount.data.find((item: any) => item.statusCount === 'COMPLETED')?.serviceStatus || 0;
-    const canceled = appointmentCount.data.find((item: any) => item.statusCount === 'CANCELED')?.serviceStatus || 0;
-
-    const total = Number(pending) + Number(completed) + Number(canceled);
-
-    return { completed, canceled, pending, total };
-  }, [appointmentCount?.data]);
-
-  const statsData: StatItem[] = [
+  // Prepare stats data for rendering
+  const statsData: StatItemData[] = useMemo(() => [
     { id: '1', label: 'New job requests', value: appointmentStats.pending.toString() },
     { id: '2', label: 'Total Amount', value: `${currency} ${formatNumberWithCommas(balance ?? 0)}` },
     { id: '3', label: 'Completed appointments', value: appointmentStats.completed.toString() },
     { id: '4', label: 'Cancelled appointments', value: appointmentStats.canceled.toString() }
-  ];
+  ], [appointmentStats, currency, balance]);
 
-  const renderStatItem = ({ item }: { item: StatItem }) => (
-    <View className="bg-gray-100 rounded-lg p-4 w-[48%] mb-2">
-      <Text className="text-gray-600 text-xs mb-1">
-        {item.label}
-      </Text>
-      <Text className="text-lg font-bold text-blue-800">
-        {item.value}
-      </Text>
-    </View>
-  );
-
-  const handleViewReviews = () => {
+  const handleViewReviews = useCallback(() => {
     router.push('/view-reviews');
-  }
+  }, [router]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -119,7 +68,7 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
         </View>
         <FlatList
           data={statsData}
-          renderItem={renderStatItem}
+          renderItem={({ item }) => <StatItem label={item.label} value={item.value} />}
           keyExtractor={item => item.id}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
@@ -134,35 +83,13 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
             />
           }
           ListFooterComponent={
-            <View className='my-12 flex-col items-center justify-between'>
-              <Text className='text-xl text-black-300 font-bold'>Average customer rating:</Text>
-              <Text className='text-5xl  font-bold my-4 text-primary-300'>  {reviewCount ?? 0}</Text>
-
-              <View className='flex-row items-center justify-center gap-1'>
-                {renderStars(reviewCount)}
-              </View>
-
-              <Text className='text-lg text-black-300 font-medium mt-4'>{reviewCount ?? 0} reviews</Text>
-
-              <Button
-                type='button'
-                variant='outline'
-                className='mt-4 w-6/12'
-                onPress={handleViewReviews}
-              >
-                <Text className='font-bold text-primary-300 text-lg'>Read all reviews</Text>
-              </Button>
-
-            </View>
+            <RatingSection
+              ratingCount={ratingCount}
+              reviewCount={reviewCount}
+              onViewReviews={handleViewReviews}
+            />
           }
-
         />
-
-
-        <View className='my-8 flex-row items-center justify-between'>
-          <Text className='text-lg text-black-300 font-bold'>Average customer rating:</Text>
-          <Text className='text-lg text-black-300 font-bold'>4.5</Text>
-        </View>
 
         {/* Loading Overlay during refresh */}
         {refreshing && (

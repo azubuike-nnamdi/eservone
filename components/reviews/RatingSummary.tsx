@@ -6,10 +6,11 @@ import { RatingStats } from './types';
 
 interface RatingSummaryProps {
   ratingStats: RatingStats;
+  ratingCount: number; // This is now the average rating
 }
 
-const RatingSummary: React.FC<RatingSummaryProps> = ({ ratingStats }) => {
-  const { averageRating, percentages, totalReviews } = ratingStats;
+const RatingSummary: React.FC<RatingSummaryProps> = ({ ratingStats, ratingCount }) => {
+  const { percentages, totalReviews } = ratingStats;
 
   return (
     <View className="bg-white mx-4 mt-6 rounded-2xl p-6" style={{
@@ -23,11 +24,11 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ ratingStats }) => {
         {/* Overall Rating */}
         <View className="items-center flex-1">
           <Text className="text-5xl font-bold text-indigo-700 mb-1">
-            {averageRating}
+            {ratingCount.toFixed(1)}
             <Text className="text-2xl text-gray-500">/5</Text>
           </Text>
           <View className="flex-row items-center mb-2">
-            <StarRating rating={parseFloat(averageRating)} size={20} />
+            <StarRating rating={ratingCount} size={20} />
           </View>
           <Text className="text-gray-600 text-base">
             {totalReviews} {totalReviews === 1 ? 'Review' : 'Reviews'}
@@ -37,7 +38,7 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ ratingStats }) => {
         {/* Separator */}
         <View className="h-24 w-px bg-gray-200 mx-2" />
 
-        {/* Rating Distribution */}
+        {/* Rating Distribution - Estimated from total rating count */}
         <View className="flex-1 ml-2">
           {[5, 4, 3, 2, 1].map((rating) => (
             <View key={rating} className="flex-row items-center mb-3">
@@ -60,6 +61,11 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ ratingStats }) => {
               </Text>
             </View>
           ))}
+          {totalReviews > 0 && (
+            <Text className="text-gray-400 text-xs text-center mt-2">
+              *Estimated distribution
+            </Text>
+          )}
         </View>
       </View>
     </View>
