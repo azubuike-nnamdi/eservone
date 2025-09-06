@@ -19,10 +19,6 @@ export default function Homepage() {
    const { handleInitiatePayment, isPending } = useInitiatePayment();
    const [amount, setAmount] = useState('');
 
-
-
-
-
    // This function is called when user presses "Top Up" in the modal
    const handleTopUp = async () => {
       if (!amount || isNaN(Number(amount))) return;
