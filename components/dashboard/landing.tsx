@@ -25,7 +25,7 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
   const { user } = useAuthStore()
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
-  const [showReviewsModal, setShowReviewsModal] = useState(false);
+
   const router = useRouter();
 
   const renderStars = (rating: number) => {
@@ -135,8 +135,8 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency }: D
           }
           ListFooterComponent={
             <View className='my-12 flex-col items-center justify-between'>
-              <Text className='text-xl text-black-300 font-bold'>Total customer rating:</Text>
-              <Text className='text-5xl  font-bold my-4 text-primary-300'>{0}</Text>
+              <Text className='text-xl text-black-300 font-bold'>Average customer rating:</Text>
+              <Text className='text-5xl  font-bold my-4 text-primary-300'>  {reviewCount ?? 0}</Text>
 
               <View className='flex-row items-center justify-center gap-1'>
                 {renderStars(reviewCount)}

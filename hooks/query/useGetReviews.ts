@@ -7,10 +7,10 @@ export const useGetAllReviews = ({ providerEmail }: { providerEmail: string }) =
     return response.data
   }
 
-  const { data, isPending, error, isError } = useQuery({
+  const { data, isPending, error, isError, refetch } = useQuery({
     queryKey: ['reviews', providerEmail],
     queryFn: getAllReviews
   })
 
-  return { data, isPending, error, isError }
+  return { data, isPending, error, isError, refetch }
 }

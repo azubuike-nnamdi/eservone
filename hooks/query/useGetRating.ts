@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetRating = ({ providerEmail }: { providerEmail: string }) => {
   const getRating = async () => {
-    const response = await api.get(`/eserve-one/get-all-rating?providerEmail=${providerEmail}`,)
+    const response = await api.get(`/eserve-one/get-ratings?providerEmail=${providerEmail}`,)
     return response.data
   }
 
