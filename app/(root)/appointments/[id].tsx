@@ -3,6 +3,7 @@ import AppointmentInfoSection from "@/components/appointments/appointment-info-s
 import AppointmentStatusIndicator from "@/components/appointments/appointment-status-indicator";
 import CancelAppointmentModal from "@/components/appointments/cancel-appointment-modal";
 import CompleteAppointmentModal from "@/components/appointments/complete-appointment-modal";
+import DeclineAppointmentModal from "@/components/appointments/decline-appointment-modal";
 import IssueReportModal from "@/components/appointments/issue-report-modal";
 import ReviewSubmissionModal from "@/components/appointments/review-submission-modal";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
@@ -24,15 +25,18 @@ export default function AppointmentDetails() {
     showCancelModal,
     showCompleteModal,
     showReviewModal,
+    showDeclineModal,
     showReportModal,
     setShowCancelModal,
     setShowCompleteModal,
     setShowReviewModal,
+    setShowDeclineModal,
     setShowReportModal,
     isCancelling,
     isCompleting,
     isCreatingRating,
     isCreatingReview,
+    isDecliningAppointment,
     isMakingPayment,
     isReporting,
     handleReschedule,
@@ -48,6 +52,8 @@ export default function AppointmentDetails() {
     handleConfirmCancel,
     handleConfirmComplete,
     handleAcceptBooking,
+    handleDecline,
+    handleConfirmDecline,
     isAcceptingBooking,
     needsBothCompletion,
   } = useAppointmentDetails();
@@ -99,7 +105,9 @@ export default function AppointmentDetails() {
           onCancel={handleCancel}
           onReview={handleReview}
           onPayNow={handlePayNow}
+          onDecline={handleDecline}
           isCompleting={isCompleting}
+          isDecliningAppointment={isDecliningAppointment}
           isMakingPayment={isMakingPayment}
           onAcceptBooking={handleAcceptBooking}
           isAcceptingBooking={isAcceptingBooking}
@@ -134,6 +142,13 @@ export default function AppointmentDetails() {
         onClose={() => setShowReportModal(false)}
         onSubmit={handleSubmitReport}
         isLoading={isReporting}
+      />
+
+      <DeclineAppointmentModal
+        visible={showDeclineModal}
+        onClose={() => setShowDeclineModal(false)}
+        onConfirm={handleConfirmDecline}
+        isLoading={isDecliningAppointment}
       />
     </SafeAreaView>
   );

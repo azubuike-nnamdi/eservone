@@ -21,7 +21,9 @@ interface AppointmentActionsSectionProps {
   onCancel: () => void;
   onReview: () => void;
   onPayNow: () => void;
+  onDecline: () => void;
   isCompleting: boolean;
+  isDecliningAppointment: boolean;
   isMakingPayment: boolean;
   onAcceptBooking?: () => void;
   isAcceptingBooking?: boolean;
@@ -42,7 +44,9 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
   onCancel,
   onReview,
   onPayNow,
+  onDecline,
   isCompleting,
+  isDecliningAppointment,
   isMakingPayment,
   onAcceptBooking,
   isAcceptingBooking,
@@ -64,7 +68,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
   return (
 
     <>
-      {/* Accept booking for providers when status is PENDING */}
+      {/* Accept/Decline booking for providers when status is PENDING */}
       {isProvider && appointment.serviceAppointmentStatus === 'PENDING' && (
         <>
           <View className="bg-white mb-6">
@@ -76,6 +80,17 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
               <Image source={icons.markCompletedIcon} className="w-5 h-5" />
               <Text className="text-base text-black">
                 {isAcceptingBooking ? 'Accepting booking...' : 'Accept booking'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-row items-center gap-4 py-4"
+              onPress={onDecline}
+              disabled={isDecliningAppointment}
+            >
+              <Image source={icons.cancelIcon} className="w-5 h-5" />
+              <Text className="text-base font-semibold text-red-600">
+                {isDecliningAppointment ? 'Declining...' : 'Decline offer'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -154,16 +169,15 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
         </View>
       )}
 
-      {/* Cancel appointment - Show for both seekers and providers when both statuses are pending OR when status is ACCEPT and payment not successful */}
-      {((appointment.seekerServiceStatus === 'PENDING' && appointment.providerServiceStatus === 'PENDING') ||
-        (appointment.serviceAppointmentStatus === 'ACCEPT' && appointment.paymentStatus === 'PENDING')) && (
-          <View className="bg-white mb-6">
-            <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onCancel}>
-              <Image source={icons.cancelIcon} className="w-6 h-6" />
-              <Text className="text-base font-semibold text-red-600">Cancel appointment</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+      {/* Cancel appointment - Show for both seekers and providers when serviceAppointmentStatus is ACCEPT */}
+      {appointment.serviceAppointmentStatus === 'ACCEPT' && (
+        <View className="bg-white mb-6">
+          <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onCancel}>
+            <Image source={icons.cancelIcon} className="w-6 h-6" />
+            <Text className="text-base font-semibold text-red-600">Cancel appointment</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Review Section - Only for completed appointments and seekers */}
       {isCompleted && isSeeker && (

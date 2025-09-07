@@ -10,7 +10,7 @@ const AppointmentStatusIndicator: React.FC<AppointmentStatusIndicatorProps> = ({
   // Check both statuses to determine the correct message and styling
   const isAppointmentPending = appointment.serviceAppointmentStatus === 'PENDING';
   const isAppointmentAccepted = appointment.serviceAppointmentStatus === 'ACCEPT';
-  const isAppointmentDeclined = appointment.serviceAppointmentStatus === 'DECLINED';
+  const isAppointmentDeclined = appointment.serviceAppointmentStatus === 'DECLINE';
 
   // Service completion status (only when both parties complete)
   const isServiceCompleted = appointment.seekerServiceStatus === 'COMPLETED' && appointment.providerServiceStatus === 'COMPLETED';

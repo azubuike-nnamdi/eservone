@@ -1,5 +1,6 @@
 import { Appointment } from '@/constants/types'
 import { useCurrency } from '@/context/currency-context'
+import { getDeliveryTypeDisplay } from '@/lib/helper'
 import { Ionicons } from '@expo/vector-icons'
 import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
@@ -45,6 +46,17 @@ export default function AppointmentCard({ type, appointment, onPress, noMargin =
         <Text className={`text-xs mb-1 ${faded ? 'text-black-300' : 'text-black-500'}`} numberOfLines={1}>
           {provider}
         </Text>
+
+        {/* Delivery Type */}
+        {(appointment.homeService || appointment.walkInService) && (
+          <View className="flex-row items-center mb-1">
+            <Ionicons name="car-outline" size={12} color="#6B7280" />
+            <Text className={`text-xs ml-1 ${faded ? 'text-black-400' : 'text-black-500'}`}>
+              {getDeliveryTypeDisplay(appointment.homeService, appointment.walkInService)}
+            </Text>
+          </View>
+        )}
+
         <Text className={`text-xs ${faded ? 'text-black-400' : 'text-black-500'}`}>
           Price: <Text className="font-bold text-black">{formattedCost}</Text>
         </Text>
