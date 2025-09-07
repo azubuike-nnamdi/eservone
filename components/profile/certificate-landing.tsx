@@ -1,12 +1,18 @@
 import icons from "@/constants/icons";
 import { UPLOAD_CERTIFICATE } from "@/constants/routes";
+import { useGetIndustrialCertificate } from "@/hooks/query/useGetIndustrialCertificate";
 import { useRouter } from "expo-router";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import Button from "../common/button";
 export default function CertificateLanding() {
   const router = useRouter();
 
+  const { isPending, data } = useGetIndustrialCertificate()
+
+  console.log('industrial certificate', data)
+
   const handleAddCertificate = () => {
+
     router.push(UPLOAD_CERTIFICATE);
   }
   return (
