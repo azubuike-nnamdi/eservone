@@ -1,10 +1,12 @@
 import { ServiceItem } from '@/constants/types'
 import { useCurrency } from '@/context/currency-context'
+import { getDeliveryTypeDisplay } from '@/lib/helper'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 
 const FALLBACK_IMAGE = 'https://images.pexels.com/photos/3998414/pexels-photo-3998414.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+
 
 export default function ServiceCard({ item, onPress }: { item: ServiceItem; onPress: () => void }) {
   const { format } = useCurrency()
@@ -53,12 +55,14 @@ export default function ServiceCard({ item, onPress }: { item: ServiceItem; onPr
               {item.address || 'No address'}
             </Text>
           </View>
-          <View className="flex-row items-center">
-            <Ionicons name="car-outline" size={16} color="#6B7280" />
-            <Text className="text-gray-600 text-sm ml-1">
-              {item.serviceDeliveryType === 'HOME_SERVICE' ? 'Home Service' : 'Walk-in'}
-            </Text>
-          </View>
+          {(item.homeService || item.walkInService) && (
+            <View className="flex-row items-center">
+              <Ionicons name="car-outline" size={16} color="#6B7280" />
+              <Text className="text-gray-600 text-sm ml-1">
+                {getDeliveryTypeDisplay(item.homeService, item.walkInService)}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Manage Service Link */}

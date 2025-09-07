@@ -24,8 +24,16 @@ export const calculateRatingStats = (reviews: Review[]): RatingStats => {
   return { averageRating, ratingCounts, percentages, totalReviews };
 };
 
-export const getInitials = (userId: number): string => {
-  return `U${userId.toString().slice(-2)}`;
+export const getInitials = (name: string): string => {
+  if (!name || name.trim() === '') return 'U';
+
+  const words = name.trim().split(' ');
+  if (words.length === 1) {
+    return words[0].charAt(0).toUpperCase();
+  }
+
+  // Get first letter of first word and first letter of last word
+  return `${words[0].charAt(0)}${words[words.length - 1].charAt(0)}`.toUpperCase();
 };
 
 export const getRandomColor = (userId: number): string => {
