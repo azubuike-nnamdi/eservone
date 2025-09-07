@@ -3,6 +3,7 @@ import { useToast } from "@/context/toast-context"
 import { api } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "expo-router"
+import { Alert } from "react-native"
 
 const useCompleteAppointment = () => {
   const router = useRouter()
@@ -14,12 +15,12 @@ const useCompleteAppointment = () => {
     mutationFn: (payload: CompleteAppointmentPayload) => api.post(`/eserve-one/completed-appointment`, payload),
     onSuccess: async (data) => {
       if (data) {
-        showToast(data?.data?.description, "success")
+        Alert.alert(data?.data?.description)
         router.back()
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      showToast(error?.response?.data?.description ?? "Failed to book appointment", "error")
+      Alert.alert(error?.response?.data?.description ?? "Failed to book appointment")
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] })

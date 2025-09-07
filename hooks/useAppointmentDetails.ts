@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import useAcceptBooking from "./mutation/useAcceptBooking";
 import useCreateRating from "./mutation/useCreateRating";
+import useDeclineAppointment from "./mutation/useDeclineAppointment";
 import useMakeBookingPayment from "./mutation/useMakeBookingPayment";
 import useProviderCancelAppointment from "./mutation/useProviderCancelAppointment";
 import useProviderCompleteAppointment from "./mutation/useProviderCompleteAppointment";
@@ -25,6 +26,7 @@ export const useAppointmentDetails = () => {
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
 
   // Hooks
@@ -37,6 +39,7 @@ export const useAppointmentDetails = () => {
   const { handleCreateRating, isPending: isCreatingRating } = useCreateRating();
   const { handleCreateRating: handleCreateReview, isPending: isCreatingReview } = useSubmitReview();
   const { handleAcceptBooking: acceptBooking, isPending: isAcceptingBooking } = useAcceptBooking();
+  const { handleDeclineAppointment, isPending: isDecliningAppointment } = useDeclineAppointment();
   const { handleMakeBookingPayment, isPending: isMakingPayment } = useMakeBookingPayment();
 
   // Effects
@@ -163,6 +166,17 @@ export const useAppointmentDetails = () => {
     }
   };
 
+  const handleDecline = () => {
+    setShowDeclineModal(true);
+  };
+
+  const handleConfirmDecline = () => {
+    if (appointment) {
+      handleDeclineAppointment({ serviceAppointmentId: appointment.id });
+      setShowDeclineModal(false);
+    }
+  };
+
   const handleSubmitReport = async (issueType: string, description: string) => {
     setIsReporting(true);
     // TODO: Implement actual report submission logic (API call)
@@ -193,9 +207,11 @@ export const useAppointmentDetails = () => {
     showCancelModal,
     showCompleteModal,
     showReviewModal,
+    showDeclineModal,
     setShowCancelModal,
     setShowCompleteModal,
     setShowReviewModal,
+    setShowDeclineModal,
     showReportModal,
     setShowReportModal,
     isReporting,
@@ -208,6 +224,7 @@ export const useAppointmentDetails = () => {
     isCreatingRating,
     isCreatingReview,
     isAcceptingBooking,
+    isDecliningAppointment,
     isMakingPayment,
 
     // Action handlers
@@ -223,6 +240,8 @@ export const useAppointmentDetails = () => {
     handleConfirmCancel,
     handleConfirmComplete,
     handleAcceptBooking,
+    handleDecline,
+    handleConfirmDecline,
     handleSubmitReport,
 
   };

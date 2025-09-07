@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { useServiceCreationStore } from "@/store/service-creation-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
+import { Alert } from "react-native";
 
 // Define the payload structure according to the API's JSON expectation
 interface CreateServicePayload {
@@ -13,6 +14,9 @@ interface CreateServicePayload {
   serviceDeliveryType: string;
   minimumPrice: number;
   maximumPrice: number;
+  address: string;
+  homeService: boolean;
+  walkInService: boolean;
   receivablePrice?: number; // Keep commented if calculated server-side
   uploadImage: {
     image: string; // Base64 encoded string
@@ -33,14 +37,16 @@ export const useCreateService = () => {
     },
     onSuccess: (data) => {
       if (data) {
-        showToast(data?.data?.description, "success")
+
+        Alert.alert(data?.data?.description)
         resetStore()
         router.push(MANAGE_SERVICES)
       }
       queryClient.invalidateQueries({ queryKey: ["services"] })
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      showToast(error?.response?.data?.description, "error")
+
+      Alert.alert(error?.response?.data?.description || "Something went wrong")
       //redirect user to verify identity if message is "You cannot create service, Kindly complete signup."
       if (error?.response?.data?.description === "You cannot create service, Kindly complete signup") {
         router.push('/service-creation/verify-identity')

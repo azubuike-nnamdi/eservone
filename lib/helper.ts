@@ -154,3 +154,4 @@ export const getDeliveryTypeDisplay = (homeService?: boolean, walkInService?: bo
   }
   return null; // Don't show anything if both are false
 };
+

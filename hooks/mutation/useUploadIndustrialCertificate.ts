@@ -22,7 +22,7 @@ const useUploadIndustrialCertificate = () => {
       Alert.alert('Error', error?.response?.data?.description ?? "Failed to upload industrial certificate")
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] })
+      queryClient.invalidateQueries({ queryKey: ["user-profile", "industrial-certificate"] })
     }
   })
 
