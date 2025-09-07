@@ -117,10 +117,10 @@ export const useAppointmentDetails = () => {
     }
   };
 
-  const handlePayNow = () => {
-    if (appointment && user) {
+  const handlePayNow = (amount: string) => {
+    if (appointment && user && amount.trim()) {
       const payload = {
-        amount: String(appointment.costOfService),
+        amount: amount,
         description: `Payment for ${appointment.serviceName}`,
         receiverWalletId: appointment?.serviceProviderEmail,
         serviceAppointmentId: appointment?.id,

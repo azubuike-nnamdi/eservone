@@ -245,7 +245,7 @@ type BookAppointmentPayload = {
   additionalDetails: string;
   appointmentDate: string;
   buzzCode: string;
-  costOfService: string;
+  costOfService?: string;
   customerAddress: string;
   hasPet: boolean;
   serviceId: number;

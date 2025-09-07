@@ -17,19 +17,19 @@ interface BookingFormProps {
   upfront: string;
   details: string;
   hasPets: boolean;
-  costOfService: string;
-  costError: string;
+  costOfService?: string;
+  costError?: string;
   onDatePress: () => void;
   onTimeChange: (time: string) => void;
   onBuzzCodeChange: (code: string) => void;
   onUpfrontChange: (upfront: string) => void;
   onDetailsChange: (details: string) => void;
   onHasPetsChange: (hasPets: boolean) => void;
-  onCostOfServiceChange: (cost: string) => void;
+  onCostOfServiceChange?: (cost: string) => void;
   timeOptions: { label: string; value: string }[];
   upfrontOptions: { label: string; value: string }[];
-  minPrice: string;
-  maxPrice: string;
+  minPrice?: string;
+  maxPrice?: string;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
@@ -45,7 +45,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   upfront,
   details,
   hasPets,
-  costOfService,
+  // costOfService,
   costError,
   onDatePress,
   onTimeChange,
@@ -53,11 +53,11 @@ const BookingForm: React.FC<BookingFormProps> = ({
   onUpfrontChange,
   onDetailsChange,
   onHasPetsChange,
-  onCostOfServiceChange,
+  // onCostOfServiceChange,
   timeOptions,
   upfrontOptions,
-  minPrice,
-  maxPrice,
+  // minPrice,
+  // maxPrice,
 }) => {
   return (
     <>
@@ -83,14 +83,14 @@ const BookingForm: React.FC<BookingFormProps> = ({
       />
 
       {/* Cost of Service */}
-      <TextInput
+      {/* <TextInput
         label={`Cost of service (${minPrice} - ${maxPrice})`}
         value={costOfService}
         onChangeText={onCostOfServiceChange}
         placeholder="Enter amount"
         keyboardType="numeric"
         error={costError}
-      />
+      /> */}
 
       {/* Date and Time */}
       <View className="flex-row mb-2 gap-2">

@@ -1,7 +1,8 @@
 import icons from "@/constants/icons";
 import { Appointment } from "@/constants/types";
+import { formatNumberWithCommas } from "@/lib/helper";
 import React, { useState } from "react";
-import { Image, Share, Text, TouchableOpacity, View } from "react-native";
+import { Image, Share, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Button from "../common/button";
 import AcceptBookingModal from "./accept-booking-modal";
 import CompletionActions from "./completion-actions";
@@ -20,7 +21,7 @@ interface AppointmentActionsSectionProps {
   onReport: () => void;
   onCancel: () => void;
   onReview: () => void;
-  onPayNow: () => void;
+  onPayNow: (amount: string) => void;
   onDecline: () => void;
   isCompleting: boolean;
   isDecliningAppointment: boolean;
@@ -53,6 +54,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
   needsBothCompletion
 }) => {
   const [showAcceptModal, setShowAcceptModal] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState('');
 
   // // Debug logging - remove this when done testing
   // console.log('AppointmentActionsSection Debug:', {
@@ -192,12 +194,24 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
         !(appointment.seekerServiceStatus === 'COMPLETED' && appointment.providerServiceStatus === 'COMPLETED') &&
         isSeeker &&
         appointment.paymentStatus !== 'SUCCESSFUL' && (
-          <View className="bg-white mb-6">
+          <View className="bg-white mb-6 p-4 rounded-lg">
             <Text className="text-lg font-bold mb-4">Payment</Text>
+
+            <View className="mb-4">
+              <Text className="text-sm text-gray-600 mb-2">Enter amount to pay</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-3 text-base"
+                placeholder="Enter amount (₦)"
+                value={paymentAmount}
+                onChangeText={setPaymentAmount}
+                keyboardType="numeric"
+              />
+            </View>
+
             <Button
               className="bg-green-600 py-4 rounded-lg"
-              onPress={onPayNow}
-              disabled={isMakingPayment}
+              onPress={() => onPayNow(paymentAmount)}
+              disabled={isMakingPayment || !paymentAmount.trim()}
               loadingText="Processing Payment..."
               loading={isMakingPayment}
             >
@@ -205,8 +219,9 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
                 Pay Now
               </Text>
             </Button>
+
             <Text className="text-sm text-gray-500 mt-2 text-center">
-              Amount: ₦{appointment.costOfService}
+              Service Cost: ₦{formatNumberWithCommas(paymentAmount)}
             </Text>
           </View>
         )}

@@ -150,12 +150,12 @@ export default function ProductById() {
     const hasDate = date !== null;
     const hasTime = time.trim().length > 0;
     const hasUpfront = upfront.trim().length > 0;
-    const hasValidCost = costOfService.trim().length > 0 &&
-      !costError &&
-      parseFloat(costOfService) >= (service?.minimumPrice || 0) &&
-      parseFloat(costOfService) <= (service?.maximumPrice || Infinity);
+    // const hasValidCost = costOfService.trim().length > 0 &&
+    //   !costError &&
+    //   parseFloat(costOfService) >= (service?.minimumPrice || 0) &&
+    //   parseFloat(costOfService) <= (service?.maximumPrice || Infinity);
 
-    return hasAddress && hasDate && hasTime && hasUpfront && hasValidCost;
+    return hasAddress && hasDate && hasTime && hasUpfront;
   };
 
   const handleBookService = () => {
@@ -168,7 +168,7 @@ export default function ProductById() {
       additionalDetails: details,
       appointmentDate: isoString,
       buzzCode,
-      costOfService: service?.minimumPrice?.toString() || '',
+      // costOfService: service?.minimumPrice?.toString() || '',
       customerAddress: address,
       hasPet: hasPets,
       serviceId: Number(id),
@@ -215,19 +215,19 @@ export default function ProductById() {
             upfront={upfront}
             details={details}
             hasPets={hasPets}
-            costOfService={costOfService}
-            costError={costError}
+            // costOfService={costOfService}
+            // costError={costError}
             onDatePress={() => setShowDatePicker(true)}
             onTimeChange={setTime}
             onBuzzCodeChange={setBuzzCode}
             onUpfrontChange={setUpfront}
             onDetailsChange={setDetails}
             onHasPetsChange={setHasPets}
-            onCostOfServiceChange={setCostOfService}
+            // onCostOfServiceChange={setCostOfService}
             timeOptions={filteredTimeOptions}
             upfrontOptions={upfrontOptions}
-            minPrice={formattedMinPrice}
-            maxPrice={formattedMaxPrice}
+          // minPrice={formattedMinPrice}
+          // maxPrice={formattedMaxPrice}
           />
 
           {/* Book service button */}
