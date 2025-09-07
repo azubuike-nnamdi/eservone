@@ -221,7 +221,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
             </Button>
 
             <Text className="text-sm text-gray-500 mt-2 text-center">
-              Service Cost: ₦{formatNumberWithCommas(paymentAmount)}
+              Amount to Pay: ₦{formatNumberWithCommas(paymentAmount) || '0'}
             </Text>
           </View>
         )}

@@ -11,7 +11,6 @@ import { useCurrency } from '@/context/currency-context';
 import useBookAppointment from "@/hooks/mutation/useBookAppointment";
 import useGetServiceById from "@/hooks/query/useGetServiceById";
 import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
-import { useDebounce } from "@/lib/helper";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, View } from "react-native";
@@ -35,11 +34,11 @@ export default function ProductById() {
   const [upfront, setUpfront] = useState('0');
   const [details, setDetails] = useState('');
   const [hasPets, setHasPets] = useState(false);
-  const [costOfService, setCostOfService] = useState('');
-  const [costError, setCostError] = useState('');
+  // const [costOfService, setCostOfService] = useState('');
+  // const [costError, setCostError] = useState('');
 
   // Debounce cost validation
-  const debouncedCost = useDebounce(costOfService, 500);
+  // const debouncedCost = useDebounce(costOfService, 500);
 
   const upfrontOptions = [
     { label: '0', value: '0' },
@@ -79,26 +78,26 @@ export default function ProductById() {
   const service = serviceData?.data;
 
   // Debounced cost validation
-  useEffect(() => {
-    if (debouncedCost && service?.minimumPrice && service?.maximumPrice) {
-      const cost = parseFloat(debouncedCost);
-      const minPrice = service.minimumPrice;
-      const maxPrice = service.maximumPrice;
+  // useEffect(() => {
+  //   if (debouncedCost && service?.minimumPrice && service?.maximumPrice) {
+  //     const cost = parseFloat(debouncedCost);
+  //     const minPrice = service.minimumPrice;
+  //     const maxPrice = service.maximumPrice;
 
-      if (isNaN(cost)) {
-        setCostError('Please enter a valid number');
-      } else if (cost < minPrice) {
-        setCostError(`Amount must be at least ${format(minPrice)}`);
-      } else if (cost > maxPrice) {
-        setCostError(`Amount cannot exceed ${format(maxPrice)}`);
-      } else {
-        setCostError('');
-      }
-    } else if (debouncedCost === '') {
-      // Clear error when input is empty
-      setCostError('');
-    }
-  }, [debouncedCost, service?.minimumPrice, service?.maximumPrice, format]);
+  //     if (isNaN(cost)) {
+  //       setCostError('Please enter a valid number');
+  //     } else if (cost < minPrice) {
+  //       setCostError(`Amount must be at least ${format(minPrice)}`);
+  //     } else if (cost > maxPrice) {
+  //       setCostError(`Amount cannot exceed ${format(maxPrice)}`);
+  //     } else {
+  //       setCostError('');
+  //     }
+  //   } else if (debouncedCost === '') {
+  //     // Clear error when input is empty
+  //     setCostError('');
+  //   }
+  // }, [debouncedCost, service?.minimumPrice, service?.maximumPrice, format]);
 
   if (isPending) {
     return (
@@ -199,6 +198,8 @@ export default function ProductById() {
             maxPrice={formattedMaxPrice}
             selectedServiceType={selectedServiceType}
             onServiceTypeChange={setSelectedServiceType}
+            homeService={service?.homeService}
+            walkInService={service?.walkInService}
           />
 
           {/* Booking Form */}
