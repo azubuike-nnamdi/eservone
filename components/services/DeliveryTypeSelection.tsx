@@ -19,11 +19,9 @@ export default function DeliveryTypeSelection({ showErrors }: DeliveryTypeSelect
 
       <Checkbox
         label="Walk-in service"
-        checked={store.deliveryType.walkIn}
+        checked={store.deliveryType.walkInService}
         onChange={() => {
-          store.setDeliveryType('walkIn', true);
-          store.setDeliveryType('homeService', false);
-          store.setDeliveryType('virtualService', false);
+          store.setDeliveryType('walkInService', !store.deliveryType.walkInService);
         }}
       />
 
@@ -31,14 +29,12 @@ export default function DeliveryTypeSelection({ showErrors }: DeliveryTypeSelect
         label="Home service"
         checked={store.deliveryType.homeService}
         onChange={() => {
-          store.setDeliveryType('walkIn', false);
-          store.setDeliveryType('homeService', true);
-          store.setDeliveryType('virtualService', false);
+          store.setDeliveryType('homeService', !store.deliveryType.homeService);
         }}
       />
 
       {/* Validation error for delivery type */}
-      {showErrors && !store.deliveryType.walkIn && !store.deliveryType.homeService && validation.errors.includes("At least one delivery type must be selected") && (
+      {showErrors && !store.deliveryType.walkInService && !store.deliveryType.homeService && validation.errors.includes("At least one delivery type must be selected") && (
         <Text className="text-red-500 text-sm mt-2">
           At least one delivery type must be selected
         </Text>

@@ -7,8 +7,8 @@ interface ServiceCreationState {
   serviceDescription: string
   serviceAddress: string
   deliveryType: {
-    walkIn: boolean
     homeService: boolean
+    walkInService: boolean
     virtualService: boolean
   }
   minFee: number | null
@@ -34,8 +34,8 @@ const initialState = {
   serviceDescription: '',
   serviceAddress: '',
   deliveryType: {
-    walkIn: false,
     homeService: false,
+    walkInService: false,
     virtualService: false,
   },
   minFee: null,
@@ -91,7 +91,7 @@ export const useServiceCreationStore = create<ServiceCreationState>((set, get) =
       errors.push("Service address is required");
     }
 
-    if (!state.deliveryType.walkIn && !state.deliveryType.homeService) {
+    if (!state.deliveryType.homeService && !state.deliveryType.walkInService) {
       errors.push("At least one delivery type must be selected");
     }
 
