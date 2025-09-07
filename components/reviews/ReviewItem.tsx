@@ -1,17 +1,47 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
-import StarRating from './StarRating';
 import { Review } from './types';
-import { formatDate, getInitials, getRandomColor } from './utils';
+import { getInitials, getRandomColor } from './utils';
 
 interface ReviewItemProps {
   review: Review;
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({ review }) => {
-  const initials = getInitials(review.commentCreatedBy);
+  const initials = getInitials(review.commentCreatedBy.toString());
   const color = getRandomColor(review.commentCreatedBy);
-  const formattedDate = formatDate(review.createdAt);
+
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <Ionicons key={i} name="star" size={16} color="#FCD34D" />
+      );
+    }
+
+    // Half star
+    if (hasHalfStar) {
+      stars.push(
+        <Ionicons key="half" name="star-half" size={16} color="#FCD34D" />
+      );
+    }
+
+    // Empty stars
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <Ionicons key={`empty-${i}`} name="star-outline" size={16} color="#D1D5DB" />
+      );
+    }
+
+    return stars;
+  };
+
 
   return (
     <View className="bg-white rounded-2xl p-5 mb-4 mx-4 shadow-sm border border-gray-100" style={{
@@ -38,22 +68,24 @@ const ReviewItem: React.FC<ReviewItemProps> = ({ review }) => {
         {/* Review Content */}
         <View className="flex-1">
           <View className="flex-row items-center justify-between mb-2">
-            {review.rating && (
-              <View className="flex-row items-center bg-gray-50 px-2 py-1 rounded-full">
-                <StarRating rating={review.rating} size={14} />
-                <Text className="text-gray-700 font-semibold ml-1 text-xs">
-                  {review.rating}
-                </Text>
-              </View>
+            {review.commentCreatedBy && (
+              <Text className="text-gray-700 font-semibold ml-1 text-xs">
+                Commented by: {review.commentCreatedBy}
+              </Text>
             )}
           </View>
 
-          <View className="flex-row items-center mb-3">
-            <StarRating rating={review.rating || 0} size={14} />
-            <Text className="text-gray-500 text-xs ml-2">
-              {formattedDate}
-            </Text>
-          </View>
+          {/* Star Rating */}
+          {review.rating !== null && (
+            <View className="flex-row items-center mb-3">
+              <View className="flex-row items-center">
+                {renderStars(review.rating)}
+              </View>
+              <Text className="text-gray-500 text-xs ml-2">
+                {review.rating}/5
+              </Text>
+            </View>
+          )}
 
           <Text className="text-gray-800 text-sm leading-6">
             {review.content}
