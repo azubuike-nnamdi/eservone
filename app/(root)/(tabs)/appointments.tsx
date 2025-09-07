@@ -18,8 +18,9 @@ function sectionAppointments(appointments: Appointment[] = []) {
     // Service is only completed when BOTH seeker and provider complete
     const isServiceCompleted = appointment?.seekerServiceStatus === 'COMPLETED' && appointment?.providerServiceStatus === 'COMPLETED';
     const isServiceCanceled = appointment?.serviceAppointmentStatus === 'CANCELED';
+    const isServiceDeclined = appointment?.serviceAppointmentStatus === 'DECLINE';
 
-    if (isServiceCompleted || isServiceCanceled) {
+    if (isServiceCompleted || isServiceCanceled || isServiceDeclined) {
       history.push(appointment);
     } else {
       upcoming.push(appointment);
