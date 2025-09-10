@@ -7,10 +7,10 @@ export const useGetIndustrialCertificate = () => {
     return response.data
   }
 
-  const { data, isPending, error } = useQuery({
+  const { data, isPending, error, isError } = useQuery({
     queryKey: ['industrial-certificate'],
     queryFn: getIndustrialCertificate
   })
 
-  return { data, isPending, error }
+  return { data, isPending, error, isError }
 }
