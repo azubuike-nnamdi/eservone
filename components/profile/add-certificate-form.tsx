@@ -1,5 +1,5 @@
 import useUploadIndustrialCertificate from '@/hooks/mutation/useUploadIndustrialCertificate';
-import useGetServiceCategory from '@/hooks/query/useGetServiceCategory';
+import useGetServiceCategoryByUser from '@/hooks/query/useGetServiceCategoryByUser';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -65,7 +65,7 @@ const ServiceSelection: React.FC<{
 
   // Map service categories from API to the format needed by Select component
   const serviceOptions: SelectOption[] = serviceCategories?.map(service => ({
-    label: service.serviceType,
+    label: service.serviceName,
     value: service.id,
   })) || [];
 
@@ -117,7 +117,7 @@ export default function AddCertificateForm() {
     document: null,
   });
 
-  const { data: serviceCategory, isPending: isLoadingCategories } = useGetServiceCategory()
+  const { data: serviceCategory, isPending: isLoadingCategories } = useGetServiceCategoryByUser()
 
   const { handleUploadIndustrialCertificate, isPending } = useUploadIndustrialCertificate()
   const [errorMessage, setErrorMessage] = useState('');
