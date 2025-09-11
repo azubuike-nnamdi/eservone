@@ -60,6 +60,8 @@ type User = {
   userRole: string;
   country?: string;
   currency?: string;
+  isBusiness?: boolean;
+  isIndustryCertificateVerified?: boolean;
 };
 
 type UserContextType = {

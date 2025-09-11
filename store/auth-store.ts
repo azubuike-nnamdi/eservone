@@ -10,6 +10,8 @@ interface AuthState {
   isAuthenticated: boolean
   setAuth: (accessToken: string, refreshToken: string, user: User) => void
   clearAuth: () => void
+  isBusiness: boolean | null
+  isIndustryCertificateVerified: boolean | null
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -19,6 +21,8 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       user: null,
       isAuthenticated: false,
+      isBusiness: null,
+      isIndustryCertificateVerified: null,
       setAuth: (accessToken, refreshToken, user) =>
         set({
           accessToken,

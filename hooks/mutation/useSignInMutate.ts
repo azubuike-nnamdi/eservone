@@ -14,6 +14,7 @@ const useSignInMutate = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: SignInPayload) => axios.post(`${baseURL}/eserve-one/user-login`, payload),
     onSuccess: async (data) => {
+      // console.log("data", data?.data?.data)
       if (data) {
         // Store auth data in Zustand store
         setAuth(
@@ -25,6 +26,8 @@ const useSignInMutate = () => {
             lastName: data?.data?.data?.lastName,
             userRole: data?.data?.data?.role,
             country: data?.data?.data?.country,
+            isBusiness: data?.data?.data?.isBusiness,
+            isIndustryCertificateVerified: data?.data?.data?.isIndustryCertificateVerified,
           }
         )
         queryClient.invalidateQueries({ queryKey: ["user"] })
