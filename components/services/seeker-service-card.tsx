@@ -47,13 +47,13 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
   // Function to determine delivery type display
   const deliveryTypeDisplay = getDeliveryTypeDisplay(homeService, walkInService);
 
-  console.log('🔍 SeekerServiceCard state:', {
-    modalVisible,
-    providerEmailAddress,
-    homeService,
-    walkInService,
-    deliveryTypeDisplay
-  });
+  // console.log('🔍 SeekerServiceCard state:', {
+  //   modalVisible,
+  //   providerEmailAddress,
+  //   homeService,
+  //   walkInService,
+  //   deliveryTypeDisplay
+  // });
 
   return (
     <>
