@@ -73,7 +73,7 @@ export default function ServiceSeekerHomepage() {
             >
                <ProfileHeader
                   title="Hire a service"
-                  showNotification={true}
+                  showNotification={false}
                   showBackArrow={false}
                />
                <View className="px-7">

@@ -14,14 +14,15 @@ interface AppointmentCardProps {
 
 export default function AppointmentCard({ type, appointment, onPress, noMargin = false }: AppointmentCardProps) {
   const { format } = useCurrency();
-  const formattedCost = format(parseFloat(appointment.costOfService));
+  const costValue = appointment.costOfService ? parseFloat(appointment.costOfService) : 0;
+  const formattedCost = costValue > 0 ? format(costValue) : 'Price not set';
 
   const dateObj = new Date(appointment.appointmentDate);
   const month = dateObj.toLocaleString('default', { month: 'short' });
   const day = dateObj.getDate();
   const time = dateObj.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   const provider = appointment.serviceStatus;
-  const rating = 5.0;
+  const reviewCount = appointment.reviewCount || 0;
 
   const faded = type === 'history';
 
@@ -62,16 +63,14 @@ export default function AppointmentCard({ type, appointment, onPress, noMargin =
         </Text>
       </View>
 
-      {/* Chevron or Rating */}
+      {/* Review Count */}
       <View className="flex-row items-center pr-3">
-        {type === 'history' ? (
-          <View className="flex-row items-center">
-            <Ionicons name="star" size={12} color="#FFD700" style={{ marginRight: 2 }} />
-            <Text className="text-xs font-bold text-zinc-500">{rating.toFixed(1)}</Text>
-          </View>
-        ) : (
-          <Ionicons name="chevron-forward" size={16} color="#B0B0B0" />
-        )}
+        <View className="flex-row items-center">
+          <Ionicons name="chatbubble-outline" size={12} color="#6B7280" style={{ marginRight: 2 }} />
+          <Text className={`text-xs font-bold ${faded ? 'text-zinc-500' : 'text-zinc-600'}`}>
+            {reviewCount} review{reviewCount !== 1 ? 's' : ''}
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   )

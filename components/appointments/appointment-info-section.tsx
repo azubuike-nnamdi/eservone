@@ -8,7 +8,8 @@ import { Text, View } from 'react-native';
 export default function AppointmentInfoSection({ appointment }: { appointment: Appointment }) {
   const { format } = useCurrency();
   const user = useAuthStore((state) => state.user);
-  const formattedCost = format(parseFloat(appointment.costOfService));
+  const costValue = appointment.costOfService ? parseFloat(appointment.costOfService) : 0;
+  const formattedCost = costValue > 0 ? format(costValue) : 'Price not set';
   const deliveryTypeDisplay = getDeliveryTypeDisplay(appointment.homeService, appointment.walkInService);
   const isProvider = user?.userRole === 'SERVICE_PROVIDER';
 
@@ -53,10 +54,12 @@ export default function AppointmentInfoSection({ appointment }: { appointment: A
           </View>
         )}
 
-        <View className="flex-row justify-between">
-          <Text className="text-gray-600">Buzz Code:</Text>
-          <Text className="text-black">{appointment.buzzCode}</Text>
-        </View>
+        {appointment.buzzCode && (
+          <View className="flex-row justify-between">
+            <Text className="text-gray-600">Buzz Code:</Text>
+            <Text className="text-black">{appointment.buzzCode}</Text>
+          </View>
+        )}
 
         {appointment.additionalDetails && (
           <View className="flex-row justify-between">

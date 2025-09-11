@@ -114,6 +114,8 @@ type Appointment = {
   paymentStatus?: 'SUCCESSFUL' | 'FAILED' | 'PENDING' | 'FINALIZED'
   homeService?: boolean
   walkInService?: boolean
+  rating?: number | null
+  reviewCount?: number
 }
 
 type AppointmentType = 'upcoming' | 'history'

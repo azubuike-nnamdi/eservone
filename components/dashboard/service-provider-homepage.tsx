@@ -67,7 +67,7 @@ export default function ServiceProviderHomepage() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
-        <ProfileHeader title="Service Provider" showNotification={true} showBackArrow={false} />
+        <ProfileHeader title="Service Provider" showNotification={false} showBackArrow={false} />
         <View className="flex-1 px-7 ">
           {renderContent()}
         </View>
