@@ -1,3 +1,4 @@
+import UserBadge from '@/components/common/UserBadge';
 import RatingSection from '@/components/dashboard/RatingSection';
 import StatItem from '@/components/dashboard/StatItem';
 import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails';
@@ -28,6 +29,10 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency, rat
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
+
+  //isBusiness and isIndustryCertificateVerified
+  const isBusiness = user?.isBusiness;
+  const isIndustryCertificateVerified = user?.isIndustryCertificateVerified;
 
   // Use custom hook for appointment stats
   const appointmentStats = useAppointmentStats(appointmentCount);
@@ -61,9 +66,15 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency, rat
         <View className='flex-row items-center justify-between my-4'>
           <View className="flex-row items-baseline my-4">
             <Text className="text-2xl font-bold">{getGreeting()},</Text>
-            <Text className="text-2xl text-black-300/50 font-medium ml-1">
-              {user?.firstName}
-            </Text>
+            <View className="flex-row items-center">
+              <Text className="text-2xl text-black-300/50 font-medium ml-1">
+                {user?.firstName}
+              </Text>
+              <UserBadge
+                isBusiness={isBusiness}
+                isIndustryCertificateVerified={isIndustryCertificateVerified}
+              />
+            </View>
           </View>
         </View>
         <FlatList
