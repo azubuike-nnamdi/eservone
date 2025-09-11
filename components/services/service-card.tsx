@@ -1,3 +1,4 @@
+import UserBadge from '@/components/common/UserBadge'
 import { ServiceItem } from '@/constants/types'
 import { useCurrency } from '@/context/currency-context'
 import { getDeliveryTypeDisplay } from '@/lib/helper'
@@ -33,6 +34,11 @@ export default function ServiceCard({ item, onPress }: { item: ServiceItem; onPr
             <Text className="text-base font-semibold text-primary-900 underline mr-1">
               {item.serviceName}
             </Text>
+            <UserBadge
+              isBusiness={item.providerBusinessStatus}
+              isIndustryCertificateVerified={item.providerVerificationStatus}
+              className="w-4 h-4 ml-1"
+            />
             {/* Optional: Verified icon */}
             {item.active && (
               <MaterialCommunityIcons name="check-decagram" size={16} color="#22c55e" />
@@ -47,18 +53,21 @@ export default function ServiceCard({ item, onPress }: { item: ServiceItem; onPr
           {item.serviceDescription}
         </Text>
 
-        {/* Service Details Row */}
-        <View className="flex-row items-center justify-between mb-3">
-          <View className="flex-row items-center">
+        {/* Service Details */}
+        <View className="mb-3">
+          {/* Address */}
+          <View className="flex-row items-center mb-1">
             <Ionicons name="location-outline" size={16} color="#6B7280" />
             <Text className="text-gray-600 text-sm ml-1" numberOfLines={1}>
               {item.address || 'No address'}
             </Text>
           </View>
-          {(item.homeService || item.walkInService) && (
-            <View className="flex-row items-center">
-              <Ionicons name="car-outline" size={16} color="#6B7280" />
-              <Text className="text-gray-600 text-sm ml-1">
+
+          {/* Delivery Type */}
+          {getDeliveryTypeDisplay(item.homeService, item.walkInService) && (
+            <View className="flex-row items-center mb-1">
+              <Text className="text-xs text-gray-400">Service delivery type: </Text>
+              <Text className="text-xs text-gray-400 font-bold">
                 {getDeliveryTypeDisplay(item.homeService, item.walkInService)}
               </Text>
             </View>

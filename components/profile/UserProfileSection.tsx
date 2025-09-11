@@ -1,5 +1,7 @@
 
 
+import UserBadge from '@/components/common/UserBadge';
+import { useAuthStore } from '@/store/auth-store';
 import React from 'react';
 import { Text, View } from 'react-native';
 import ProfileImageUpload from './ProfileImageUpload';
@@ -20,6 +22,7 @@ export default function UserProfileSection({
   setImageUploadModalVisible
 }: UserProfileSectionProps) {
   const fullName = `${userProfileDetails?.data?.firstName} ${userProfileDetails?.data?.lastName}`;
+  const user = useAuthStore()
 
   return (
     <View className='flex-row items-center mt-6 mb-8'>
@@ -37,7 +40,13 @@ export default function UserProfileSection({
         isUploading={isUpdatePending}
       />
       <View className='ml-4 flex-1'>
-        <Text className='text-lg font-rubikMedium'>{fullName}</Text>
+        <View className='flex-row items-center'>
+          <Text className='text-lg font-rubikMedium'>{fullName}</Text>
+          <UserBadge
+            isBusiness={user?.user?.isBusiness}
+            isIndustryCertificateVerified={user?.user?.isIndustryCertificateVerified}
+          />
+        </View>
         <Text className='text-gray-400'>{userProfileDetails?.data?.emailAddress}</Text>
       </View>
     </View>
