@@ -31,7 +31,7 @@ export default function ProviderServicesList({ services, onBookService }: Provid
       renderItem={renderServiceItem}
       keyExtractor={(item) => item.id.toString()}
       showsVerticalScrollIndicator={false}
-      scrollEnabled={false}
+      scrollEnabled={true}
       contentContainerStyle={{ paddingBottom: 20 }}
     />
   );

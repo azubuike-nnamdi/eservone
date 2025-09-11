@@ -32,7 +32,7 @@ export default function ProviderReviewsList({ reviews, businessName }: ProviderR
       renderItem={renderReviewItem}
       keyExtractor={(item, index) => `review-${item.commentCreatedBy}-${index}`}
       showsVerticalScrollIndicator={false}
-      scrollEnabled={false}
+      scrollEnabled={true}
       contentContainerStyle={{ paddingBottom: 20 }}
       ItemSeparatorComponent={() => <View className="h-2" />}
     />
