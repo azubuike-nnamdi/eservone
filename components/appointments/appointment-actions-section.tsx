@@ -171,15 +171,17 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
         </View>
       )}
 
-      {/* Cancel appointment - Show for both seekers and providers when serviceAppointmentStatus is ACCEPT */}
-      {appointment.serviceAppointmentStatus === 'ACCEPT' && (
-        <View className="bg-white mb-6">
-          <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onCancel}>
-            <Image source={icons.cancelIcon} className="w-6 h-6" />
-            <Text className="text-base font-semibold text-red-600">Cancel appointment</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      {/* Cancel appointment - Show for both seekers and providers when serviceAppointmentStatus is ACCEPT and neither party has completed */}
+      {appointment.serviceAppointmentStatus === 'ACCEPT' &&
+        appointment.seekerServiceStatus !== 'COMPLETED' &&
+        appointment.providerServiceStatus !== 'COMPLETED' && (
+          <View className="bg-white mb-6">
+            <TouchableOpacity className="flex-row items-center gap-4 py-4" onPress={onCancel}>
+              <Image source={icons.cancelIcon} className="w-6 h-6" />
+              <Text className="text-base font-semibold text-red-600">Cancel appointment</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
       {/* Review Section - Only for completed appointments and seekers */}
       {isCompleted && isSeeker && (
