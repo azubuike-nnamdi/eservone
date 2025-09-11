@@ -36,7 +36,7 @@ const EmptyState = ({ firstName }: { firstName?: string }) => (
 
 export default function ServiceProviderHomepage() {
   const { user } = useAuthStore()
-  console.log('user', user)
+  // console.log('user', user)
   const { data, isPending } = useGetAllServices()
   const { data: appointmentCount, isPending: appointmentCountPending } = useGetAppointmentCount()
   const { data: reviews, isPending: reviewsPending } = useGetAllReviews({ providerEmail: user?.email ?? "" })
@@ -53,7 +53,7 @@ export default function ServiceProviderHomepage() {
   const reviewCount = reviews?.data?.length ?? 0
   const ratingCount = rating?.data ?? 0
 
-  console.log('review data', reviews?.data)
+  // console.log('review data', reviews?.data)
 
   const renderContent = () => {
     if (isPending || appointmentCountPending || reviewsPending || ratingPending || accountBalancePending) return <DashboardSkeleton />
