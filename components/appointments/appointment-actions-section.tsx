@@ -205,7 +205,17 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
                 className="border border-gray-300 rounded-lg p-3 text-base"
                 placeholder="Enter amount (₦)"
                 value={paymentAmount}
-                onChangeText={setPaymentAmount}
+                onChangeText={(text) => {
+                  // Only allow numbers and decimal point
+                  const numericText = text.replace(/[^0-9.]/g, '');
+                  // Prevent multiple decimal points
+                  const parts = numericText.split('.');
+                  if (parts.length > 2) {
+                    setPaymentAmount(parts[0] + '.' + parts.slice(1).join(''));
+                  } else {
+                    setPaymentAmount(numericText);
+                  }
+                }}
                 keyboardType="numeric"
               />
             </View>
