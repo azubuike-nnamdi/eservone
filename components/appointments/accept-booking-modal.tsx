@@ -63,11 +63,17 @@ const AcceptBookingModal: React.FC<AcceptBookingModalProps> = ({
               <Text className="text-center text-base text-gray-700 font-semibold">Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="flex-1 py-3 rounded-lg bg-primary-300"
+              className={`flex-1 py-3 rounded-lg ${isLoading || !amount.trim()
+                ? 'bg-gray-300'
+                : 'bg-primary-300'
+                }`}
               onPress={() => onConfirm(amount)}
               disabled={isLoading || !amount.trim()}
             >
-              <Text className="text-center text-base text-white font-semibold">
+              <Text className={`text-center text-base font-semibold ${isLoading || !amount.trim()
+                ? 'text-gray-500'
+                : 'text-white'
+                }`}>
                 {isLoading ? "Accepting..." : "Accept"}
               </Text>
             </TouchableOpacity>
