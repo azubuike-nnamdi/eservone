@@ -40,39 +40,50 @@ export default function ProfileImageUpload({
   const setModalVisible = onModalClose ? (() => onModalClose()) : setShowPreviewModal;
 
   const requestPermissions = async () => {
-    if (Platform.OS !== 'web') {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'Permission Required',
-          'Sorry, we need camera roll permissions to make this work!'
-        );
-        return false;
+    try {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permission Required',
+            'Sorry, we need camera roll permissions to make this work!'
+          );
+          return false;
+        }
       }
+      return true;
+    } catch (error) {
+      console.error('Permission request error:', error);
+      Alert.alert('Error', 'Failed to request permissions. Please try again.');
+      return false;
     }
-    return true;
   };
 
   const pickImage = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-
     try {
+      const hasPermission = await requestPermissions();
+      if (!hasPermission) return;
+
       setInternalIsUploading(true);
+
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.7, // Reduced quality for iOS stability
+        quality: 0.5, // Further reduced quality for iOS stability
         exif: false, // Disable EXIF data to reduce memory usage
         base64: false, // Don't include base64 in picker result
+        allowsMultipleSelection: false, // Ensure single selection
       });
 
-      if (!result.canceled && result.assets[0]) {
-        const uri = result.assets[0].uri;
-        setSelectedImageUri(uri);
-        setShowPreviewModal(true);
-        onImageSelected(uri);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        if (asset && asset.uri) {
+          const uri = asset.uri;
+          setSelectedImageUri(uri);
+          setShowPreviewModal(true);
+          onImageSelected(uri);
+        }
       }
     } catch (error) {
       console.error('Image picker error:', error);
@@ -83,32 +94,37 @@ export default function ProfileImageUpload({
   };
 
   const takePhoto = async () => {
-    if (Platform.OS !== 'web') {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'Permission Required',
-          'Sorry, we need camera permissions to make this work!'
-        );
-        return;
-      }
-    }
-
     try {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permission Required',
+            'Sorry, we need camera permissions to make this work!'
+          );
+          return;
+        }
+      }
+
       setInternalIsUploading(true);
+
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.7, // Reduced quality for iOS stability
+        quality: 0.5, // Further reduced quality for iOS stability
         exif: false, // Disable EXIF data to reduce memory usage
         base64: false, // Don't include base64 in picker result
+        allowsMultipleSelection: false, // Ensure single selection
       });
 
-      if (!result.canceled && result.assets[0]) {
-        const uri = result.assets[0].uri;
-        setSelectedImageUri(uri);
-        setShowPreviewModal(true);
-        onImageSelected(uri);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        if (asset && asset.uri) {
+          const uri = asset.uri;
+          setSelectedImageUri(uri);
+          setShowPreviewModal(true);
+          onImageSelected(uri);
+        }
       }
     } catch (error) {
       console.error('Camera error:', error);
@@ -119,13 +135,29 @@ export default function ProfileImageUpload({
   };
 
   const showImageOptions = () => {
+    if (isUploading) {
+      return; // Prevent showing options while uploading
+    }
+
     Alert.alert(
       'Update Profile Picture',
       'Choose an option',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Take Photo', onPress: takePhoto },
-        { text: 'Choose from Library', onPress: pickImage },
+        {
+          text: 'Take Photo',
+          onPress: () => {
+            // Add small delay to prevent race conditions
+            setTimeout(() => takePhoto(), 100);
+          }
+        },
+        {
+          text: 'Choose from Library',
+          onPress: () => {
+            // Add small delay to prevent race conditions
+            setTimeout(() => pickImage(), 100);
+          }
+        },
       ]
     );
   };
@@ -144,6 +176,10 @@ export default function ProfileImageUpload({
   };
 
   const handleImagePress = () => {
+    if (isUploading) {
+      return; // Prevent interaction while uploading
+    }
+
     if (currentImageUri) {
       setShowViewModal(true);
     } else {
