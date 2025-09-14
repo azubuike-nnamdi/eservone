@@ -1,6 +1,6 @@
 import { useWalletState } from '@/hooks/useWalletState';
 import React from 'react';
-import { ActivityIndicator, ScrollView } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import WalletCard from '../common/wallet-card';
 import BankAccountsSection from './BankAccountsSection';
 import WalletActionButtons from './WalletActionButtons';
@@ -58,29 +58,34 @@ const WalletDashboard = () => {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
-      <WalletCard
-        balance={balance}
-        currency={currency}
-        showChevron={false}
-      />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1"
+    >
+      <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
+        <WalletCard
+          balance={balance}
+          currency={currency}
+          showChevron={false}
+        />
 
-      <WalletActionButtons
-        onAddFunds={() => setModalVisible(true)}
-        onWithdrawFunds={openWithdrawModal}
-      />
+        <WalletActionButtons
+          onAddFunds={() => setModalVisible(true)}
+          onWithdrawFunds={openWithdrawModal}
+        />
 
-      <WithdrawalActivity
-        currency={currency}
-        balance={balance}
-        onSeeAllWithdrawals={handleSeeAllWithdrawals}
-      />
+        <WithdrawalActivity
+          currency={currency}
+          balance={balance}
+          onSeeAllWithdrawals={handleSeeAllWithdrawals}
+        />
 
-      <BankAccountsSection
-        beneficiariesData={beneficiariesData}
-        onAddAccount={handleAddAccount}
-        onViewAccountDetails={handleViewAccountDetails}
-      />
+        <BankAccountsSection
+          beneficiariesData={beneficiariesData}
+          onAddAccount={handleAddAccount}
+          onViewAccountDetails={handleViewAccountDetails}
+        />
+      </ScrollView>
 
       <WalletModals
         modalVisible={modalVisible}
@@ -109,7 +114,7 @@ const WalletDashboard = () => {
         paystackUrl={paystackUrl}
         setPaystackUrl={setPaystackUrl}
       />
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

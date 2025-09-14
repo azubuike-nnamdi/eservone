@@ -7,7 +7,7 @@ import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { formatDate } from '@/lib/helper'
 import { Feather } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { Image, Text, TouchableOpacity, View } from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileInformation() {
@@ -37,61 +37,67 @@ export default function ProfileInformation() {
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <KeyboardAwareScrollView className="flex-1">
-        <ProfileHeader title='Profile information' showNotification={false} showBackArrow={true} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <KeyboardAwareScrollView className="flex-1">
+          <ProfileHeader title='Profile information' showNotification={false} showBackArrow={true} />
 
-        <View className='px-7'>
-          {/* Profile Picture and Basic Info */}
-          <View className='items-left mt-6'>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Image
-                source={{ uri: userProfileDetails?.data?.profilePicture }}
-                className='size-16 rounded-full bg-gray-100'
-              />
-            </TouchableOpacity>
-            <Text className='text-2xl font-semibold'>{fullName}</Text>
-            <View className='flex-row items-center mt-2'>
-              <Text className='text-gray-600'>{userProfileDetails?.data?.emailAddress}</Text>
-              <Text className='text-gray-400 mx-2'>•</Text>
-              <Text className='text-gray-600'>Joined {formatDate(userProfileDetails?.data?.dateCreated)}</Text>
+          <View className='px-7'>
+            {/* Profile Picture and Basic Info */}
+            <View className='items-left mt-6'>
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <Image
+                  source={{ uri: userProfileDetails?.data?.profilePicture }}
+                  className='size-16 rounded-full bg-gray-100'
+                />
+              </TouchableOpacity>
+              <Text className='text-2xl font-semibold'>{fullName}</Text>
+              <View className='flex-row items-center mt-2'>
+                <Text className='text-gray-600'>{userProfileDetails?.data?.emailAddress}</Text>
+                <Text className='text-gray-400 mx-2'>•</Text>
+                <Text className='text-gray-600'>Joined {formatDate(userProfileDetails?.data?.dateCreated)}</Text>
+              </View>
+            </View>
+
+            {/* Bio Section */}
+            <View className='mt-8'>
+              <View className='flex-row justify-between items-center mb-2'>
+                <Text className='text-xl font-semibold'>Bio</Text>
+                <Feather name="edit-2" size={15} color="#6B7280" onPress={() => setShowBioModal(true)} />
+              </View>
+              <Text className='text-gray-600 leading-6'>
+                {bio}
+              </Text>
+            </View>
+
+            {/* Home Address Section */}
+            <View className='mt-8'>
+              <View className='flex-row justify-between items-center mb-2'>
+                <Text className='text-xl font-semibold'>Home address</Text>
+                <Feather name="edit-2" size={15} color="#6B7280" onPress={() => setShowBioModal(true)} />
+              </View>
+              <Text className='text-gray-600'>{userProfileDetails?.data?.address}</Text>
             </View>
           </View>
+        </KeyboardAwareScrollView>
 
-          {/* Bio Section */}
-          <View className='mt-8'>
-            <View className='flex-row justify-between items-center mb-2'>
-              <Text className='text-xl font-semibold'>Bio</Text>
-              <Feather name="edit-2" size={15} color="#6B7280" onPress={() => setShowBioModal(true)} />
-            </View>
-            <Text className='text-gray-600 leading-6'>
-              {bio}
-            </Text>
-          </View>
+        <UserBioModal
+          visible={showBioModal}
+          onClose={() => setShowBioModal(false)}
+          onSubmit={handleBioSubmit}
+          initialBio={bio}
+          initialAddress={userProfileDetails?.data?.address || ""}
+          isLoading={isPending}
+        />
 
-          {/* Home Address Section */}
-          <View className='mt-8'>
-            <View className='flex-row justify-between items-center mb-2'>
-              <Text className='text-xl font-semibold'>Home address</Text>
-              <Feather name="edit-2" size={15} color="#6B7280" onPress={() => setShowBioModal(true)} />
-            </View>
-            <Text className='text-gray-600'>{userProfileDetails?.data?.address}</Text>
-          </View>
-        </View>
-      </KeyboardAwareScrollView>
-      <UserBioModal
-        visible={showBioModal}
-        onClose={() => setShowBioModal(false)}
-        onSubmit={handleBioSubmit}
-        initialBio={bio}
-        initialAddress={userProfileDetails?.data?.address || ""}
-        isLoading={isPending}
-      />
-
-      <ProfileImageModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        imageUri={userProfileDetails?.data?.profilePicture || ""}
-      />
+        <ProfileImageModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          imageUri={userProfileDetails?.data?.profilePicture || ""}
+        />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }

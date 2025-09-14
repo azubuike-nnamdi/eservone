@@ -2,7 +2,7 @@ import useInitiatePayment from "@/hooks/mutation/useInitiatePayment";
 import useGetUserProfileDetails from "@/hooks/query/useGetUserProfileDetails";
 import { useAuthStore } from "@/store/auth-store";
 import React, { useState } from "react";
-import { Text, TouchableOpacity } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, TouchableOpacity } from 'react-native';
 import PaymentStatusModal from "./payment-status-modal";
 import PaystackWebviewRobustModal from "./PaystackWebviewRobustModal";
 import ServiceProviderHomepage from "./service-provider-homepage";
@@ -39,7 +39,10 @@ export default function Homepage() {
 
    const isServiceSeeker = user?.userRole === "SERVICE_SEEKER";
    return (
-      <>
+      <KeyboardAvoidingView
+         behavior={Platform.OS === "ios" ? "padding" : "height"}
+         className="flex-1"
+      >
          {isServiceSeeker ? <ServiceSeekerHomepage /> : <ServiceProviderHomepage />}
          {/* Floating + Button */}
          <TouchableOpacity
@@ -89,6 +92,6 @@ export default function Homepage() {
             visible={showStatusModal}
             onClose={() => setShowStatusModal(false)}
          />
-      </>
+      </KeyboardAvoidingView>
    );
 }
