@@ -1,19 +1,23 @@
 import React from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface AcceptBookingModalProps {
   visible: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (amount: string) => void;
   isLoading?: boolean;
+  amount: string;
+  onAmountChange: (amount: string) => void;
 }
 
 const AcceptBookingModal: React.FC<AcceptBookingModalProps> = ({
   visible,
   onClose,
   onConfirm,
-  isLoading
+  isLoading,
+  amount,
+  onAmountChange
 }) => {
   return (
     <Modal
@@ -25,9 +29,31 @@ const AcceptBookingModal: React.FC<AcceptBookingModalProps> = ({
       <View className="flex-1 justify-end bg-black/40">
         <SafeAreaView className="bg-white rounded-t-2xl p-6 max-h-[60%] mb-4">
           <Text className="text-lg font-bold mb-4 text-center">Accept Booking</Text>
-          <Text className="text-base text-gray-700 mb-8 text-center">
+          <Text className="text-base text-gray-700 mb-6 text-center">
             Are you sure you want to accept this booking?
           </Text>
+
+          <View className="mb-6">
+            <Text className="text-sm text-gray-600 mb-2">Agreed amount for service (₦)</Text>
+            <TextInput
+              className="border border-gray-300 rounded-lg p-3 text-base"
+              placeholder="Enter agreed amount"
+              value={amount}
+              onChangeText={(text) => {
+                // Only allow numbers and decimal point
+                const numericText = text.replace(/[^0-9.]/g, '');
+                // Prevent multiple decimal points
+                const parts = numericText.split('.');
+                if (parts.length > 2) {
+                  onAmountChange(parts[0] + '.' + parts.slice(1).join(''));
+                } else {
+                  onAmountChange(numericText);
+                }
+              }}
+              keyboardType="numeric"
+            />
+          </View>
+
           <View className="flex-row gap-4">
             <TouchableOpacity
               className="flex-1 py-3 rounded-lg border border-gray-200 bg-gray-100"
@@ -38,8 +64,8 @@ const AcceptBookingModal: React.FC<AcceptBookingModalProps> = ({
             </TouchableOpacity>
             <TouchableOpacity
               className="flex-1 py-3 rounded-lg bg-primary-300"
-              onPress={onConfirm}
-              disabled={isLoading}
+              onPress={() => onConfirm(amount)}
+              disabled={isLoading || !amount.trim()}
             >
               <Text className="text-center text-base text-white font-semibold">
                 {isLoading ? "Accepting..." : "Accept"}
