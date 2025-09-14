@@ -1,4 +1,5 @@
 import UserBioModal from '@/components/appointments/user-bio-modal'
+import KeyboardAwareScrollView from '@/components/common/keyboard-aware-scroll-view'
 import ProfileHeader from '@/components/common/profile-header'
 import ProfileImageModal from '@/components/profile/ProfileImageModal'
 import useUpdateUserBio from '@/hooks/mutation/useUpdateUserBio'
@@ -6,7 +7,7 @@ import useGetUserProfileDetails from '@/hooks/query/useGetUserProfileDetails'
 import { formatDate } from '@/lib/helper'
 import { Feather } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileInformation() {
@@ -36,7 +37,7 @@ export default function ProfileInformation() {
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName=''>
+      <KeyboardAwareScrollView className="flex-1">
         <ProfileHeader title='Profile information' showNotification={false} showBackArrow={true} />
 
         <View className='px-7'>
@@ -76,8 +77,7 @@ export default function ProfileInformation() {
             <Text className='text-gray-600'>{userProfileDetails?.data?.address}</Text>
           </View>
         </View>
-
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <UserBioModal
         visible={showBioModal}
         onClose={() => setShowBioModal(false)}

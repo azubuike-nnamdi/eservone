@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import KeyboardAwareScrollView from "../common/keyboard-aware-scroll-view";
 
 interface UserBioModalProps {
   visible: boolean;
@@ -42,34 +43,37 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
         <SafeAreaView className="bg-white rounded-t-2xl p-6 max-h-[70%] mb-4">
           <Text className="text-lg font-bold mb-4 text-center">Edit Profile</Text>
 
-          {/* Bio Input */}
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-2">Bio</Text>
-            <TextInput
-              className="border border-gray-300 rounded-lg p-3 text-base min-h-[80px]"
-              placeholder="Enter your bio..."
-              value={bio}
-              onChangeText={setBio}
-              multiline
-              numberOfLines={4}
-              editable={!isLoading}
-            />
-          </View>
+          <KeyboardAwareScrollView className="flex-1" keyboardVerticalOffset={100}>
+            {/* Bio Input */}
+            <View className="mb-4">
+              <Text className="text-sm font-medium text-gray-700 mb-2">Bio</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-3 text-base min-h-[80px]"
+                placeholder="Enter your bio..."
+                value={bio}
+                onChangeText={setBio}
+                multiline
+                numberOfLines={4}
+                editable={!isLoading}
+              />
+            </View>
 
-          {/* Address Input */}
-          <View className="mb-6">
-            <Text className="text-sm font-medium text-gray-700 mb-2">Home Address</Text>
-            <TextInput
-              className="border border-gray-300 rounded-lg p-3 text-base"
-              placeholder="Enter your home userAddress..."
-              value={userAddress}
-              onChangeText={setUserAddress}
-              multiline
-              numberOfLines={3}
-              editable={!isLoading}
-            />
-          </View>
-          <View className="flex-row gap-4">
+            {/* Address Input */}
+            <View className="mb-6">
+              <Text className="text-sm font-medium text-gray-700 mb-2">Home Address</Text>
+              <TextInput
+                className="border border-gray-300 rounded-lg p-3 text-base"
+                placeholder="Enter your home userAddress..."
+                value={userAddress}
+                onChangeText={setUserAddress}
+                multiline
+                numberOfLines={3}
+                editable={!isLoading}
+              />
+            </View>
+          </KeyboardAwareScrollView>
+
+          <View className="flex-row gap-4 mt-4">
             <TouchableOpacity
               className="flex-1 py-3 rounded-lg border border-gray-200 bg-gray-100"
               onPress={onClose}

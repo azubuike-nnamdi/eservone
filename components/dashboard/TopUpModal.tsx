@@ -1,6 +1,7 @@
 import React from 'react';
 import { Animated, Easing, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Button from '../common/button';
+import KeyboardAwareScrollView from '../common/keyboard-aware-scroll-view';
 
 interface TopUpModalProps {
   visible: boolean;
@@ -55,18 +56,21 @@ const TopUpModal: React.FC<TopUpModalProps> = ({ visible, onClose, amount, setAm
         <View className="bg-white rounded-t-2xl p-6 pb-12">
           <Text className="text-lg font-bold mb-4 text-center">Top Up Account</Text>
 
-          <TextInput
-            placeholder="Amount"
-            keyboardType="numeric"
-            value={amount}
-            onChangeText={val => {
-              // Only allow numbers (and optionally a single dot for decimals)
-              if (/^\d*\.?\d*$/.test(val)) {
-                setAmount(val);
-              }
-            }}
-            className="border border-gray-200 rounded-lg px-4 py-3 mb-6"
-          />
+          <KeyboardAwareScrollView className="flex-1" keyboardVerticalOffset={100}>
+            <TextInput
+              placeholder="Amount"
+              keyboardType="numeric"
+              value={amount}
+              onChangeText={val => {
+                // Only allow numbers (and optionally a single dot for decimals)
+                if (/^\d*\.?\d*$/.test(val)) {
+                  setAmount(val);
+                }
+              }}
+              className="border border-gray-200 rounded-lg px-4 py-3 mb-6"
+            />
+          </KeyboardAwareScrollView>
+
           <Button
             onPress={onTopUp}
             disabled={!amount || isPending}

@@ -7,8 +7,9 @@ import { useAuthStore } from '@/store/auth-store';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Button from '../common/button';
+import KeyboardAwareScrollView from '../common/keyboard-aware-scroll-view';
 
 interface AddBankAccountModalProps {
   visible: boolean;
@@ -113,13 +114,13 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
     } else {
       setAccountName("");
     }
-  }, [debouncedAccountNumber, debouncedBankCode, user?.email]);
+  }, [debouncedAccountNumber, debouncedBankCode, user?.email, handleValidateAccount]);
 
   useEffect(() => {
     if (isBeneficiaryCreated) {
       onClose();
     }
-  }, [isBeneficiaryCreated]);
+  }, [isBeneficiaryCreated, onClose]);
 
   const isFormValid = selectedBank && accountNumber.length >= 10;
 
@@ -132,7 +133,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
     >
       <View className="flex-1 bg-black/50 justify-end">
         <View className="bg-white rounded-t-3xl p-6 min:h-[70%] overflow-hidden mb-2">
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <KeyboardAwareScrollView className="flex-1" keyboardVerticalOffset={100}>
             {/* Header */}
             <View className="flex-row items-center justify-between mb-6">
               <Text className="text-xl font-rubikMedium">Add Bank Account</Text>
@@ -172,7 +173,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
                   </View>
 
                   {/* Bank List */}
-                  <ScrollView className="max-h-[160px]">
+                  <View className="max-h-[160px]">
                     {isLoadingBanks ? (
                       <View className="p-3 items-center">
                         <ActivityIndicator size="small" color="#1E40AF" />
@@ -189,7 +190,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
                         </TouchableOpacity>
                       ))
                     )}
-                  </ScrollView>
+                  </View>
                 </View>
               )}
             </View>
@@ -233,7 +234,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
                 Add Account
               </Text>
             </Button>
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
       </View>
     </Modal>
