@@ -288,6 +288,7 @@ type createReviewPayload = {
 
 type AcceptBookingPayload = {
   serviceAppointmentId: number
+  amountAgreed: number
 }
 
 type UploadIndustrialCertificatePayload = {

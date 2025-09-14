@@ -160,9 +160,12 @@ export const useAppointmentDetails = () => {
     }
   };
 
-  const handleAcceptBooking = () => {
-    if (appointment) {
-      acceptBooking({ serviceAppointmentId: appointment.id });
+  const handleAcceptBooking = (amount: string) => {
+    if (appointment && amount.trim()) {
+      acceptBooking({
+        serviceAppointmentId: appointment.id,
+        amountAgreed: parseFloat(amount) || 0
+      });
     }
   };
 

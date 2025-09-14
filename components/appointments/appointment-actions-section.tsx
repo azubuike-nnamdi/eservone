@@ -26,7 +26,7 @@ interface AppointmentActionsSectionProps {
   isCompleting: boolean;
   isDecliningAppointment: boolean;
   isMakingPayment: boolean;
-  onAcceptBooking?: () => void;
+  onAcceptBooking?: (amount: string) => void;
   isAcceptingBooking?: boolean;
   needsBothCompletion: boolean;
 }
@@ -55,6 +55,7 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
 }) => {
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState('');
+  const [agreedAmount, setAgreedAmount] = useState('');
 
   // // Debug logging - remove this when done testing
   // console.log('AppointmentActionsSection Debug:', {
@@ -99,12 +100,17 @@ const AppointmentActionsSection: React.FC<AppointmentActionsSectionProps> = ({
           {/* Accept Booking Modal */}
           <AcceptBookingModal
             visible={showAcceptModal}
-            onClose={() => setShowAcceptModal(false)}
-            onConfirm={() => {
+            onClose={() => {
               setShowAcceptModal(false);
-              onAcceptBooking && onAcceptBooking();
+              setAgreedAmount(''); // Reset amount when closing
+            }}
+            onConfirm={(amount) => {
+              setShowAcceptModal(false);
+              onAcceptBooking && onAcceptBooking(amount);
             }}
             isLoading={isAcceptingBooking}
+            amount={agreedAmount}
+            onAmountChange={setAgreedAmount}
           />
         </>
       )}

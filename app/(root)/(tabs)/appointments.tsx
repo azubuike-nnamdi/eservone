@@ -26,8 +26,20 @@ function sectionAppointments(appointments: Appointment[] = []) {
       upcoming.push(appointment);
     }
   });
+
+  // Sort both arrays by appointmentDate in descending order (latest first)
+  const sortByDate = (a: Appointment, b: Appointment) => {
+    const dateA = new Date(a.appointmentDate).getTime();
+    const dateB = new Date(b.appointmentDate).getTime();
+    return dateB - dateA; // Descending order (latest first)
+  };
+
+  upcoming.sort(sortByDate);
+  history.sort(sortByDate);
+
   return { upcoming, history };
 }
+
 
 export default function Appointments() {
   const user = useAuthStore((state) => state.user);

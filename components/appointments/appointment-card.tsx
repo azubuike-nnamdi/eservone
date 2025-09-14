@@ -29,24 +29,28 @@ export default function AppointmentCard({ type, appointment, onPress, noMargin =
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`flex-row items-center border border-gray-100 mb-4 rounded-lg ${faded ? 'bg-zinc-50 opacity-60 ' : 'bg-white'} ${noMargin ? '' : 'mb-3'}`}
+      className={`flex-row items-center border border-gray-200 mb-4 rounded-xl ${faded ? 'bg-zinc-50 opacity-60 ' : 'bg-white'} ${noMargin ? '' : 'mb-3'}`}
       style={{ height: 70 }}
       activeOpacity={0.85}
     >
       {/* Date Box */}
-      <View className={`h-full px-3 items-center justify-center ${faded ? 'bg-zinc-100' : 'bg-primary-100'}`} style={{ width: 55 }}>
+      <View className={`h-full px-3 items-center justify-center mr-3 ${faded ? 'bg-zinc-200' : 'bg-primary-100'}`} style={{ width: 85 }}>
         <Text className={`text-xs font-bold ${faded ? 'text-black-400' : 'text-primary-500'}`}>{month} {day}</Text>
         <Text className={`text-xs ${faded ? 'text-black-400' : 'text-primary-400'}`}>{time}</Text>
       </View>
 
       {/* Details */}
-      <View className="flex-1 px-3 py-2 justify-center">
-        <Text className={`text-sm font-bold mb-1 ${faded ? 'text-black-600' : 'text-black'}`} numberOfLines={1}>
-          {appointment.serviceName}
-        </Text>
-        <Text className={`text-xs mb-1 ${faded ? 'text-black-300' : 'text-black-500'}`} numberOfLines={1}>
-          {provider}
-        </Text>
+      <View className="flex-1  justify-center">
+        {appointment.serviceName && (
+          <Text className={`text-xs mb-1 ${faded ? 'text-black-300' : 'text-black-500'}`} numberOfLines={1}>
+            {appointment.serviceName}
+          </Text>
+        )}
+        {provider && (
+          <Text className={`text-xs mb-1 ${faded ? 'text-black-300' : 'text-black-500'}`} numberOfLines={1}>
+            {provider}
+          </Text>
+        )}
 
         {/* Delivery Type */}
         {(appointment.homeService || appointment.walkInService) && (
