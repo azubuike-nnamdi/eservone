@@ -63,7 +63,9 @@ export default function ProfileImageUpload({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.8,
+        quality: 0.7, // Reduced quality for iOS stability
+        exif: false, // Disable EXIF data to reduce memory usage
+        base64: false, // Don't include base64 in picker result
       });
 
       if (!result.canceled && result.assets[0]) {
@@ -73,6 +75,7 @@ export default function ProfileImageUpload({
         onImageSelected(uri);
       }
     } catch (error) {
+      console.error('Image picker error:', error);
       Alert.alert('Error', 'Failed to pick image. Please try again.');
     } finally {
       setInternalIsUploading(false);
@@ -96,7 +99,9 @@ export default function ProfileImageUpload({
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.8,
+        quality: 0.7, // Reduced quality for iOS stability
+        exif: false, // Disable EXIF data to reduce memory usage
+        base64: false, // Don't include base64 in picker result
       });
 
       if (!result.canceled && result.assets[0]) {
@@ -106,6 +111,7 @@ export default function ProfileImageUpload({
         onImageSelected(uri);
       }
     } catch (error) {
+      console.error('Camera error:', error);
       Alert.alert('Error', 'Failed to take photo. Please try again.');
     } finally {
       setInternalIsUploading(false);

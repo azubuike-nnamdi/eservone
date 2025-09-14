@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Checkbox from "../common/check-box";
+import KeyboardAwareScrollView from "../common/keyboard-aware-scroll-view";
 import Select from "../common/select";
 import TextInput from "../common/text-input";
 
@@ -60,7 +61,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   // maxPrice,
 }) => {
   return (
-    <>
+    <KeyboardAwareScrollView className="flex-1">
       {/* Address */}
       <View className="mb-2 flex-row justify-between items-center">
         <Text className="text-base font-semibold">
@@ -154,7 +155,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
           onChange={onHasPetsChange}
         />
       )}
-    </>
+    </KeyboardAwareScrollView>
   );
 };
 

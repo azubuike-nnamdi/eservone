@@ -186,16 +186,29 @@ export default function AddCertificateForm() {
     }
 
     const fileUri = formData.document.assets[0].uri;
-    const base64File = await FileSystem.readAsStringAsync(fileUri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+    const fileSize = formData.document.assets[0].size || 0;
 
-    return {
-      name: formData.document.assets[0].name,
-      type: formData.document.assets[0].mimeType,
-      size: formData.document.assets[0].size,
-      base64: base64File,
-    };
+    // Check file size limit (10MB) to prevent memory issues on iOS
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (fileSize > MAX_FILE_SIZE) {
+      throw new Error('File size too large. Please select a file smaller than 10MB.');
+    }
+
+    try {
+      const base64File = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      return {
+        name: formData.document.assets[0].name,
+        type: formData.document.assets[0].mimeType,
+        size: fileSize,
+        base64: base64File,
+      };
+    } catch (error) {
+      console.error('Error reading file:', error);
+      throw new Error('Failed to process document. Please try again.');
+    }
   };
 
   /**
@@ -204,20 +217,25 @@ export default function AddCertificateForm() {
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    const documentData = await prepareDocumentData();
+    try {
+      const documentData = await prepareDocumentData();
 
-    // Use the service ID from API, or custom service name if "other" is selected
-    const serviceId = formData.service === 'other'
-      ? formData.customService.trim()
-      : String(formData.service);
+      // Use the service ID from API, or custom service name if "other" is selected
+      const serviceId = formData.service === 'other'
+        ? formData.customService.trim()
+        : String(formData.service);
 
-    const payload = {
-      fileName: documentData.name,
-      serviceId: serviceId,
-      industryCertificate: documentData.base64
+      const payload = {
+        fileName: documentData.name,
+        serviceId: serviceId,
+        industryCertificate: documentData.base64
+      }
+
+      handleUploadIndustrialCertificate(payload)
+    } catch (error) {
+      console.error('Upload error:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to upload document. Please try again.');
     }
-
-    handleUploadIndustrialCertificate(payload)
   };
 
   return (

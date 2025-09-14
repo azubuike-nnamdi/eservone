@@ -1,4 +1,5 @@
 import Button from '@/components/common/button'
+import KeyboardAwareScrollView from '@/components/common/keyboard-aware-scroll-view'
 import CustomModal from '@/components/common/Modal'
 import ProfileHeader from '@/components/common/profile-header'
 import { UpdateProfilePayload } from '@/constants/types'
@@ -12,10 +13,8 @@ import * as ImagePicker from 'expo-image-picker'
 import React, { useEffect, useState } from 'react'
 import {
   Image,
-  KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -126,122 +125,117 @@ export default function VerifyIdentity() {
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <KeyboardAwareScrollView
         className="flex-1"
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+        contentContainerClassName="pb-32"
       >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerClassName="pb-32"
-        >
-          <ProfileHeader title='Verify Identity' showNotification={false} showBackArrow={true} />
+        <ProfileHeader title='Verify Identity' showNotification={false} showBackArrow={true} />
 
-          <View className='px-7 my-5 items-center'>
-            <Text className='text-gray-700 text-md font-medium mb-2'>Verify Identity</Text>
-            <Text className='text-gray-700 text-sm font-rubikRegular text-center px-7'>
-              Verifying your identity increases your chances of getting a job. It&apos;s a way to show that you&apos;re trusted eservone service provider.
-            </Text>
-          </View>
+        <View className='px-7 my-5 items-center'>
+          <Text className='text-gray-700 text-md font-medium mb-2'>Verify Identity</Text>
+          <Text className='text-gray-700 text-sm font-rubikRegular text-center px-7'>
+            Verifying your identity increases your chances of getting a job. It&apos;s a way to show that you&apos;re trusted eservone service provider.
+          </Text>
+        </View>
 
-          {/* Profile Picture Upload */}
-          <View className='items-center mt-8 mb-6 px-7'>
-            <TouchableOpacity
-              onPress={pickProfileImage}
-              className='size-28 bg-gray-200 rounded-full justify-center items-center mb-3'
-            >
-              {profileImage ? (
-                <Image source={{ uri: profileImage }} className='size-28 rounded-full' />
-              ) : (
-                <Ionicons name='person-outline' size={40} color='gray' />
-              )}
-            </TouchableOpacity>
-            <Text className='text-primary-500 font-rubikMedium text-base'>Upload a profile picture</Text>
-            <Text className='text-center text-gray-500 text-sm mt-1'>
-              Please make sure your profile picture properly captures your face
-            </Text>
-          </View>
+        {/* Profile Picture Upload */}
+        <View className='items-center mt-8 mb-6 px-7'>
+          <TouchableOpacity
+            onPress={pickProfileImage}
+            className='size-28 bg-gray-200 rounded-full justify-center items-center mb-3'
+          >
+            {profileImage ? (
+              <Image source={{ uri: profileImage }} className='size-28 rounded-full' />
+            ) : (
+              <Ionicons name='person-outline' size={40} color='gray' />
+            )}
+          </TouchableOpacity>
+          <Text className='text-primary-500 font-rubikMedium text-base'>Upload a profile picture</Text>
+          <Text className='text-center text-gray-500 text-sm mt-1'>
+            Please make sure your profile picture properly captures your face
+          </Text>
+        </View>
 
-          {/* ID Upload */}
-          <View className='items-center mb-8 px-7'>
-            <TouchableOpacity
-              onPress={pickIdDocument}
-              className='w-full h-36 border-2 border-dashed border-primary-300 rounded-lg justify-center items-center bg-primary-50 mb-3'
-            >
-              {documentName ? (
-                <View className='items-center px-4'>
-                  <MaterialIcons name='check-circle' size={32} color='green' />
-                  <Text className='text-gray-700 mt-2 text-sm font-rubikRegular text-center' numberOfLines={2} ellipsizeMode='middle'>
-                    {documentName}
-                  </Text>
-                </View>
-              ) : (
-                <View className='items-center'>
-                  <MaterialIcons name='cloud-upload' size={40} color='gray' />
-                  <Text className='text-primary-500 font-rubikMedium mt-2'>Select image, PDF, or DOCX</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-            <Text className='text-primary-500 font-rubikMedium text-base'>Upload a valid means of Identification</Text>
-            <Text className='text-center text-gray-500 text-sm mt-1'>
-              The details on your means of ID must match the personal details on your eservone account
-            </Text>
-          </View>
+        {/* ID Upload */}
+        <View className='items-center mb-8 px-7'>
+          <TouchableOpacity
+            onPress={pickIdDocument}
+            className='w-full h-36 border-2 border-dashed border-primary-300 rounded-lg justify-center items-center bg-primary-50 mb-3'
+          >
+            {documentName ? (
+              <View className='items-center px-4'>
+                <MaterialIcons name='check-circle' size={32} color='green' />
+                <Text className='text-gray-700 mt-2 text-sm font-rubikRegular text-center' numberOfLines={2} ellipsizeMode='middle'>
+                  {documentName}
+                </Text>
+              </View>
+            ) : (
+              <View className='items-center'>
+                <MaterialIcons name='cloud-upload' size={40} color='gray' />
+                <Text className='text-primary-500 font-rubikMedium mt-2'>Select image, PDF, or DOCX</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          <Text className='text-primary-500 font-rubikMedium text-base'>Upload a valid means of Identification</Text>
+          <Text className='text-center text-gray-500 text-sm mt-1'>
+            The details on your means of ID must match the personal details on your eservone account
+          </Text>
+        </View>
 
-          {/* Input Fields */}
-          <View className='mb-6 space-y-5 px-7'>
-            <View>
-              <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Home address:</Text>
-              <TextInput
-                className='border border-gray-300 rounded-lg p-5 bg-gray-50'
-                placeholder='Enter your home address'
-                value={address}
-                onChangeText={setAddress}
-              />
-            </View>
-            <View className='py-4'>
-              <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Email address:</Text>
-              <TextInput
-                className='border border-gray-300 rounded-lg p-5 bg-gray-200 text-gray-500'
-                placeholder='Enter your email address'
-                value={email}
-                onChangeText={setEmail}
-                keyboardType='email-address'
-                autoCapitalize='none'
-                editable={false}
-              />
-            </View>
-            <View>
-              <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Phone number:</Text>
-              <TextInput
-                inputMode='numeric'
-                className='border border-gray-300 rounded-lg p-5 bg-gray-50'
-                placeholder='Enter your phone number'
-                value={phoneNumber}
-                onChangeText={(text) => {
-                  // Only allow numeric input
-                  const numericValue = text.replace(/[^0-9]/g, '');
-                  setPhoneNumber(numericValue);
-                }}
-                keyboardType='phone-pad'
-              />
-            </View>
+        {/* Input Fields */}
+        <View className='mb-6 space-y-5 px-7'>
+          <View>
+            <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Home address:</Text>
+            <TextInput
+              className='border border-gray-300 rounded-lg p-5 bg-gray-50'
+              placeholder='Enter your home address'
+              value={address}
+              onChangeText={setAddress}
+            />
           </View>
+          <View className='py-4'>
+            <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Email address:</Text>
+            <TextInput
+              className='border border-gray-300 rounded-lg p-5 bg-gray-200 text-gray-500'
+              placeholder='Enter your email address'
+              value={email}
+              onChangeText={setEmail}
+              keyboardType='email-address'
+              autoCapitalize='none'
+              editable={false}
+            />
+          </View>
+          <View>
+            <Text className='text-sm font-rubikMedium text-gray-700 mb-2'>Phone number:</Text>
+            <TextInput
+              inputMode='numeric'
+              className='border border-gray-300 rounded-lg p-5 bg-gray-50'
+              placeholder='Enter your phone number'
+              value={phoneNumber}
+              onChangeText={(text) => {
+                // Only allow numeric input
+                const numericValue = text.replace(/[^0-9]/g, '');
+                setPhoneNumber(numericValue);
+              }}
+              keyboardType='phone-pad'
+            />
+          </View>
+        </View>
 
-          {/* Submit Button */}
-          <View className='px-7'>
-            <Button
-              onPress={handleSubmit}
-              variant='primary'
-              loading={isPending}
-              disabled={isPending}
-              loadingText='Submitting...'
-            >
-              Submit
-            </Button>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        {/* Submit Button */}
+        <View className='px-7'>
+          <Button
+            onPress={handleSubmit}
+            variant='primary'
+            loading={isPending}
+            disabled={isPending}
+            loadingText='Submitting...'
+          >
+            Submit
+          </Button>
+        </View>
+      </KeyboardAwareScrollView>
 
       {/* Custom Modal */}
       <CustomModal

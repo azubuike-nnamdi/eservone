@@ -4,7 +4,8 @@ import useChangePassword from "@/hooks/mutation/useChangePassword";
 import { passwordStrength, validatePassword } from "@/lib/helper";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import KeyboardAwareScrollView from "../common/keyboard-aware-scroll-view";
 
 export default function ProfileChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -57,10 +58,8 @@ export default function ProfileChangePassword() {
   const strength = passwordStrength(password);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1">
-      <View className="mt-10 bg-white">
+    <KeyboardAwareScrollView className="flex-1">
+      <View className="mt-10 bg-white px-4">
         {/* Current Password Field */}
         <Text className="text-lg font-bold mb-2 text-black">Current password</Text>
         <View className="relative mb-6">
@@ -153,6 +152,6 @@ export default function ProfileChangePassword() {
           Change Password
         </Button>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }

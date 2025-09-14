@@ -1,4 +1,5 @@
 import Button from "@/components/common/button";
+import KeyboardAwareScrollView from "@/components/common/keyboard-aware-scroll-view";
 import ProfileHeader from "@/components/common/profile-header";
 import Step1Details from "@/components/services/Step1Details";
 import Step2Pricing from "@/components/services/Step2Pricing";
@@ -8,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useServiceCreationStore } from "@/store/service-creation-store";
 import { router } from "expo-router";
 import React from "react";
-import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from "react-native";
+import { Alert, Platform, SafeAreaView, View } from "react-native";
 
 const TOTAL_STEPS = 3;
 
@@ -150,38 +151,32 @@ export default function CreateService() {
         ))}
       </View>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <KeyboardAwareScrollView
         className="flex-1"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Adjust offset if needed
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+        contentContainerClassName="flex-grow pb-5 px-7"
       >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerClassName="flex-grow pb-5" // Use flex-grow to push button down
-          className="flex-1 px-7"
-        >
-          <View className="flex-1">
-            {renderStep()}
-          </View>
-
-        </ScrollView>
-        {/* Navigation Buttons - outside ScrollView content to stick at bottom */}
-        <View className="px-7 pt-4 pb-6 border-t border-gray-200 bg-white">
-          <Button
-            onPress={handleNext}
-            variant='primary'
-            loading={store.currentStep === TOTAL_STEPS && isPending}
-            disabled={
-              isPending ||
-              (store.currentStep === TOTAL_STEPS && store.images.length === 0) ||
-              (store.currentStep === 1 && !store.validateStep1().isValid)
-            }
-            loadingText="Publishing..."
-          >
-            {store.currentStep === TOTAL_STEPS ? "Publish Service" : "Continue"}
-          </Button>
+        <View className="flex-1">
+          {renderStep()}
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+
+      {/* Navigation Buttons - outside ScrollView content to stick at bottom */}
+      <View className="px-7 pt-4 pb-6 border-t border-gray-200 bg-white">
+        <Button
+          onPress={handleNext}
+          variant='primary'
+          loading={store.currentStep === TOTAL_STEPS && isPending}
+          disabled={
+            isPending ||
+            (store.currentStep === TOTAL_STEPS && store.images.length === 0) ||
+            (store.currentStep === 1 && !store.validateStep1().isValid)
+          }
+          loadingText="Publishing..."
+        >
+          {store.currentStep === TOTAL_STEPS ? "Publish Service" : "Continue"}
+        </Button>
+      </View>
     </SafeAreaView>
   );
 }

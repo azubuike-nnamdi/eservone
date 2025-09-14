@@ -1,4 +1,5 @@
 import AuthHeader from '@/components/common/auth-header'
+import KeyboardAwareScrollView from '@/components/common/keyboard-aware-scroll-view'
 import { PersonalDetailsStep } from '@/components/personal-detail-step'
 import { SecurityStep } from '@/components/security-step'
 import { ServiceTypeStep } from '@/components/service-type-step'
@@ -6,7 +7,7 @@ import { TermsStep } from '@/components/terms-step'
 import { SignUpPayload } from '@/constants/types'
 import { useOnboardingStore } from '@/store/onboarding-store'
 import React, { useState } from 'react'
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import * as Device from "expo-device"
@@ -70,10 +71,7 @@ export default function ContinueSignUp() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
+      <KeyboardAwareScrollView className="flex-1">
         <View className="flex-1 px-6">
           <AuthHeader title="Complete your account setup" />
 
@@ -94,7 +92,7 @@ export default function ContinueSignUp() {
 
           {renderStep()}
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   )
 }
