@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import KeyboardAwareScrollView from "../common/keyboard-aware-scroll-view";
 
 interface UserBioModalProps {
   visible: boolean;
@@ -43,7 +42,7 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
         <SafeAreaView className="bg-white rounded-t-2xl p-6 max-h-[70%] mb-4">
           <Text className="text-lg font-bold mb-4 text-center">Edit Profile</Text>
 
-          <KeyboardAwareScrollView className="flex-1" keyboardVerticalOffset={100}>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {/* Bio Input */}
             <View className="mb-4">
               <Text className="text-sm font-medium text-gray-700 mb-2">Bio</Text>
@@ -71,7 +70,7 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
                 editable={!isLoading}
               />
             </View>
-          </KeyboardAwareScrollView>
+          </ScrollView>
 
           <View className="flex-row gap-4 mt-4">
             <TouchableOpacity

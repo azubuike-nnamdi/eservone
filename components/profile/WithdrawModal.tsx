@@ -1,10 +1,9 @@
 import { getBankName, maskAccountNumber } from '@/lib/bank-helper';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import BottomSheetModal from '../common/bottom-sheet-modal';
 import Button from '../common/button';
-import KeyboardAwareScrollView from '../common/keyboard-aware-scroll-view';
 
 interface BankAccount {
   id: number;
@@ -46,7 +45,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
       onClose={onClose}
       title="Withdraw Funds"
     >
-      <KeyboardAwareScrollView className="flex-1" keyboardVerticalOffset={100}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="space-y-6 pb-6">
           {/* Balance Display */}
           <View className="bg-gray-50 rounded-lg p-4">
@@ -148,7 +147,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({
             </View>
           </Button>
         </View>
-      </KeyboardAwareScrollView>
+      </ScrollView>
     </BottomSheetModal>
   );
 };
