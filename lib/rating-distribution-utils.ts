@@ -6,6 +6,16 @@ interface RatingDistribution {
   [key: number]: number; // rating -> percentage
 }
 
+interface ActualDistribution {
+  counts: { [key: number]: number }; // rating -> count
+  percentages: { [key: number]: number }; // rating -> percentage
+}
+
+interface Review {
+  rating: number;
+  [key: string]: any;
+}
+
 /**
  * Estimates rating distribution based on total rating count and review count
  * This is a heuristic approach when individual ratings aren't available
@@ -106,4 +116,33 @@ export const createUniformDistribution = (
   distribution[roundedRating] = 100;
 
   return distribution;
+};
+
+/**
+ * Calculates actual rating distribution from individual review data
+ */
+export const calculateActualDistribution = (reviews: Review[]): ActualDistribution => {
+  const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  const percentages = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+  const totalReviews = reviews.length;
+
+  if (totalReviews === 0) {
+    return { counts, percentages };
+  }
+
+  // Count each rating
+  reviews.forEach(review => {
+    const rating = review.rating;
+    if (rating >= 1 && rating <= 5) {
+      counts[rating as keyof typeof counts]++;
+    }
+  });
+
+  // Calculate percentages
+  for (let i = 1; i <= 5; i++) {
+    percentages[i as keyof typeof percentages] = Math.round((counts[i as keyof typeof counts] / totalReviews) * 100);
+  }
+
+  return { counts, percentages };
 };

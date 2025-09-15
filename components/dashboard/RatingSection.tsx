@@ -1,11 +1,10 @@
 import Button from '@/components/common/button';
 import StarRating from '@/components/common/StarRating';
-import { calculateAverageRating } from '@/lib/rating-utils';
 import React from 'react';
 import { Text, View } from 'react-native';
 
 interface RatingSectionProps {
-  ratingCount: number; // This is the total sum of all ratings
+  averageRating: number; // This is the average rating from the API
   reviewCount: number;
   onViewReviews: () => void;
 }
@@ -14,12 +13,10 @@ interface RatingSectionProps {
  * Component for displaying the rating section with stars and review count
  */
 const RatingSection: React.FC<RatingSectionProps> = ({
-  ratingCount,
+  averageRating,
   reviewCount,
   onViewReviews
 }) => {
-  // Calculate the actual average rating from total rating count and review count
-  const averageRating = calculateAverageRating(ratingCount, reviewCount);
 
   return (
     <View className='my-12 flex-col items-center justify-between'>

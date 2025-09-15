@@ -33,6 +33,7 @@ const requestInterceptor = (config: any) => {
   //const refreshToken = useAuthStore.getState().refreshToken;
 
   const token = signupToken || authToken;
+  // console.log('token', token);
   if (token) {
     config.headers.Authorization = `${token}`;
   }

@@ -51,14 +51,14 @@ export default function ServiceProviderHomepage() {
 
 
   const reviewCount = reviews?.data?.length ?? 0
-  const ratingCount = rating?.data ?? 0
+  const ratingCount = rating?.data ?? 0 // This is the average rating from the API
 
   // console.log('review data', reviews?.data)
 
   const renderContent = () => {
     if (isPending || appointmentCountPending || reviewsPending || ratingPending || accountBalancePending) return <DashboardSkeleton />
     if (!data) return <EmptyState firstName={user?.firstName} />
-    return <DashboardScreen appointmentCount={appointmentCount} reviewCount={reviewCount} balance={balance} currency={currency} ratingCount={ratingCount} />
+    return <DashboardScreen appointmentCount={appointmentCount} reviewCount={reviewCount} balance={balance} currency={currency} averageRating={ratingCount} />
   }
 
   return (

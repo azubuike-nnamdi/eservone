@@ -21,10 +21,10 @@ type DashboardScreenProps = {
   reviewCount: number;
   balance: number;
   currency: string;
-  ratingCount: number;
+  averageRating: number;
 }
 
-const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency, ratingCount }: DashboardScreenProps) => {
+const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency, averageRating }: DashboardScreenProps) => {
   const { user } = useAuthStore();
   const { refetch: refetchUserProfile } = useGetUserProfileDetails();
   const [refreshing, setRefreshing] = useState(false);
@@ -95,7 +95,7 @@ const DashboardScreen = ({ appointmentCount, reviewCount, balance, currency, rat
           }
           ListFooterComponent={
             <RatingSection
-              ratingCount={ratingCount}
+              averageRating={averageRating}
               reviewCount={reviewCount}
               onViewReviews={handleViewReviews}
             />

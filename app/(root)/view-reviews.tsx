@@ -8,8 +8,7 @@ import {
 } from "@/components/reviews";
 import { useGetRating } from "@/hooks/query/useGetRating";
 import { useGetAllReviews } from "@/hooks/query/useGetReviews";
-import { estimateRatingDistribution } from "@/lib/rating-distribution-utils";
-import { calculateAverageRating } from "@/lib/rating-utils";
+import { calculateActualDistribution } from "@/lib/rating-distribution-utils";
 import { useAuthStore } from "@/store/auth-store";
 import { SafeAreaView, ScrollView } from "react-native";
 
@@ -19,35 +18,27 @@ export default function ViewReviews() {
     providerEmail: user?.email ?? ""
   });
   const { data: rating, isPending: ratingPending, isError: ratingError } = useGetRating({ providerEmail: user?.email ?? "" })
+  // console.log('rating', rating);
 
   const reviews = reviewsData?.data || [];
-  const totalRatingCount = rating?.data ?? 0; // This is the sum of all ratings (e.g., 3)
+  const averageRating = rating?.data ?? 0; // API now returns the average rating directly
   const reviewCount = reviews.length; // Number of reviews
 
-  // Calculate the average rating from total rating count and review count
-  const averageRating = calculateAverageRating(totalRatingCount, reviewCount);
+  // Calculate actual distribution from individual review data
+  const actualDistribution = calculateActualDistribution(reviews);
 
-  // Since individual ratings aren't available, estimate the distribution
-  const estimatedDistribution = estimateRatingDistribution(totalRatingCount, reviewCount);
-
-  // Create rating stats with estimated distribution
+  // Create rating stats with actual distribution
   const ratingStats = {
     averageRating: averageRating.toFixed(1),
-    ratingCounts: {
-      5: Math.round((estimatedDistribution[5] / 100) * reviewCount),
-      4: Math.round((estimatedDistribution[4] / 100) * reviewCount),
-      3: Math.round((estimatedDistribution[3] / 100) * reviewCount),
-      2: Math.round((estimatedDistribution[2] / 100) * reviewCount),
-      1: Math.round((estimatedDistribution[1] / 100) * reviewCount),
-    },
-    percentages: estimatedDistribution,
+    ratingCounts: actualDistribution.counts,
+    percentages: actualDistribution.percentages,
     totalReviews: reviewCount
   };
 
-  console.log('Total Rating Count:', totalRatingCount);
-  console.log('Review Count:', reviewCount);
-  console.log('Average Rating:', averageRating);
-  console.log('Estimated Distribution:', estimatedDistribution);
+  // console.log('Average Rating:', averageRating);
+  // console.log('Review Count:', reviewCount);
+  // console.log('Actual Distribution:', actualDistribution);
+  // console.log('reviews', reviews);
 
   if (isPending || ratingPending) {
     return <LoadingState />;
