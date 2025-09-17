@@ -44,10 +44,6 @@ export default function ForgotPassword() {
     handleForgotPassword({ email })
   }
 
-  const handleDeleteStorage = () => {
-    AsyncStorage.clear()
-  }
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
@@ -85,12 +81,6 @@ export default function ForgotPassword() {
               We'll send you a message
             </Text>
           </View>
-
-          <TouchableOpacity onPress={handleDeleteStorage}>
-            <Text className="text-gray-400 text-sm mt-2 text-center">
-              delete
-            </Text>
-          </TouchableOpacity>
 
           {/* Sign In Button */}
           <View className="w-full px-6 mt-8">
