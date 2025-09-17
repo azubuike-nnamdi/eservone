@@ -12,17 +12,18 @@ const useValidateResetPasswordEmail = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: ValidateResetPasswordEmailPayload) => {
-      return api.post(`/eserve-one/validate-password-otp`, payload)
+      return api.post(`/eserve-one/validate-reset-password-email`, payload)
     },
     onSuccess: ({ data }) => {
       if (data) {
         queryClient.invalidateQueries({ queryKey: ["user"] })
-        console.log("OTP Validation Success, saving token:", data?.data?.jwtToken)
+        // console.log("OTP Validation Success, saving token:", data?.data?.jwtToken)
         setJwtToken(data?.data?.jwtToken)
         router.push(RESET_PASSWORD)
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
+
       Alert.alert('Error', error.response.data.description)
     }
   })
