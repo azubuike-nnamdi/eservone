@@ -12,7 +12,11 @@
          "supportsTablet": true,
          "bundleIdentifier": "com.nnamdi.azubuike.eservone",
          "infoPlist": {
-            "ITSAppUsesNonExemptEncryption": false
+            "ITSAppUsesNonExemptEncryption": false,
+            "NSPhotoLibraryUsageDescription": "Give $(PRODUCT_NAME) permission to access your photos for image selection and upload.",
+            "NSCameraUsageDescription": "Give $(PRODUCT_NAME) permission to use your camera for taking photos.",
+            "NSMicrophoneUsageDescription": "Give $(PRODUCT_NAME) permission to access your microphone for video recording.",
+            "NSFaceIDUsageDescription": "Give $(PRODUCT_NAME) permission to access your Face ID biometric data for secure authentication."
          }
       },
       "android": {

@@ -5,11 +5,11 @@ import ProfileHeader from '@/components/common/profile-header'
 import { UpdateProfilePayload } from '@/constants/types'
 import useUpdateProfile from '@/hooks/mutation/useUpdateProfile'
 import { useModal } from '@/hooks/useModal'
+import { ImagePickerUtils } from '@/lib/image-picker-utils'
 import { useAuthStore } from '@/store/auth-store'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system'
-import * as ImagePicker from 'expo-image-picker'
 import React, { useEffect, useState } from 'react'
 import {
   Image,
@@ -36,25 +36,24 @@ export default function VerifyIdentity() {
   }, [user])
 
   const pickProfileImage = async () => {
-    // Request media library permissions
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      showError(
-        'Permission Required',
-        'You need to allow access to your photos to upload a profile picture.'
-      )
-      return;
-    }
+    try {
+      const result = await ImagePickerUtils.launchImageLibrary({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7, // Reduced quality for iOS stability and memory management
+        exif: false, // Disable EXIF data to reduce memory usage
+        base64: false, // Don't include base64 in picker result
+        allowsMultipleSelection: false, // Ensure single selection
+      })
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    })
-
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri)
+      if (result.success && result.uri) {
+        setProfileImage(result.uri);
+      } else if (result.error && result.error !== 'User cancelled') {
+        showError('Error', result.error);
+      }
+    } catch (error) {
+      console.error('Image picker error:', error);
+      showError('Error', 'Failed to pick image. Please try again.');
     }
   }
 

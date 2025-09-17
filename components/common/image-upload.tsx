@@ -1,7 +1,7 @@
+import { ImagePickerUtils } from '@/lib/image-picker-utils'
 import { cn } from '@/lib/utils'
 import { Ionicons } from '@expo/vector-icons'
 import * as FileSystem from 'expo-file-system'
-import * as ImagePicker from 'expo-image-picker'
 import React from 'react'
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native'
 
@@ -33,37 +33,39 @@ export default function ImageUpload({
 }: ImageUploadProps) {
 
   const pickImage = async () => {
-    if (images.length >= maxImages) {
-      Alert.alert('Maximum Images Reached', `You can only upload up to ${maxImages} images.`);
-      return;
-    }
-
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      Alert.alert("Permission Required", "You need to allow access to your photos to upload images.");
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.8,
-      base64: true, // Get base64 string
-    });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const asset = result.assets[0];
-      // Only allow jpeg/jpg/png
-      // (File type check can be re-enabled if needed)
-      let base64 = asset.base64;
-      if (!base64) {
-        base64 = await convertImageToBase64(asset.uri);
-        if (!base64) {
-          Alert.alert('Error', 'Could not convert image to base64.');
-          return;
-        }
+    try {
+      if (images.length >= maxImages) {
+        Alert.alert('Maximum Images Reached', `You can only upload up to ${maxImages} images.`);
+        return;
       }
-      onAddImage(base64);
+
+      const result = await ImagePickerUtils.launchImageLibrary({
+        allowsEditing: true,
+        quality: 0.7, // Reduced quality for iOS stability and memory management
+        exif: false, // Disable EXIF data to reduce memory usage
+        base64: true, // Get base64 string
+        allowsMultipleSelection: false, // Ensure single selection
+      });
+
+      if (result.success && result.uri) {
+        // Only allow jpeg/jpg/png
+        // (File type check can be re-enabled if needed)
+        let base64 = result.base64;
+        if (!base64) {
+          const convertedBase64 = await convertImageToBase64(result.uri);
+          if (!convertedBase64) {
+            Alert.alert('Error', 'Could not convert image to base64.');
+            return;
+          }
+          base64 = convertedBase64;
+        }
+        onAddImage(base64);
+      } else if (result.error && result.error !== 'User cancelled') {
+        Alert.alert('Error', result.error);
+      }
+    } catch (error) {
+      console.error('Image picker error:', error);
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
     }
   };
 

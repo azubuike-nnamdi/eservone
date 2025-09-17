@@ -1,8 +1,8 @@
 import Button from '@/components/common/button';
+import { ImagePickerUtils } from '@/lib/image-picker-utils';
 import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
-import { Alert, Image, Modal, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
 
 interface ProfileImageUploadProps {
   currentImageUri?: string;
@@ -39,126 +39,31 @@ export default function ProfileImageUpload({
   const modalVisible = isModalVisible !== undefined ? isModalVisible : showPreviewModal;
   const setModalVisible = onModalClose ? (() => onModalClose()) : setShowPreviewModal;
 
-  const requestPermissions = async () => {
-    try {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert(
-            'Permission Required',
-            'Sorry, we need camera roll permissions to make this work!'
-          );
-          return false;
-        }
-      }
-      return true;
-    } catch (error) {
-      console.error('Permission request error:', error);
-      Alert.alert('Error', 'Failed to request permissions. Please try again.');
-      return false;
-    }
-  };
-
-  const pickImage = async () => {
-    try {
-      const hasPermission = await requestPermissions();
-      if (!hasPermission) return;
-
-      setInternalIsUploading(true);
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.5, // Further reduced quality for iOS stability
-        exif: false, // Disable EXIF data to reduce memory usage
-        base64: false, // Don't include base64 in picker result
-        allowsMultipleSelection: false, // Ensure single selection
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const asset = result.assets[0];
-        if (asset && asset.uri) {
-          const uri = asset.uri;
-          setSelectedImageUri(uri);
-          setShowPreviewModal(true);
-          onImageSelected(uri);
-        }
-      }
-    } catch (error) {
-      console.error('Image picker error:', error);
-      Alert.alert('Error', 'Failed to pick image. Please try again.');
-    } finally {
-      setInternalIsUploading(false);
-    }
-  };
-
-  const takePhoto = async () => {
-    try {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert(
-            'Permission Required',
-            'Sorry, we need camera permissions to make this work!'
-          );
-          return;
-        }
-      }
-
-      setInternalIsUploading(true);
-
-      const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.5, // Further reduced quality for iOS stability
-        exif: false, // Disable EXIF data to reduce memory usage
-        base64: false, // Don't include base64 in picker result
-        allowsMultipleSelection: false, // Ensure single selection
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const asset = result.assets[0];
-        if (asset && asset.uri) {
-          const uri = asset.uri;
-          setSelectedImageUri(uri);
-          setShowPreviewModal(true);
-          onImageSelected(uri);
-        }
-      }
-    } catch (error) {
-      console.error('Camera error:', error);
-      Alert.alert('Error', 'Failed to take photo. Please try again.');
-    } finally {
-      setInternalIsUploading(false);
-    }
-  };
 
   const showImageOptions = () => {
     if (isUploading) {
       return; // Prevent showing options while uploading
     }
 
-    Alert.alert(
-      'Update Profile Picture',
-      'Choose an option',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Take Photo',
-          onPress: () => {
-            // Add small delay to prevent race conditions
-            setTimeout(() => takePhoto(), 100);
-          }
-        },
-        {
-          text: 'Choose from Library',
-          onPress: () => {
-            // Add small delay to prevent race conditions
-            setTimeout(() => pickImage(), 100);
-          }
-        },
-      ]
+    ImagePickerUtils.showImageOptions(
+      async (uri: string) => {
+        setInternalIsUploading(true);
+        try {
+          setSelectedImageUri(uri);
+          setShowPreviewModal(true);
+          onImageSelected(uri);
+        } finally {
+          setInternalIsUploading(false);
+        }
+      },
+      {
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+        exif: false,
+        base64: false,
+        allowsMultipleSelection: false,
+      }
     );
   };
 
