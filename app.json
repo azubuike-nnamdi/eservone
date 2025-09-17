@@ -1,6 +1,6 @@
 {
    "expo": {
-      "name": "eservone",
+      "name": "EservOne",
       "slug": "eservone",
       "version": "1.0.18",
       "orientation": "portrait",
@@ -13,10 +13,10 @@
          "bundleIdentifier": "com.nnamdi.azubuike.eservone",
          "infoPlist": {
             "ITSAppUsesNonExemptEncryption": false,
-            "NSPhotoLibraryUsageDescription": "Give $(PRODUCT_NAME) permission to access your photos for image selection and upload.",
-            "NSCameraUsageDescription": "Give $(PRODUCT_NAME) permission to use your camera for taking photos.",
-            "NSMicrophoneUsageDescription": "Give $(PRODUCT_NAME) permission to access your microphone for video recording.",
-            "NSFaceIDUsageDescription": "Give $(PRODUCT_NAME) permission to access your Face ID biometric data for secure authentication."
+            "NSPhotoLibraryUsageDescription": "Give EservOne permission to access your photos for image selection and upload.",
+            "NSCameraUsageDescription": "Give EservOne permission to use your camera for taking photos.",
+            "NSMicrophoneUsageDescription": "Give EservOne permission to access your microphone for video recording.",
+            "NSFaceIDUsageDescription": "Give EservOne permission to access your Face ID biometric data for secure authentication."
          }
       },
       "android": {
