@@ -4,6 +4,7 @@ import Button from "@/components/common/button"
 import icons from "@/constants/icons"
 import images from "@/constants/images"
 import type { ValidateResetPasswordEmailPayload, VerificationPayload } from "@/constants/types"
+import useForgotPassword from "@/hooks/mutation/useForgotPassword"
 import useValidateResetPasswordEmail from "@/hooks/mutation/useValidateResetPasswordEmail"
 import ValidateEmail from "@/hooks/mutation/verify-email"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -11,6 +12,7 @@ import * as Clipboard from 'expo-clipboard'
 import { router } from "expo-router"
 import { useEffect, useRef, useState } from "react"
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -35,17 +37,25 @@ export default function VerifyEmail() {
   const inputRefs = useRef<(TextInput | null)[]>([])
   const { handleValidateEmail, isPending } = ValidateEmail()
   const { handleValidateResetPasswordEmail, isPending: isResetPasswordPending } = useValidateResetPasswordEmail()
+  const { handleForgotPassword, isPending: isResendPending } = useForgotPassword()
 
   useEffect(() => {
     const getStoredData = async () => {
       try {
         const [storedEmail, storedFlowType, storedRequestId] = await Promise.all([
-          AsyncStorage.getItem("verify_email"),
+          AsyncStorage.getItem("forgot_password_email"),
           AsyncStorage.getItem("flow_type"),
           AsyncStorage.getItem("requestId"),
         ])
+
+        // Also check for verify_email if forgot_password_email is not found (for signup flow)
+        let emailToUse = storedEmail;
+        if (!emailToUse) {
+          emailToUse = await AsyncStorage.getItem("verify_email");
+        }
+
         console.log("Retrieved requestId from AsyncStorage:", storedRequestId)
-        setEmail(storedEmail)
+        setEmail(emailToUse)
         setFlowType(storedFlowType as "signup" | "forgot_password")
         setRequestId(storedRequestId)
       } catch (error) {
@@ -65,14 +75,15 @@ export default function VerifyEmail() {
         const matches = clipboardContent.match(/\d{6}(?!.*\d{6})/);
         if (matches && matches[0]) {
           const code = matches[0];
-          if (code !== otp.join("")) {
+          const currentOtp = otp.join("");
+          if (code !== currentOtp) {
             setClipboardOtp(code);
             setShowPastePrompt(true);
           }
         } else {
           setShowPastePrompt(false);
         }
-      } catch (error) {
+      } catch {
         console.log("Clipboard access not available");
       }
     };
@@ -84,7 +95,7 @@ export default function VerifyEmail() {
     const interval = setInterval(checkClipboardForOtp, 2000);
 
     return () => clearInterval(interval);
-  }, [otp.join("")]); // Re-run when OTP changes
+  }, [otp]); // Re-run when OTP changes
 
   // Countdown timer effect
   useEffect(() => {
@@ -140,10 +151,17 @@ export default function VerifyEmail() {
     }
   }
 
-  // Resend handler (add your resend logic here)
-  const handleResend = () => {
-    setCountdown(30);
-    // TODO: Add resend code logic here
+  // Resend handler
+  const handleResend = async () => {
+    if (email && flowType === "forgot_password") {
+      setCountdown(30);
+      setOtp(["", "", "", "", "", ""]);
+      setIsValidOtp(true);
+      setErrorMessage("");
+
+      // Call the forgot password API to resend OTP
+      handleForgotPassword({ email });
+    }
   };
 
   // Handle user accepting to paste OTP
@@ -165,6 +183,18 @@ export default function VerifyEmail() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
+        {/* Loading Overlay for Resend OTP */}
+        {isResendPending && (
+          <View className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+            <View className="bg-white rounded-lg p-6 items-center">
+              <ActivityIndicator size="large" color="#3B82F6" />
+              <Text className="text-black text-lg font-medium mt-4">Resending OTP...</Text>
+              <Text className="text-gray-500 text-sm mt-2 text-center">
+                Please wait while we send a new verification code
+              </Text>
+            </View>
+          </View>
+        )}
         {/* Back Arrow */}
         <TouchableOpacity
           className="absolute top-16 left-6 z-10 p-2"
@@ -269,8 +299,14 @@ export default function VerifyEmail() {
           {countdown > 0 ? (
             <Text className="mt-4 text-gray-400 text-sm">Resend code in {countdown}s</Text>
           ) : (
-            <TouchableOpacity className="mt-4" onPress={handleResend}>
-              <Text className="text-primary-300 text-sm">Didn't receive the code? Resend</Text>
+            <TouchableOpacity
+              className="mt-4"
+              onPress={handleResend}
+              disabled={isResendPending}
+            >
+              <Text className={`text-sm ${isResendPending ? 'text-gray-400' : 'text-primary-300'}`}>
+                {isResendPending ? 'Resending...' : "Didn't receive the code? Resend"}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
