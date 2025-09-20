@@ -164,7 +164,7 @@ export default function SignIn() {
           {/* Create Account Link */}
           <View className="flex-row justify-center mt-4">
             <Text className="text-gray-600 text-sm">
-              New to eservone?
+              New to EservOne?
             </Text>
             <TouchableOpacity className="ml-1" onPress={handleCreateAccount}>
               <Text className="text-primary-300 text-sm font-medium">
