@@ -10,7 +10,7 @@
       "newArchEnabled": true,
       "ios": {
          "supportsTablet": true,
-         "bundleIdentifier": "com.nnamdi.azubuike.eservone",
+         "bundleIdentifier": "com.eservone.app",
          "infoPlist": {
             "ITSAppUsesNonExemptEncryption": false,
             "NSPhotoLibraryUsageDescription": "Give EservOne permission to access your photos for image selection and upload.",
