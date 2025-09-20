@@ -26,6 +26,12 @@
       }
    },
    "submit": {
-      "production": {}
+      "production": {
+         "ios": {
+            "appleId": "acu.nnamdi@gmail.com",
+            "ascAppId": "6752815253",
+            "appleTeamId": "SSDF48K4LT"
+         }
+      }
    }
 }

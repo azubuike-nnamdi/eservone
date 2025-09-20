@@ -113,7 +113,7 @@ const AddBankAccountModal: React.FC<AddBankAccountModalProps> = ({ visible, onCl
     } else {
       setAccountName("");
     }
-  }, [debouncedAccountNumber, debouncedBankCode, user?.email, handleValidateAccount]);
+  }, [debouncedAccountNumber, debouncedBankCode, user?.email]);
 
   useEffect(() => {
     if (isBeneficiaryCreated) {
