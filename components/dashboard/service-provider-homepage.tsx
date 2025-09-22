@@ -11,7 +11,7 @@ import { getGreeting } from '@/lib/helper'
 import { useAuthStore } from '@/store/auth-store'
 import { router } from 'expo-router'
 import React from 'react'
-import { Image, KeyboardAvoidingView, Platform, SafeAreaView, Text, View } from 'react-native'
+import { FlatList, Image, KeyboardAvoidingView, Platform, RefreshControl, SafeAreaView, Text, View } from 'react-native'
 import DashboardSkeleton from './dashboard-skeleton'
 import DashboardScreen from './landing'
 
@@ -41,7 +41,7 @@ export default function ServiceProviderHomepage() {
   const { data: appointmentCount, isPending: appointmentCountPending } = useGetAppointmentCount()
   const { data: reviews, isPending: reviewsPending } = useGetAllReviews({ providerEmail: user?.email ?? "" })
   const { data: rating, isPending: ratingPending } = useGetRating({ providerEmail: user?.email ?? "" })
-  const { data: accountBalance, isPending: accountBalancePending } = useGetAccountBalance()
+  const { data: accountBalance, isPending: accountBalancePending, refetch: refetchBalance } = useGetAccountBalance()
   // const { data: ratings, isPending: ratingsPending } = useGetAllRatings()
 
   // console.log('appointmentCount', appointmentCount)
@@ -68,9 +68,27 @@ export default function ServiceProviderHomepage() {
         className="flex-1"
       >
         <ProfileHeader title="Service Provider" showNotification={false} showBackArrow={false} />
-        <View className="flex-1 px-7 ">
-          {renderContent()}
-        </View>
+        <FlatList
+          data={[1]} // Single item to render the content
+          keyExtractor={() => 'dashboard-content'}
+          renderItem={() => (
+            <View className="px-7">
+              {renderContent()}
+            </View>
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={isPending || appointmentCountPending || reviewsPending || ratingPending || accountBalancePending}
+              onRefresh={() => {
+                refetchBalance();
+                // You can add other refetch calls here if needed
+              }}
+              tintColor="#007AFF"
+              colors={['#007AFF']}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   )

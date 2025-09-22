@@ -17,6 +17,7 @@ export default function MessageRoom() {
     handleSendMessagePress,
     isSendingMessage,
     user,
+    refetchMessages,
     // debugInfo
   } = useMessageRoomLogic();
 
@@ -42,6 +43,8 @@ export default function MessageRoom() {
             messages={displayedMessages}
             currentUserEmail={user?.email || ''}
             isPending={isPending}
+            onRefresh={refetchMessages}
+            isRefreshing={isPending}
           />
         </View>
 
