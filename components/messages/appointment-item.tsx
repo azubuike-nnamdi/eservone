@@ -1,5 +1,6 @@
 import { Appointment } from '@/constants/types';
 import { useCurrency } from '@/context/currency-context';
+import { formatNumberWithCommas } from '@/lib/helper';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -18,7 +19,7 @@ export default function AppointmentItem({ appointment, onPress }: { appointment:
           <View className={`px-3 py-1 rounded-full ml-2 ${appointment.serviceStatus === 'COMPLETED' ? 'bg-green-100' : appointment.serviceStatus === 'CANCELED' ? 'bg-red-100' : 'bg-yellow-400'}`}
             style={{ minWidth: 80, alignItems: 'center' }}>
             <Text className={`text-xs font-semibold uppercase ${appointment.serviceStatus === 'COMPLETED' ? 'text-green-700' : appointment.serviceStatus === 'CANCELED' ? 'text-red-700' : 'text-black'}`}>
-              {appointment.serviceStatus}
+              PENDING
             </Text>
           </View>
         </View>
@@ -37,7 +38,7 @@ export default function AppointmentItem({ appointment, onPress }: { appointment:
         )}
         <View className="flex-row justify-between items-end mt-2">
           <Text className="text-primary-300 font-extrabold text-lg">
-            {formattedCost}
+            {formatNumberWithCommas(formattedCost)}
           </Text>
         </View>
       </View>

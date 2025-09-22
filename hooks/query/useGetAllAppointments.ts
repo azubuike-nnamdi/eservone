@@ -9,6 +9,7 @@ export const useGetAllAppointments = () => {
 
   const { data, isPending, error } = useQuery({
     queryKey: ['appointments'],
+    staleTime: 1000,
     queryFn: getAllAppointments
   })
 

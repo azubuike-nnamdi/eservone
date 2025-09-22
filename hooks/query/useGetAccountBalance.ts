@@ -9,7 +9,11 @@ export const useGetAccountBalance = () => {
 
   const { data, isPending, error, refetch } = useQuery({
     queryKey: ['payment'],
-    queryFn: getAccountBalance
+    queryFn: getAccountBalance,
+    refetchInterval: 10000, // Refetch every 10 seconds for real-time balance updates
+    refetchIntervalInBackground: false, // Don't poll in background to save battery
+    refetchOnWindowFocus: true, // Refetch when user returns to the app
+    staleTime: 0, // Always consider data stale to ensure fresh balance
   })
 
   return { data, isPending, error, refetch }

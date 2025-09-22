@@ -1,8 +1,11 @@
 import { Message } from "@/constants/types";
 import { chatApi } from "@/lib/api";
+import { useFocusEffect } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
+import { useCallback, useRef } from "react";
 
 export const useGetRoomMessages = (groupId: string, receiver: string, sender: string) => {
+  const isFocusedRef = useRef(true);
 
   const getRoomMessages = async (groupId: string, receiver: string, sender: string): Promise<Message[]> => {
     const response = await chatApi.get(`/chat/message?groupId=${groupId}&receiver=${receiver}&sender=${sender}`)
@@ -43,16 +46,37 @@ export const useGetRoomMessages = (groupId: string, receiver: string, sender: st
     return transformedMessages;
   }
 
-  const { data, isPending, error } = useQuery({
+  const { data, isPending, error, refetch } = useQuery({
     queryKey: ['room-messages', groupId, receiver, sender],
     queryFn: () => getRoomMessages(groupId, receiver, sender),
-    enabled: !!groupId && !!receiver && !!sender
+    enabled: !!groupId && !!receiver && !!sender,
+    refetchInterval: () => {
+      // Only poll when the screen is focused
+      return isFocusedRef.current ? 2000 : false; // 2 seconds when focused, no polling when not focused
+    },
+    refetchIntervalInBackground: false, // Don't poll in background to save battery
+    refetchOnWindowFocus: true, // Refetch when user returns to the app
+    staleTime: 0, // Always consider data stale to ensure fresh messages
   })
+
+  // Handle screen focus to control polling
+  useFocusEffect(
+    useCallback(() => {
+      isFocusedRef.current = true;
+      // Refetch immediately when screen comes into focus
+      refetch();
+
+      return () => {
+        isFocusedRef.current = false;
+      };
+    }, [refetch])
+  );
 
   return {
     data,
     isPending,
-    error
+    error,
+    refetch
   }
 }
 

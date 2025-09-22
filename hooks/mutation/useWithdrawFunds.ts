@@ -1,10 +1,10 @@
 import { WithdrawFundsPayload } from "@/constants/types"
-import { useToast } from "@/context/toast-context"
 import { api } from "@/lib/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Alert } from "react-native"
 
 const useWithdrawFunds = () => {
-  const { showToast } = useToast()
+
   const queryClient = useQueryClient()
   const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: (payload: WithdrawFundsPayload) => {
@@ -18,7 +18,8 @@ const useWithdrawFunds = () => {
       }
     },
     onError: (error: { response: { data: { description: string } } }) => {
-      showToast(error.response.data.description, 'error')
+      Alert.alert(error.response.data.description)
+
     }
   })
 

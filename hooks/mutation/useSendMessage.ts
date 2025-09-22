@@ -15,7 +15,10 @@ const useSendMessage = () => {
     onSuccess: (data) => {
       // Clear optimistic messages since they're now confirmed by server
       setMessages([]);
+      // Invalidate and refetch messages immediately
       queryClient.invalidateQueries({ queryKey: ["room-messages"] });
+      // Force refetch to get the latest messages
+      queryClient.refetchQueries({ queryKey: ["room-messages"] });
     },
     onError: (error: { response: { data: { description: string } } }) => {
       showToast(error.response.data.description, "error");

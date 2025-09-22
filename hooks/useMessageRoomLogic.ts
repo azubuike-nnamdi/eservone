@@ -33,11 +33,11 @@ export const useMessageRoomLogic = () => {
 
   const recipientEmail = getRecipientEmail();
 
-  const { data, isPending, error } = useGetRoomMessages(id, recipientEmail, user?.email || '');
+  const { data, isPending, error, refetch } = useGetRoomMessages(id, recipientEmail, user?.email || '');
 
   // Combine server messages with optimistic messages and sort by timestamp
   const getDisplayedMessages = () => {
-    const allMessages = [...(data || []), ...optimisticMessages];
+    const allMessages = [...(Array.isArray(data) ? data : []), ...optimisticMessages];
 
     try {
       return allMessages.sort((a, b) => {
@@ -78,9 +78,9 @@ export const useMessageRoomLogic = () => {
       sender: user.email
     };
 
-    console.log("Sending message with payload:", payload);
-    console.log("Current user:", user.email);
-    console.log("Recipient email:", recipientEmail);
+    // console.log("Sending message with payload:", payload);
+    // console.log("Current user:", user.email);
+    // console.log("Recipient email:", recipientEmail);
 
     handleSendMessage(payload, optimisticMessage);
   };
@@ -110,6 +110,7 @@ export const useMessageRoomLogic = () => {
 
     // Actions
     handleSendMessagePress,
+    refetchMessages: refetch,
 
     // Debug info
     recipientEmail,
