@@ -13,8 +13,8 @@
          "bundleIdentifier": "com.eservone.app",
          "infoPlist": {
             "ITSAppUsesNonExemptEncryption": false,
-            "NSPhotoLibraryUsageDescription": "Give EservOne permission to access your photos for image selection and upload.",
-            "NSCameraUsageDescription": "Give EservOne permission to use your camera for taking photos.",
+            "NSPhotoLibraryUsageDescription": "EservOne needs access to your photo library so you can select and upload existing photos as your profile picture or service images. This allows you to showcase your work and build trust with potential clients.",
+            "NSCameraUsageDescription": "EservOne uses your camera to let you take profile photos and service images that you can upload to your account. This helps other users see who they're working with and what services you offer.",
             "NSMicrophoneUsageDescription": "Give EservOne permission to access your microphone for video recording.",
             "NSFaceIDUsageDescription": "Give EservOne permission to access your Face ID biometric data for secure authentication."
          }
@@ -24,7 +24,8 @@
             "foregroundImage": "./assets/icons/eservone-logo-square.png",
             "backgroundColor": "#ffffff"
          },
-         "package": "com.nnamdi.azubuike.eservone"
+         "package": "com.nnamdi.azubuike.eservone",
+         "edgeToEdgeEnabled": true
       },
       "web": {
          "bundler": "metro",
@@ -43,7 +44,8 @@
                "backgroundColor": "#ffffff"
             }
          ],
-         "expo-secure-store"
+         "expo-secure-store",
+         "expo-tracking-transparency"
       ],
       "experiments": {
          "typedRoutes": true
