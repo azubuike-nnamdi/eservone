@@ -16,7 +16,8 @@
       "nnamdi",
       "paystack",
       "Tobi",
-      "Vetinarian"
+      "Vetinarian",
+      "worklets"
    ],
    "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
