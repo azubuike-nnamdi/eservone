@@ -164,6 +164,16 @@ export default function VerifyEmail() {
     }
   };
 
+  // Clear stored verification data when going back
+  const handleGoBack = async () => {
+    try {
+      await AsyncStorage.multiRemove(['verify_email', 'requestId', 'forgot_password_email', 'flow_type']);
+    } catch (error) {
+      console.error("Error clearing verification data:", error);
+    }
+    router.back();
+  };
+
   // Handle user accepting to paste OTP
   const handlePasteOtp = () => {
     if (clipboardOtp && /^\d{6}$/.test(clipboardOtp)) {
@@ -198,7 +208,7 @@ export default function VerifyEmail() {
         {/* Back Arrow */}
         <TouchableOpacity
           className="absolute top-16 left-6 z-10 p-2"
-          onPress={() => router.back()}
+          onPress={handleGoBack}
         >
           <Image source={icons.backArrow} className="w-8 h-8" />
         </TouchableOpacity>

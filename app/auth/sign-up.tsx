@@ -11,11 +11,17 @@ import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function SignUp() {
-  const { data, setEmail } = useOnboardingStore();
+  const { data, setEmail, resetOnboarding } = useOnboardingStore();
   const [emailInput, setEmailInput] = useState(data.email);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const { handleInitializeEmail, isPending } = InitializeEmail();
+
+  // Reset onboarding data when component mounts (new sign-up flow)
+  useEffect(() => {
+    resetOnboarding();
+    setEmailInput('');
+  }, [resetOnboarding]);
 
   // Update local state when store data changes
   useEffect(() => {
@@ -26,6 +32,11 @@ export default function SignUp() {
     setEmailInput(text);
     setIsValidEmail(true);
     setErrorMessage("");
+
+    // Clear any previous verification data when user types a new email
+    if (text !== data.email) {
+      AsyncStorage.multiRemove(['verify_email', 'requestId', 'forgot_password_email']);
+    }
   };
 
   const handleContinue = async () => {

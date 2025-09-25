@@ -3,6 +3,7 @@ import type { VerificationPayload } from "@/constants/types"
 import { useToast } from "@/context/toast-context"
 import { api } from "@/lib/api"
 import { useSignupStore } from "@/store/signup-store"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { router } from "expo-router"
 
@@ -15,8 +16,15 @@ const ValidateEmail = () => {
     mutationFn: (payload: VerificationPayload) => {
       return api.post(`/eserve-one/verify-email`, payload)
     },
-    onSuccess: ({ data }) => {
+    onSuccess: async ({ data }) => {
       if (data) {
+        // Clear verification data from AsyncStorage
+        try {
+          await AsyncStorage.multiRemove(['verify_email', 'requestId', 'forgot_password_email', 'flow_type']);
+        } catch (error) {
+          console.error("Error clearing verification data:", error);
+        }
+
         // console.log("Storing JWT Token:", data?.data?.jwtToken);
         showToast("Email verified successfully", "success")
         router.push(CONTINUE_SIGN_UP)
