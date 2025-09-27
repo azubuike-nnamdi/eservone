@@ -5,6 +5,7 @@ import ProfileHeader from '@/components/common/profile-header'
 import { UpdateProfilePayload } from '@/constants/types'
 import useUpdateProfile from '@/hooks/mutation/useUpdateProfile'
 import { useModal } from '@/hooks/useModal'
+import { formatBytesToMB, isValidImageType } from '@/lib/helper'
 import { ImagePickerUtils } from '@/lib/image-picker-utils'
 import { useAuthStore } from '@/store/auth-store'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
@@ -35,6 +36,23 @@ export default function VerifyIdentity() {
     setEmail(user?.email || '')
   }, [user])
 
+  // Helper to validate document file type
+  const isValidDocumentType = (uri: string): boolean => {
+    const extension = uri.split('.').pop()?.toLowerCase();
+    return extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'pdf' || extension === 'docx';
+  };
+
+  // Helper to get file size from URI
+  const getFileSizeInBytes = async (uri: string): Promise<number> => {
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(uri);
+      return fileInfo.exists ? fileInfo.size || 0 : 0;
+    } catch (error) {
+      console.error('Error getting file size:', error);
+      return 0;
+    }
+  };
+
   const pickProfileImage = async () => {
     try {
       const result = await ImagePickerUtils.launchImageLibrary({
@@ -47,6 +65,21 @@ export default function VerifyIdentity() {
       })
 
       if (result.success && result.uri) {
+        // Validate file type
+        if (!isValidImageType(result.uri)) {
+          showError('Invalid File Type', 'Please select only JPG, JPEG, or PNG images for your profile picture.');
+          return;
+        }
+
+        // Validate file size (1MB limit for profile image)
+        const fileSizeInBytes = await getFileSizeInBytes(result.uri);
+        const fileSizeInMB = formatBytesToMB(fileSizeInBytes);
+
+        if (fileSizeInMB > 1) {
+          showError('Image Too Large', `Profile image size is ${fileSizeInMB}MB. Please select an image smaller than 1MB.`);
+          return;
+        }
+
         setProfileImage(result.uri);
       } else if (result.error && result.error !== 'User cancelled') {
         showError('Error', result.error);
@@ -65,6 +98,24 @@ export default function VerifyIdentity() {
       })
 
       if (!result.canceled) {
+        const documentAsset = result.assets?.[0];
+        if (documentAsset) {
+          // Validate file type
+          if (!isValidDocumentType(documentAsset.uri)) {
+            showError('Invalid File Type', 'Please select only JPG, JPEG, PNG, PDF, or DOCX files for your ID document.');
+            return;
+          }
+
+          // Validate file size (1MB limit for ID document)
+          const fileSizeInBytes = await getFileSizeInBytes(documentAsset.uri);
+          const fileSizeInMB = formatBytesToMB(fileSizeInBytes);
+
+          if (fileSizeInMB > 1) {
+            showError('Document Too Large', `ID document size is ${fileSizeInMB}MB. Please select a document smaller than 1MB.`);
+            return;
+          }
+        }
+
         // result is DocumentPickerSuccessResult
         setIdDocument(result)
       } else {
@@ -154,6 +205,9 @@ export default function VerifyIdentity() {
           <Text className='text-center text-gray-500 text-sm mt-1'>
             Please make sure your profile picture properly captures your face
           </Text>
+          <Text className='text-center text-gray-400 text-xs mt-1'>
+            (JPG/PNG only, max 1MB)
+          </Text>
         </View>
 
         {/* ID Upload */}
@@ -179,6 +233,9 @@ export default function VerifyIdentity() {
           <Text className='text-primary-500 font-rubikMedium text-base'>Upload a valid means of Identification</Text>
           <Text className='text-center text-gray-500 text-sm mt-1'>
             The details on your means of ID must match the personal details on your eservone account
+          </Text>
+          <Text className='text-center text-gray-400 text-xs mt-1'>
+            (JPG/PNG/PDF/DOCX only, max 1MB)
           </Text>
         </View>
 
