@@ -12,7 +12,7 @@ export default function Step3Media() {
         Media
       </Text>
       <Text className='text-sm text-gray-500 mb-6'>
-        Add images to properly convey your service. You can upload a maximum of 4 images.
+        Add images to properly convey your service. You can upload a maximum of 4 images (JPG/PNG only, 1MB each, 4MB total).
       </Text>
 
       <ImageUpload

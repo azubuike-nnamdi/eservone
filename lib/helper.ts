@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import * as FileSystem from 'expo-file-system';
 import { useState } from "react";
 
 const validateEmail = (text: string) => {
@@ -155,3 +156,36 @@ export const getDeliveryTypeDisplay = (homeService?: boolean, walkInService?: bo
   return null; // Don't show anything if both are false
 };
 
+
+
+// Helper to convert file URI to base64
+export const convertImageToBase64 = async (fileUri: string) => {
+  try {
+    const base64Data = await FileSystem.readAsStringAsync(fileUri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    return base64Data;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return null;
+  }
+};
+
+// Helper to validate file type
+export const isValidImageType = (uri: string): boolean => {
+  const extension = uri.split('.').pop()?.toLowerCase();
+  return extension === 'jpg' || extension === 'jpeg' || extension === 'png';
+};
+
+// Helper to calculate base64 size in bytes
+export const getBase64SizeInBytes = (base64: string): number => {
+  // Remove data URL prefix if present
+  const base64Data = base64.replace(/^data:image\/[a-z]+;base64,/, '');
+  // Calculate size: base64 is 4/3 the size of the original binary data
+  return (base64Data.length * 3) / 4;
+};
+
+// Helper to format bytes to MB
+export const formatBytesToMB = (bytes: number): number => {
+  return Math.round((bytes / (1024 * 1024)) * 100) / 100;
+};

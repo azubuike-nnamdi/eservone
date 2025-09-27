@@ -1,7 +1,7 @@
+import { convertImageToBase64, formatBytesToMB, getBase64SizeInBytes, isValidImageType } from '@/lib/helper'
 import { ImagePickerUtils } from '@/lib/image-picker-utils'
 import { cn } from '@/lib/utils'
 import { Ionicons } from '@expo/vector-icons'
-import * as FileSystem from 'expo-file-system'
 import React from 'react'
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native'
 
@@ -11,19 +11,6 @@ interface ImageUploadProps {
   onRemoveImage: (base64: string) => void
   maxImages?: number
 }
-
-// Helper to convert file URI to base64
-const convertImageToBase64 = async (fileUri: string) => {
-  try {
-    const base64Data = await FileSystem.readAsStringAsync(fileUri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    return base64Data;
-  } catch (error) {
-    console.error('Error converting image to base64:', error);
-    return null;
-  }
-};
 
 export default function ImageUpload({
   images,
@@ -48,8 +35,12 @@ export default function ImageUpload({
       });
 
       if (result.success && result.uri) {
-        // Only allow jpeg/jpg/png
-        // (File type check can be re-enabled if needed)
+        // Validate file type
+        if (!isValidImageType(result.uri)) {
+          Alert.alert('Invalid File Type', 'Please select only JPG, JPEG, or PNG images.');
+          return;
+        }
+
         let base64 = result.base64;
         if (!base64) {
           const convertedBase64 = await convertImageToBase64(result.uri);
@@ -59,6 +50,26 @@ export default function ImageUpload({
           }
           base64 = convertedBase64;
         }
+
+        // Validate individual image size (1MB limit)
+        const imageSizeInBytes = getBase64SizeInBytes(base64);
+        const imageSizeInMB = formatBytesToMB(imageSizeInBytes);
+
+        if (imageSizeInMB > 1) {
+          Alert.alert('Image Too Large', `Image size is ${imageSizeInMB}MB. Please select an image smaller than 1MB.`);
+          return;
+        }
+
+        // Validate total size limit (4MB total)
+        const currentTotalSize = images.reduce((total, img) => total + getBase64SizeInBytes(img), 0);
+        const newTotalSize = currentTotalSize + imageSizeInBytes;
+        const newTotalSizeInMB = formatBytesToMB(newTotalSize);
+
+        if (newTotalSizeInMB > 4) {
+          Alert.alert('Total Size Limit Exceeded', `Adding this image would exceed the 4MB total limit. Current total: ${formatBytesToMB(currentTotalSize)}MB. Please remove some images or select a smaller image.`);
+          return;
+        }
+
         onAddImage(base64);
       } else if (result.error && result.error !== 'User cancelled') {
         Alert.alert('Error', result.error);
@@ -92,7 +103,7 @@ export default function ImageUpload({
             'text-xs mt-1',
             images.length >= maxImages ? 'text-gray-400' : 'text-gray-500'
           )}>
-            (max {maxImages})
+            (max {maxImages}, JPG/PNG only, 1MB each, 4MB total)
           </Text>
         </View>
       </TouchableOpacity>
