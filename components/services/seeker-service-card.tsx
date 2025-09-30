@@ -87,7 +87,7 @@ const SeekerServiceCard: React.FC<SeekerServiceCardProps> = ({
           <View className="flex-1">
             <View className="flex-row items-center mb-1 gap-2">
               <Text className="font-bold text-base text-gray-900 ">{title}</Text>
-              {(providerVerificationStatus === true || providerBusinessStatus === true) && (
+              {(providerBusinessStatus === true) && (
                 <>
                   {providerVerificationStatus === true && providerBusinessStatus === true ? (
                     <Image source={icons.greenBadgeWithoutBg} className="w-4 h-4" />

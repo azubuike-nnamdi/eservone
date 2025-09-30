@@ -121,7 +121,7 @@ export default function ServiceSeekerHomepage() {
                   <View>
                      <SearchBar
                         onPress={() => router.push("/(root)/search")}
-                        placeholder="Search for a movie"
+                        placeholder="Search for a Service"
                      />
                      {/* Recent Searches UI */}
                      {recentSearches?.length > 0 && (

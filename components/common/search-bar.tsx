@@ -25,7 +25,7 @@ const SearchBar = ({ placeholder, value, onChangeText, onPress }: Props) => {
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        className="flex-1 ml-2 text-black-300"
+        className="flex-1 ml-2  placeholder:text-black"
         placeholderTextColor="#0F0F0"
         editable={!!onChangeText}
         pointerEvents={onPress ? "none" : "auto"}

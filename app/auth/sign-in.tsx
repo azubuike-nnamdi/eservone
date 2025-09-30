@@ -98,7 +98,8 @@ export default function SignIn() {
               Your email address
             </Text>
             <TextInput
-              className="w-full h-14 border border-gray-200 rounded-md px-4 text-base text-black mb-4"
+              className="w-full h-14 border border-gray-200 rounded-md px-4 text-base mb-4"
+              style={{ color: '#000000' }}
               placeholder="example@gmail.com"
               placeholderTextColor="#CCCCCC"
               value={email}
@@ -119,7 +120,8 @@ export default function SignIn() {
             </Text>
             <View className="relative w-full">
               <TextInput
-                className="w-full h-14 border border-gray-200 rounded-md px-4 text-base text-black pr-12"
+                className="w-full h-14 border border-gray-200 rounded-md px-4 text-base pr-12"
+                style={{ color: '#000000' }}
                 placeholder="********"
                 placeholderTextColor="#CCCCCC"
                 value={password}
