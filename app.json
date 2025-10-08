@@ -2,7 +2,7 @@
    "expo": {
       "name": "EservOne",
       "slug": "eservone",
-      "version": "1.0.21",
+      "version": "1.0.22",
       "orientation": "portrait",
       "icon": "./assets/icons/eservone-logo-square.png",
       "scheme": "eservone",
