@@ -11,6 +11,8 @@ interface UserBioModalProps {
   isLoading?: boolean;
 }
 
+const MAX_BIO_CHARACTERS = 250;
+
 const UserBioModal: React.FC<UserBioModalProps> = ({
   visible,
   onClose,
@@ -27,9 +29,18 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
     setUserAddress(initialAddress);
   }, [initialBio, initialAddress, visible]);
 
+  const handleBioChange = (text: string) => {
+    if (text.length <= MAX_BIO_CHARACTERS) {
+      setBio(text);
+    }
+  };
+
   const handleSubmit = () => {
     onSubmit(bio, userAddress);
   };
+
+  const isBioOverLimit = bio.length > MAX_BIO_CHARACTERS;
+  const bioCharacterCount = bio.length;
 
   return (
     <Modal
@@ -52,14 +63,25 @@ const UserBioModal: React.FC<UserBioModalProps> = ({
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-2">Bio</Text>
                 <TextInput
-                  className="border border-gray-300 rounded-lg p-3 text-base min-h-[80px]"
+                  className={`border rounded-lg p-3 text-base min-h-[80px] ${isBioOverLimit ? 'border-red-300' : 'border-gray-300'
+                    }`}
                   placeholder="Enter your bio..."
                   value={bio}
-                  onChangeText={setBio}
+                  onChangeText={handleBioChange}
                   multiline
                   numberOfLines={4}
                   editable={!isLoading}
                 />
+                <View className="flex-row justify-between items-center mt-1">
+                  <Text className="text-xs text-gray-500">
+                    {bioCharacterCount}/{MAX_BIO_CHARACTERS} characters
+                  </Text>
+                  {isBioOverLimit && (
+                    <Text className="text-xs text-red-500">
+                      Over limit
+                    </Text>
+                  )}
+                </View>
               </View>
 
               {/* Address Input */}
