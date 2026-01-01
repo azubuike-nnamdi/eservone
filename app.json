@@ -1,62 +1,66 @@
 {
-   "expo": {
-      "name": "EservOne",
-      "slug": "eservone",
-      "version": "1.0.23",
-      "orientation": "portrait",
-      "icon": "./assets/icons/eservone-logo-square.png",
-      "scheme": "eservone",
-      "userInterfaceStyle": "automatic",
-      "newArchEnabled": true,
-      "ios": {
-         "supportsTablet": true,
-         "bundleIdentifier": "com.eservone.app",
-         "infoPlist": {
-            "ITSAppUsesNonExemptEncryption": false,
-            "NSPhotoLibraryUsageDescription": "EservOne needs access to your photo library so you can select and upload existing photos as your profile picture or service images. This allows you to showcase your work and build trust with potential clients.",
-            "NSCameraUsageDescription": "EservOne uses your camera to let you take profile photos and service images that you can upload to your account. This helps other users see who they're working with and what services you offer.",
-            "NSMicrophoneUsageDescription": "Give EservOne permission to access your microphone for video recording.",
-            "NSFaceIDUsageDescription": "Give EservOne permission to access your Face ID biometric data for secure authentication."
-         }
+  "expo": {
+    "name": "EservOne",
+    "slug": "eservone",
+    "version": "1.0.23",
+    "orientation": "portrait",
+    "icon": "./assets/icons/eservone-logo-square.png",
+    "scheme": "eservone",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eservone.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "EservOne needs access to your photo library so you can select and upload existing photos as your profile picture or service images. This allows you to showcase your work and build trust with potential clients.",
+        "NSCameraUsageDescription": "EservOne uses your camera to let you take profile photos and service images that you can upload to your account. This helps other users see who they're working with and what services you offer.",
+        "NSMicrophoneUsageDescription": "Give EservOne permission to access your microphone for video recording.",
+        "NSFaceIDUsageDescription": "Give EservOne permission to access your Face ID biometric data for secure authentication."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/eservone-logo-square.png",
+        "backgroundColor": "#ffffff"
       },
-      "android": {
-         "adaptiveIcon": {
-            "foregroundImage": "./assets/icons/eservone-logo-square.png",
-            "backgroundColor": "#ffffff"
-         },
-         "package": "com.nnamdi.azubuike.eservone",
-         "edgeToEdgeEnabled": true
-      },
-      "web": {
-         "bundler": "metro",
-         "output": "static",
-         "favicon": "./assets/icons/eservone-logo-square.png"
-      },
-      "plugins": [
-         "expo-notifications",
-         "expo-router",
-         [
-            "expo-splash-screen",
-            {
-               "image": "./assets/icons/eservone-logo-square.png",
-               "imageWidth": 200,
-               "resizeMode": "contain",
-               "backgroundColor": "#ffffff"
-            }
-         ],
-         "expo-secure-store"
+      "package": "com.nnamdi.azubuike.eservone",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/icons/eservone-logo-square.png"
+    },
+    "plugins": [
+      "expo-notifications",
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icons/eservone-logo-square.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
       ],
-      "experiments": {
-         "typedRoutes": true
+      "expo-secure-store",
+      "expo-font",
+      "expo-tracking-transparency",
+      "expo-web-browser",
+      "@react-native-community/datetimepicker"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
       },
-      "extra": {
-         "router": {
-            "origin": false
-         },
-         "eas": {
-            "projectId": "7eda3ddb-757f-4432-bc54-cc5356be0314"
-         }
-      },
-      "owner": "nnamdi.azubuike"
-   }
+      "eas": {
+        "projectId": "7eda3ddb-757f-4432-bc54-cc5356be0314"
+      }
+    },
+    "owner": "nnamdi.azubuike"
+  }
 }

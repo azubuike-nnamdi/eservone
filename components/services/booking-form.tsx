@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Checkbox from "../common/check-box";
+import CustomDateTimePicker from "../common/custom-date-time-picker";
 import KeyboardAwareScrollView from "../common/keyboard-aware-scroll-view";
 import Select from "../common/select";
 import TextInput from "../common/text-input";
@@ -20,7 +21,7 @@ interface BookingFormProps {
   hasPets: boolean;
   costOfService?: string;
   costError?: string;
-  onDatePress: () => void;
+  onDateChange: (date: Date) => void;
   onTimeChange: (time: string) => void;
   onBuzzCodeChange: (code: string) => void;
   onUpfrontChange: (upfront: string) => void;
@@ -48,7 +49,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
   hasPets,
   // costOfService,
   costError,
-  onDatePress,
+  onDateChange,
   onTimeChange,
   onBuzzCodeChange,
   onUpfrontChange,
@@ -96,15 +97,13 @@ const BookingForm: React.FC<BookingFormProps> = ({
       {/* Date and Time */}
       <View className="flex-row mb-2 gap-2">
         <View className="flex-1">
-          <TouchableOpacity onPress={onDatePress}>
-            <TextInput
-              label="Select date"
-              value={date ? date.toISOString().split('T')[0] : ''}
-              placeholder="YYYY-MM-DD"
-              editable={false}
-              pointerEvents="none"
-            />
-          </TouchableOpacity>
+          <CustomDateTimePicker
+            label="Select date"
+            value={date}
+            onChange={onDateChange}
+            placeholder="Select date"
+            minimumDate={new Date()}
+          />
         </View>
         <View className="flex-1">
           <Select
