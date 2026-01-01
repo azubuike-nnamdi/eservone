@@ -2,8 +2,8 @@ import Button from "@/components/common/button";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import LoadingState from "@/components/common/LoadingState";
 import ProfileHeader from "@/components/common/profile-header";
+import CustomDateTimePicker from "@/components/common/custom-date-time-picker";
 import BookingForm from "@/components/services/booking-form";
-import DatePickerModal from "@/components/services/date-picker-modal";
 import ServiceDetails from "@/components/services/service-details";
 import ServiceImageGallery from "@/components/services/service-image-gallery";
 import { BookAppointmentPayload } from "@/constants/types";
@@ -28,7 +28,6 @@ export default function ProductById() {
   const [address, setAddress] = useState('Suite 41 apartment 9. City name');
   const [isAddressEditable, setIsAddressEditable] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [time, setTime] = useState('9:00 am');
   const [buzzCode, setBuzzCode] = useState('');
   const [upfront, setUpfront] = useState('0');
@@ -177,9 +176,8 @@ export default function ProductById() {
     handleBookAppointment(payload, service)
   }
 
-  const handleDateSelect = (dateString: string) => {
-    setDate(new Date(dateString));
-    setShowDatePicker(false);
+  const handleDateChange = (selectedDate: Date) => {
+    setDate(selectedDate);
   };
 
   return (
@@ -218,7 +216,7 @@ export default function ProductById() {
             hasPets={hasPets}
             // costOfService={costOfService}
             // costError={costError}
-            onDatePress={() => setShowDatePicker(true)}
+            onDateChange={handleDateChange}
             onTimeChange={setTime}
             onBuzzCodeChange={setBuzzCode}
             onUpfrontChange={setUpfront}
@@ -241,13 +239,6 @@ export default function ProductById() {
         </View>
       </ScrollView>
 
-      {/* Date Picker Modal */}
-      <DatePickerModal
-        visible={showDatePicker}
-        selectedDate={date}
-        onClose={() => setShowDatePicker(false)}
-        onDateSelect={handleDateSelect}
-      />
 
 
 
