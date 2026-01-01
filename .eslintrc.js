@@ -2,4 +2,7 @@
 module.exports = {
   extends: 'expo',
   ignorePatterns: ['/dist/*'],
+  rules: {
+    'expo/use-dom-exports': 'off',
+  },
 };
